@@ -1,0 +1,1318 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>엄가네 POS (실무용)</title>
+<style>
+  :root{
+    --bg:#0b0c10;
+    --panel:#111319;
+    --panel2:#0f1116;
+    --line:rgba(255,255,255,.08);
+    --text:#f5f7ff;
+    --muted:rgba(245,247,255,.65);
+    --accent:#ff9f00;
+    --good:#29d17e;
+    --bad:#ff3b30;
+    --shadow:0 14px 46px rgba(0,0,0,.45);
+    --r:18px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%; margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;}
+  button,input{font:inherit}
+  button{cursor:pointer; border:0; border-radius:14px;}
+  .app{height:100%; display:grid; grid-template-columns: 1.35fr .95fr; gap:12px; padding:12px;}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden;}
+  .left{display:flex; flex-direction:column; min-width:0;}
+  .right{display:flex; flex-direction:column; min-width:0;}
+
+  /* top bar */
+  .topbar{padding:12px; display:flex; flex-direction:column; gap:10px; border-bottom:1px solid var(--line);}
+  .tabs{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .tab{
+    padding:9px 12px; background:rgba(255,255,255,.03); color:var(--text);
+    border:1px solid var(--line);
+  }
+  .tab.active{outline:2px solid rgba(255,159,0,.35); border-color:rgba(255,159,0,.35);}
+  .row{display:flex; gap:10px; align-items:center;}
+  .search{
+    flex:1; display:flex; align-items:center; gap:10px;
+    background:rgba(0,0,0,.22); border:1px solid var(--line); border-radius:14px; padding:10px 12px;
+  }
+  .search .icon{opacity:.8}
+  .search input{
+    width:100%; border:0; outline:0; background:transparent; color:var(--text);
+    font-size:15px;
+  }
+  .sortBtn{
+    white-space:nowrap;
+    padding:10px 12px; background:rgba(255,255,255,.04);
+    color:var(--text); border:1px solid var(--line);
+  }
+  .hint{font-size:12px; color:var(--muted); opacity:.9}
+
+  /* chosung keys */
+  .keys{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .k{
+    padding:8px 10px; border:1px solid var(--line);
+    background:rgba(255,255,255,.03); color:var(--text);
+    border-radius:12px; font-weight:700; font-size:13px;
+    min-width:36px; text-align:center;
+  }
+  .k.active{outline:2px solid rgba(255,159,0,.35); border-color:rgba(255,159,0,.35);}
+  .k.clear{background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.35);}
+
+  /* pinned / grid */
+  .sectionTitle{
+    padding:10px 12px; display:flex; align-items:center; justify-content:space-between;
+    color:var(--muted); font-weight:700; font-size:13px;
+    border-bottom:1px solid var(--line);
+  }
+  .scroller{padding:12px; overflow:auto; min-height:0; flex:1;}
+  .pinnedWrap{margin-bottom:12px;}
+  .empty{color:var(--muted); font-size:13px; padding:10px 0;}
+  .grid{display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:10px;}
+  .item{
+    position:relative;
+    padding:12px 12px 10px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:16px;
+    min-height:84px;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .item .name{font-weight:900; font-size:18px; line-height:1.15; letter-spacing:-.2px;}
+  .item .price{font-weight:800; font-size:13px; color:var(--muted);}
+  .item .meta{display:flex; gap:6px; align-items:center; justify-content:space-between; margin-top:auto;}
+  .badge{
+    font-size:11px; color:var(--muted);
+    border:1px solid var(--line); padding:4px 8px; border-radius:999px;
+    background:rgba(0,0,0,.18);
+  }
+  .pinBtn{
+    width:30px; height:30px; border-radius:10px;
+    display:grid; place-items:center;
+    border:1px solid var(--line); background:rgba(0,0,0,.18);
+    opacity:.8;
+  }
+  .pinBtn.pinned{
+    border-color:rgba(255,159,0,.45);
+    background:rgba(255,159,0,.12);
+    opacity:1;
+  }
+  .pinBtn svg{width:16px; height:16px; display:block}
+
+  /* right header */
+  .rTop{
+    padding:12px;
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  }
+  .rtLeft{display:flex; flex-direction:column; gap:4px;}
+  .rtTitle{color:var(--muted); font-size:13px; font-weight:800;}
+  .rtTotal{font-size:34px; font-weight:1000; letter-spacing:-.6px;}
+  .rtCount{color:var(--muted); font-size:13px; font-weight:800;}
+  .rtBtns{display:flex; gap:8px; align-items:center;}
+  .smallBtn{
+    padding:9px 12px; border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text);
+    border-radius:14px; font-weight:900; font-size:13px;
+  }
+  .smallBtn.accent{border-color:rgba(255,159,0,.45); background:rgba(255,159,0,.12);}
+  .smallBtn.bad{border-color:rgba(255,59,48,.45); background:rgba(255,59,48,.10);}
+
+  /* cart list */
+  .cartBox{flex:1; min-height:0; overflow:auto; padding:10px 12px;}
+  .cartEmpty{color:var(--muted); padding:12px 4px; font-size:14px;}
+  .cartRow{
+    display:grid;
+    grid-template-columns: 1fr 42px 42px 42px;
+    gap:8px;
+    padding:10px 10px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    border-radius:16px;
+    margin-bottom:10px;
+    align-items:center;
+  }
+  .cartMain{min-width:0; display:flex; flex-direction:column; gap:3px;}
+  .cartName{font-weight:950; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .cartSub{font-size:12px; color:var(--muted); font-weight:800;}
+  .cBtn{
+    width:42px; height:42px; border-radius:14px;
+    border:1px solid var(--line); background:rgba(0,0,0,.18); color:var(--text);
+    font-weight:1000; font-size:18px;
+    display:grid; place-items:center;
+  }
+  .cBtn.del{background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.35);}
+
+  /* received/change + keypad */
+  .payArea{
+    padding:12px;
+    border-top:1px solid var(--line);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .moneyRow{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    border-radius:16px;
+  }
+  .moneyRow .label{color:var(--muted); font-weight:900; font-size:13px;}
+  .moneyRow .val{font-weight:1000; font-size:22px; letter-spacing:-.4px;}
+  .moneyRow.small .val{font-size:18px;}
+  .pads{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;}
+  .pad{
+    padding:14px 10px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.04);
+    color:var(--text);
+    font-weight:1000;
+    border-radius:16px;
+    font-size:16px;
+  }
+  .pad.reset{background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.35);}
+  .bottomBar{
+    display:flex; gap:10px; align-items:center;
+  }
+  .dueSave{
+    width:120px;
+    padding:14px 10px;
+    border:1px solid rgba(255,159,0,.35);
+    background:rgba(255,159,0,.10);
+    color:var(--text);
+    font-weight:1000;
+    border-radius:16px;
+    font-size:14px;
+  }
+  .payBtn{
+    flex:1;
+    padding:16px 14px;
+    border-radius:16px;
+    background:linear-gradient(180deg, rgba(255,159,0,1), rgba(255,140,0,1));
+    color:#151515;
+    font-weight:1100;
+    font-size:18px;
+  }
+
+  /* due drawer */
+  .drawer{
+    position:fixed; inset:0; display:none;
+    background:rgba(0,0,0,.55);
+    z-index:1000;
+  }
+  .drawer.open{display:block;}
+  .drawerPanel{
+    position:absolute; top:0; right:0; height:100%; width:min(520px, 92vw);
+    background:linear-gradient(180deg, rgba(17,19,25,.98), rgba(10,11,15,.98));
+    border-left:1px solid var(--line);
+    box-shadow: -12px 0 40px rgba(0,0,0,.55);
+    display:flex; flex-direction:column;
+  }
+  .drawerHead{
+    padding:14px 14px;
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .drawerHead .title{font-weight:1100; font-size:16px;}
+  .drawerHead .sub{color:var(--muted); font-size:12px; font-weight:900;}
+  .drawerList{padding:12px 14px; overflow:auto; flex:1; min-height:0;}
+  .dueCard{
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    border-radius:16px;
+    padding:12px;
+    margin-bottom:10px;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .dueTop{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .dueId{font-weight:1100;}
+  .dueSum{font-weight:1100;}
+  .dueMeta{color:var(--muted); font-size:12px; font-weight:900;}
+  .dueBtns{display:flex; gap:8px; margin-top:6px;}
+  .dueBtns button{flex:1; padding:10px 10px; border:1px solid var(--line); background:rgba(0,0,0,.18); color:var(--text); font-weight:1000;}
+  .dueBtns .load{border-color:rgba(255,159,0,.35); background:rgba(255,159,0,.10);}
+  .dueBtns .del{border-color:rgba(255,59,48,.35); background:rgba(255,59,48,.10);}
+
+  /* responsive */
+  @media (max-width: 1100px){
+    .app{grid-template-columns: 1fr;}
+    .right{order:-1;}
+    .grid{grid-template-columns: repeat(3, minmax(0,1fr));}
+  }
+  @media (max-width: 720px){
+    .grid{grid-template-columns: repeat(2, minmax(0,1fr));}
+    .rtTotal{font-size:30px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- LEFT -->
+  <div class="card left">
+    <div class="topbar">
+      <div class="tabs" id="tabs"></div>
+
+      <div class="row">
+        <div class="search">
+          <span class="icon">🔎</span>
+          <input id="q" type="text" placeholder="전카테고리 검색 (예: 감자, ㄱㅈ, ㄱㄴㄷ)" autocomplete="off" />
+        </div>
+        <button class="sortBtn" id="sortBtn">정렬: 고정 + ord</button>
+      </div>
+
+      <div class="keys" id="keys"></div>
+
+      <div class="hint">
+        • 상품 클릭=담기 · 핀=고정(상단) · 검색은 <b>탭과 무관하게 전품목</b> · 고정은 “길게 눌러”도 가능(PC는 핀 클릭)
+      </div>
+    </div>
+
+    <div class="scroller">
+      <div class="pinnedWrap">
+        <div class="sectionTitle">
+          <span>고정 · 상단</span>
+          <span class="hint" id="pinHint">고정은 “핀” 버튼</span>
+        </div>
+        <div id="pinned" class="grid" style="padding-top:10px;"></div>
+        <div id="pinnedEmpty" class="empty" style="display:none;">고정 상품이 없습니다. (상품 카드의 핀을 눌러 고정)</div>
+      </div>
+
+      <div class="sectionTitle">
+        <span id="listTitle">전체 상품</span>
+        <span class="hint" id="listHint"></span>
+      </div>
+      <div id="grid" class="grid" style="padding-top:10px;"></div>
+      <div id="gridEmpty" class="empty" style="display:none;">표시할 상품이 없습니다.</div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="card right">
+    <div class="rTop">
+      <div class="rtLeft">
+        <div class="rtTitle">총합계 / 총갯수</div>
+        <div class="rtTotal" id="totalText">0원</div>
+        <div class="rtCount" id="countText">0개</div>
+      </div>
+      <div class="rtBtns">
+        <button class="smallBtn" id="btnResetAll">새로고침</button>
+        <button class="smallBtn accent" id="btnDue">미수(0)</button>
+      </div>
+    </div>
+
+    <div class="cartBox" id="cartBox">
+      <div class="cartEmpty" id="cartEmpty">장바구니가 비었습니다.</div>
+      <div id="cartList"></div>
+      <!-- 7줄 확보용 (빈줄 느낌) -->
+      <div id="cartPad" style="height:160px; opacity:.15"></div>
+    </div>
+
+    <div class="payArea">
+      <div class="moneyRow">
+        <div class="label">받은돈</div>
+        <div class="val" id="receivedText">0원</div>
+      </div>
+      <div class="moneyRow small">
+        <div class="label">거스름돈</div>
+        <div class="val" id="changeText">0원</div>
+      </div>
+
+      <div class="pads">
+        <button class="pad" data-add="500">+500</button>
+        <button class="pad" data-add="1000">+1천</button>
+        <button class="pad" data-add="5000">+5천</button>
+        <button class="pad" data-add="10000">+1만</button>
+        <button class="pad" data-add="50000">+5만</button>
+        <button class="pad reset" id="btnResetReceived">초기화</button>
+      </div>
+
+      <div class="bottomBar">
+        <button class="dueSave" id="btnParkDue">미수<br><span style="font-size:11px; font-weight:900; opacity:.8">현재장바구니 저장</span></button>
+        <button class="payBtn" id="btnPay">결제완료</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 미수 Drawer -->
+<div class="drawer" id="drawer">
+  <div class="drawerPanel">
+    <div class="drawerHead">
+      <div>
+        <div class="title">미수 목록</div>
+        <div class="sub" id="dueSub">0건</div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="smallBtn" id="btnBackToCurrent">현재로</button>
+        <button class="smallBtn bad" id="btnCloseDrawer">닫기</button>
+      </div>
+    </div>
+    <div class="drawerList" id="dueList"></div>
+    <div style="padding:12px 14px; border-top:1px solid var(--line); display:flex; gap:10px;">
+      <button class="smallBtn" id="btnExport" style="flex:1;">백업 내보내기</button>
+      <button class="smallBtn" id="btnImport" style="flex:1;">백업 불러오기</button>
+      <input id="importFile" type="file" accept="application/json" style="display:none" />
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   ✅ 엄가네 POS (실무 최종)
+   - 카테고리 순서: 과일 → 야채 → 봉채소 → 생선 → 기타
+   - 검색: 전카테고리(탭 무관) + 초성/복합초성(ㄱㅈ, ㄱㄴㄷ)
+   - 고정핀: 고정한 것만 핀 표시(전체가 빨간 핀 X)
+   - 미수: 여러건 저장/불러오기(1,2,3…)
+   - 초기화 버튼: 받은돈만 리셋
+   - 결제완료: 현재 장바구니/받은돈 초기화
+   ========================================================= */
+
+(function(){
+  // ====== 버전(꼬임 방지) ======
+  const APP_VER = "umgane_pos2_v20251224_final_01";
+  const LS = {
+    VER: "UMG2_VER",
+    ITEMS: "UMG2_ITEMS_V1",
+    PINS: "UMG2_PINS_V1",
+    CARTS: "UMG2_CARTS_V1",     // { current:{id:qty...}, due_1:{...} ... }
+    ACTIVE: "UMG2_ACTIVE_CART", // "current" or "due_1"
+    DUES: "UMG2_DUES_V1",       // [{key:"due_1", createdAt, note, received, cartSnapshot}] - cartSnapshot optional
+    RECEIVED: "UMG2_RECEIVED_V1",
+    SORTMODE: "UMG2_SORTMODE_V1",
+    TAB: "UMG2_TAB_V1",
+    Q: "UMG2_Q_V1",
+    CHO: "UMG2_CHO_V1"
+  };
+
+  function ensureVersion(){
+    const prev = localStorage.getItem(LS.VER);
+    if(prev !== APP_VER){
+      // 상품(ITEMS)은 살리고, 상태만 초기화
+      localStorage.setItem(LS.VER, APP_VER);
+      localStorage.removeItem(LS.PINS);
+      localStorage.removeItem(LS.CARTS);
+      localStorage.removeItem(LS.ACTIVE);
+      localStorage.removeItem(LS.DUES);
+      localStorage.removeItem(LS.RECEIVED);
+      localStorage.removeItem(LS.SORTMODE);
+      localStorage.removeItem(LS.TAB);
+      localStorage.removeItem(LS.Q);
+      localStorage.removeItem(LS.CHO);
+    }
+  }
+  ensureVersion();
+
+  // ====== 유틸 ======
+  const KRW = n => (n||0).toLocaleString("ko-KR") + "원";
+  const nowISO = () => new Date().toISOString();
+  function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+
+  function parsePrice(v){
+    if(v==null) return 0;
+    const s = String(v).trim();
+    if(!s) return 0;
+    // "5,000.00" / "5000.00" / "5000" / "5,000"
+    const cleaned = s.replace(/[^\d.]/g,"");
+    if(!cleaned) return 0;
+    const num = Number(cleaned);
+    if(!isFinite(num)) return 0;
+    return Math.round(num); // 원 단위
+  }
+
+  const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+  function getChoChar(ch){
+    const code = ch.charCodeAt(0);
+    if(code < 0xAC00 || code > 0xD7A3) return ch; // 한글 아니면 그대로
+    const idx = Math.floor((code - 0xAC00) / (21*28));
+    return CHO[idx] || ch;
+  }
+  function toChosung(str){
+    return Array.from(String(str||"")).map(getChoChar).join("");
+  }
+  // "ㄱㅈ" 같은 입력을 그대로 포함검색 가능하게
+  function normalizeQuery(q){
+    return String(q||"").trim();
+  }
+
+  // ====== 카테고리 순서 고정 ======
+  const CAT_ORDER = ["과일","야채","봉채소","생선","기타"];
+  function normCat(c){
+    c = (c||"").trim();
+    if(!c) return "기타";
+    // 흔한 오타/변형 흡수
+    if(c==="봉지채소") c="봉채소";
+    if(c==="봉채소") return "봉채소";
+    if(c==="채소") return "야채";
+    if(c==="야채") return "야채";
+    if(c==="과일") return "과일";
+    if(c==="생선" || c==="수산" || c==="해산") return "생선";
+    return "기타";
+  }
+
+  // ====== 기본 상품 데이터(네가 붙여준 것 포함) ======
+  // (원하면 여기만 통으로 바꿔도 됨)
+  const DEFAULT_TSV = `
+id\tcat\tname\tprice\tactive\tord
+S01\t과일\t단감/3개\t5,000.00\t1\t2
+S02\t과일\t단감/7개\t10,000.00\t1\t3
+S03\t과일\t사과/3개\t5,000.00\t1\t4
+S04\t과일\t사과/7개\t10,000.00\t1\t5
+S05\t과일\t대봉/6개\t5,000.00\t1\t6
+S06\t과일\t대봉/13개\t10,000.00\t1\t7
+S07\t과일\t귤/9개\t3,000.00\t1\t8
+S08\t과일\t귤/20개\t6,000.00\t1\t9
+S09\t과일\t샤인/2송이\t8,000.00\t1\t12
+S10\t과일\t키위\t10,000.00\t1\t17
+S11\t과일\t석류/1개\t3,500.00\t1\t18
+S12\t과일\t석류/3개\t10,000.00\t1\t19
+S13\t과일\t바나나\t2,500.00\t1\t1
+S14\t과일\t파인애플\t4,000.00\t1\t20
+S15\t과일\t딸기/1팩\t8,000.00\t1\t10
+S16\t과일\t딸기/2팩\t15,000.00\t1\t11
+S17\t과일\t토마토\t10,000.00\t1\t13
+S18\t과일\t방울토마토/1팩\t6,000.00\t1\t14
+S19\t과일\t방울토마토/2팩\t11,000.00\t1\t15
+S20\t과일\t체리\t12,000.00\t1\t16
+
+S21\t야채\t당근\t2,500.00\t1\t01
+S22\t야채\t감자\t3,000.00\t1\t02
+S23\t야채\t고구마\t3,000.00\t1\t03
+S24\t야채\t양파\t2,500.00\t1\t04
+S25\t야채\t청양\t3,000.00\t1\t05
+S26\t야채\t아삭이\t3,500.00\t1\t06
+S27\t야채\t꽈리\t4,000.00\t1\t07
+S28\t야채\t표고\t5,000.00\t1\t08
+S29\t야채\t느타리\t2,500.00\t1\t09
+S30\t야채\t새송이/1봉\t1,500.00\t1\t010
+S31\t야채\t새송이/2봉\t2,500.00\t1\t011
+S32\t야채\t팽이/3봉\t1,000.00\t1\t012
+S33\t야채\t오이/6개\t3,000.00\t1\t014
+S34\t야채\t가지/4개\t3,000.00\t1\t015
+S35\t야채\t애호박/3개\t3,500.00\t1\t013
+S36\t야채\t브로콜리/1개\t1,300.00\t1\t016
+S37\t야채\t브로콜리/3개\t3,000.00\t1\t017
+S38\t야채\t샐러리\t2,000.00\t1\t018
+S39\t야채\t미나리\t3,000.00\t1\t019
+S40\t야채\t우엉\t3,000.00\t1\t020
+S41\t야채\t연근\t3,000.00\t1\t021
+S42\t야채\t더덕\t6,000.00\t1\t022
+S43\t야채\t알배기\t5,000.00\t1\t023
+S44\t야채\t양배추\t2,000.00\t1\t024
+S45\t야채\t양상추\t1,500.00\t1\t025
+S46\t야채\t대파\t1,000.00\t1\t026
+S47\t야채\t쪽파\t4,000.00\t1\t027
+S48\t야채\t부추\t2,000.00\t1\t028
+S49\t야채\t무\t1,500.00\t1\t029
+S50\t야채\t마늘/작은\t1,500.00\t1\t030
+S51\t야채\t마늘/큰\t5,000.00\t1\t031
+
+S52\t봉채소\t시금치/1봉지\t2,000.00\t1\t001
+S53\t봉채소\t시금치/1단\t1,500.00\t1\t002
+S54\t봉채소\t상추\t1,000.00\t1\t003
+S55\t봉채소\t깻잎\t1,000.00\t1\t004
+S56\t봉채소\t콩나물\t500.00\t1\t005
+S57\t봉채소\t숙주\t1,000.00\t1\t006
+S58\t봉채소\t청경채\t1,000.00\t1\t007
+S59\t봉채소\t케일\t1,000.00\t1\t008
+S60\t봉채소\t치커리\t1,000.00\t1\t009
+S61\t봉채소\t적겨자\t1,000.00\t1\t0010
+S62\t봉채소\t근대\t1,000.00\t1\t0011
+S63\t봉채소\t아욱\t1,500.00\t1\t0012
+S64\t봉채소\t고추잎\t2,000.00\t1\t0013
+S65\t봉채소\t쑥갓\t1,500.00\t1\t0014
+S66\t봉채소\t참나물\t1,500.00\t1\t0015
+S67\t봉채소\t취나물\t2,000.00\t1\t0016
+
+S68\t생선\t동태/1마리\t3,000.00\t1\t0001
+S69\t생선\t동태/2마리\t5,000.00\t1\t0002
+S70\t생선\t오징어/1마리\t3,000.00\t1\t0003
+S71\t생선\t오징어/2마리\t5,000.00\t1\t0004
+S72\t생선\t꼬막/1망\t3,000.00\t1\t0005
+S73\t생선\t꼬막/2망\t5,000.00\t1\t0006
+S74\t생선\t코다리/1코\t8,000.00\t1\t0007
+S75\t생선\t코다리/2코\t15,000.00\t1\t0008
+S76\t생선\t갈치\t7,000.00\t1\t0009
+S77\t생선\t굴비\t10,000.00\t1\t00010
+S78\t생선\t번데기/1봉\t3,000.00\t1\t00011
+S79\t생선\t번데기/2봉\t5,000.00\t1\t00012
+S80\t생선\t굴/1봉\t3,000.00\t1\t00013
+S81\t생선\t굴/2봉\t5,000.00\t1\t00014
+S82\t생선\t동태포/1팩\t3,000.00\t1\t00015
+S83\t생선\t동태포/2팩\t5,000.00\t1\t00016
+S84\t생선\t낀따로\t5,000.00\t1\t00017
+S85\t생선\t삼치\t5,000.00\t1\t00018
+S86\t생선\t고등어/1마리\t3,500.00\t1\t00019
+S87\t생선\t고등어/3마리\t10,000.00\t1\t00020
+S88\t생선\t자반\t6,000.00\t1\t00021
+`.trim();
+
+  function parseTSV(text){
+    const lines = text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    if(lines.length<2) return [];
+    const header = lines[0].split("\t").map(s=>s.trim());
+    const idx = (k)=>header.indexOf(k);
+    const iId=idx("id"), iCat=idx("cat"), iName=idx("name"), iPrice=idx("price"), iActive=idx("active"), iOrd=idx("ord");
+    const out=[];
+    for(let r=1;r<lines.length;r++){
+      const cols = lines[r].split("\t");
+      const id = (cols[iId]||"").trim();
+      if(!id) continue;
+      const cat = normCat(cols[iCat]);
+      const name = (cols[iName]||"").trim();
+      const price = parsePrice(cols[iPrice]);
+      const active = String(cols[iActive]||"1").trim()!=="0";
+      const ordRaw = (cols[iOrd]||"").trim();
+      const ord = ordRaw==="" ? "" : ordRaw;
+      out.push({
+        id, cat, name, price, active, ord,
+        cho: toChosung(name),
+        nameLower: (name||"").toLowerCase()
+      });
+    }
+    return out;
+  }
+
+  function loadItems(){
+    const raw = localStorage.getItem(LS.ITEMS);
+    if(raw){
+      try{
+        const arr = JSON.parse(raw);
+        if(Array.isArray(arr) && arr.length){
+          // 보정
+          return arr.map(x=>({
+            ...x,
+            cat:normCat(x.cat),
+            price:parsePrice(x.price),
+            active: !!x.active,
+            cho: x.cho || toChosung(x.name),
+            nameLower: (x.name||"").toLowerCase()
+          }));
+        }
+      }catch(e){}
+    }
+    const items = parseTSV(DEFAULT_TSV);
+    localStorage.setItem(LS.ITEMS, JSON.stringify(items));
+    return items;
+  }
+
+  function saveItems(items){
+    localStorage.setItem(LS.ITEMS, JSON.stringify(items));
+  }
+
+  // ====== 상태 ======
+  let items = loadItems();
+
+  function getPins(){
+    const raw = localStorage.getItem(LS.PINS);
+    if(!raw) return {};
+    try{ return JSON.parse(raw)||{} }catch(e){ return {} }
+  }
+  function setPins(p){ localStorage.setItem(LS.PINS, JSON.stringify(p||{})); }
+
+  function getCarts(){
+    const raw = localStorage.getItem(LS.CARTS);
+    if(!raw) return { current:{} };
+    try{
+      const obj = JSON.parse(raw)||{};
+      if(!obj.current) obj.current={};
+      return obj;
+    }catch(e){
+      return { current:{} };
+    }
+  }
+  function setCarts(c){ localStorage.setItem(LS.CARTS, JSON.stringify(c)); }
+
+  function getActiveKey(){
+    return localStorage.getItem(LS.ACTIVE) || "current";
+  }
+  function setActiveKey(k){
+    localStorage.setItem(LS.ACTIVE, k);
+  }
+
+  function getDues(){
+    const raw = localStorage.getItem(LS.DUES);
+    if(!raw) return [];
+    try{ return JSON.parse(raw)||[] }catch(e){ return [] }
+  }
+  function setDues(arr){ localStorage.setItem(LS.DUES, JSON.stringify(arr||[])); }
+
+  function getReceived(){
+    const raw = localStorage.getItem(LS.RECEIVED);
+    const n = raw? Number(raw):0;
+    return isFinite(n)? n:0;
+  }
+  function setReceived(v){
+    localStorage.setItem(LS.RECEIVED, String(Math.max(0, Math.round(v||0))));
+  }
+
+  function getSortMode(){
+    return localStorage.getItem(LS.SORTMODE) || "pin_ord";
+  }
+  function setSortMode(m){
+    localStorage.setItem(LS.SORTMODE, m);
+  }
+
+  function getTab(){
+    return localStorage.getItem(LS.TAB) || "과일";
+  }
+  function setTab(t){ localStorage.setItem(LS.TAB, t); }
+
+  function getQ(){ return localStorage.getItem(LS.Q) || ""; }
+  function setQ(v){ localStorage.setItem(LS.Q, v||""); }
+
+  function getChoSel(){ return localStorage.getItem(LS.CHO) || ""; }
+  function setChoSel(v){ localStorage.setItem(LS.CHO, v||""); }
+
+  // ====== DOM ======
+  const elTabs = document.getElementById("tabs");
+  const elKeys = document.getElementById("keys");
+  const elQ = document.getElementById("q");
+  const elSortBtn = document.getElementById("sortBtn");
+  const elPinned = document.getElementById("pinned");
+  const elPinnedEmpty = document.getElementById("pinnedEmpty");
+  const elGrid = document.getElementById("grid");
+  const elGridEmpty = document.getElementById("gridEmpty");
+  const elListTitle = document.getElementById("listTitle");
+  const elListHint = document.getElementById("listHint");
+
+  const elTotal = document.getElementById("totalText");
+  const elCount = document.getElementById("countText");
+  const elCartList = document.getElementById("cartList");
+  const elCartEmpty = document.getElementById("cartEmpty");
+  const elReceived = document.getElementById("receivedText");
+  const elChange = document.getElementById("changeText");
+  const elBtnResetAll = document.getElementById("btnResetAll");
+  const elBtnDue = document.getElementById("btnDue");
+  const elBtnParkDue = document.getElementById("btnParkDue");
+  const elBtnPay = document.getElementById("btnPay");
+  const elBtnResetReceived = document.getElementById("btnResetReceived");
+
+  const drawer = document.getElementById("drawer");
+  const dueListEl = document.getElementById("dueList");
+  const dueSub = document.getElementById("dueSub");
+  const btnCloseDrawer = document.getElementById("btnCloseDrawer");
+  const btnBackToCurrent = document.getElementById("btnBackToCurrent");
+  const btnExport = document.getElementById("btnExport");
+  const btnImport = document.getElementById("btnImport");
+  const importFile = document.getElementById("importFile");
+
+  // ====== 렌더 ======
+  function buildTabs(){
+    elTabs.innerHTML = "";
+    const cur = getTab();
+    for(const c of CAT_ORDER){
+      const b = document.createElement("button");
+      b.className = "tab" + (c===cur ? " active":"");
+      b.textContent = c;
+      b.onclick = () => { setTab(c); renderAll(); };
+      elTabs.appendChild(b);
+    }
+  }
+
+  function buildKeys(){
+    elKeys.innerHTML = "";
+    const sel = getChoSel();
+    const choRow = ["ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+    for(const k of choRow){
+      const b=document.createElement("button");
+      b.className="k"+(sel===k?" active":"");
+      b.textContent=k;
+      b.onclick=()=>{ setChoSel(sel===k?"":k); renderAll(); };
+      elKeys.appendChild(b);
+    }
+    const clear=document.createElement("button");
+    clear.className="k clear";
+    clear.textContent="X";
+    clear.onclick=()=>{ setChoSel(""); renderAll(); };
+    elKeys.appendChild(clear);
+  }
+
+  function sortItems(list){
+    const pins = getPins();
+    const mode = getSortMode(); // pin_ord only now
+    const toOrdNum = (o)=>{
+      if(o==null) return 1e15;
+      const s=String(o).trim();
+      if(!s) return 1e15;
+      const n=Number(s.replace(/[^\d]/g,""));
+      return isFinite(n)? n:1e15;
+    };
+    return list.slice().sort((a,b)=>{
+      // pinned first
+      const ap = pins[a.id] ? 1:0;
+      const bp = pins[b.id] ? 1:0;
+      if(bp!==ap) return bp-ap;
+      // ord
+      const ao = toOrdNum(a.ord);
+      const bo = toOrdNum(b.ord);
+      if(ao!==bo) return ao-bo;
+      // name
+      return String(a.name).localeCompare(String(b.name),"ko");
+    });
+  }
+
+  function matchesSearch(item, q, choSel){
+    if(!item.active) return false;
+
+    const nq = normalizeQuery(q);
+    const hasQ = !!nq;
+    const hasCho = !!choSel;
+
+    if(!hasQ && !hasCho) return true;
+
+    // 초성키 필터: "ㄱ"이면 item.cho에 "ㄱ" 포함
+    if(hasCho){
+      if(!item.cho.includes(choSel)) return false;
+    }
+
+    if(hasQ){
+      // 1) 일반 텍스트 포함
+      const low = nq.toLowerCase();
+      const byName = item.nameLower.includes(low);
+      // 2) 초성 문자열 포함 (예: ㄱㅈ, ㄱㄴㄷ)
+      const byCho = item.cho.includes(nq);
+      // 3) 섞어서도 가능: "감ㅈ" 같은 건 그냥 name 기준에 걸림
+      if(!(byName || byCho)) return false;
+    }
+    return true;
+  }
+
+  function itemCard(item){
+    const pins = getPins();
+    const wrap = document.createElement("div");
+    wrap.className = "item";
+
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = item.name;
+
+    const price = document.createElement("div");
+    price.className = "price";
+    price.textContent = KRW(item.price);
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+
+    const badge = document.createElement("div");
+    badge.className = "badge";
+    badge.textContent = item.cat;
+
+    const pin = document.createElement("button");
+    pin.className = "pinBtn" + (pins[item.id] ? " pinned":"");
+    pin.title = pins[item.id] ? "고정 해제":"고정";
+    pin.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M14 3l7 7-3 3v3l-4 4v-3L8 11h3l3-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      </svg>
+    `;
+    pin.onclick = (e)=>{
+      e.stopPropagation();
+      const p = getPins();
+      if(p[item.id]) delete p[item.id];
+      else p[item.id]=true;
+      setPins(p);
+      renderAll();
+    };
+
+    meta.appendChild(badge);
+    meta.appendChild(pin);
+
+    wrap.appendChild(name);
+    wrap.appendChild(price);
+    wrap.appendChild(meta);
+
+    // 클릭=담기
+    wrap.onclick = ()=> addToCart(item.id, 1);
+
+    // 길게 눌러 고정(모바일/실무)
+    let pressTimer=null;
+    wrap.addEventListener("pointerdown", ()=>{
+      pressTimer = setTimeout(()=>{
+        const p = getPins();
+        if(p[item.id]) delete p[item.id]; else p[item.id]=true;
+        setPins(p);
+        renderAll();
+      }, 450);
+    });
+    ["pointerup","pointercancel","pointerleave"].forEach(ev=>{
+      wrap.addEventListener(ev, ()=>{ if(pressTimer){clearTimeout(pressTimer); pressTimer=null;} });
+    });
+
+    return wrap;
+  }
+
+  function getActiveCart(){
+    const carts = getCarts();
+    const key = getActiveKey();
+    return carts[key] || {};
+  }
+  function setActiveCart(obj){
+    const carts = getCarts();
+    const key = getActiveKey();
+    carts[key] = obj || {};
+    setCarts(carts);
+  }
+
+  function addToCart(id, delta){
+    const cart = getActiveCart();
+    cart[id] = (cart[id]||0) + delta;
+    if(cart[id] <= 0) delete cart[id];
+    setActiveCart(cart);
+    renderRight();
+  }
+  function removeFromCart(id){
+    const cart = getActiveCart();
+    delete cart[id];
+    setActiveCart(cart);
+    renderRight();
+  }
+
+  function cartTotals(cart){
+    let sum=0, cnt=0;
+    for(const [id,qty] of Object.entries(cart)){
+      const it = items.find(x=>x.id===id);
+      if(!it) continue;
+      const q = qty||0;
+      cnt += q;
+      sum += it.price * q;
+    }
+    return {sum, cnt};
+  }
+
+  function renderPinnedAndGrid(){
+    const tab = getTab();
+    const q = elQ.value;
+    const choSel = getChoSel();
+
+    // 검색은 전카테고리(탭 무관) 요구사항
+    const filteredAll = items.filter(it => matchesSearch(it, q, choSel));
+    const sortedAll = sortItems(filteredAll);
+
+    // 고정 목록
+    const pins = getPins();
+    const pinnedItems = sortedAll.filter(it => pins[it.id]);
+    elPinned.innerHTML = "";
+    if(pinnedItems.length){
+      elPinnedEmpty.style.display="none";
+      pinnedItems.forEach(it=> elPinned.appendChild(itemCard(it)));
+    }else{
+      elPinnedEmpty.style.display="block";
+    }
+
+    // 메인 리스트는 "탭" 기준으로 보여주되, 검색중이면 전품목이니까 탭 필터를 풀어도 됨
+    const hasSearch = !!normalizeQuery(q) || !!choSel;
+    let mainList = sortedAll;
+    if(!hasSearch){
+      mainList = sortedAll.filter(it => it.cat === tab);
+      elListTitle.textContent = tab + " 상품";
+      elListHint.textContent = "탭 기준 표시";
+    }else{
+      elListTitle.textContent = "검색 결과 (전카테고리)";
+      elListHint.textContent = "탭 무관";
+    }
+
+    elGrid.innerHTML="";
+    if(mainList.length){
+      elGridEmpty.style.display="none";
+      mainList.forEach(it=> elGrid.appendChild(itemCard(it)));
+    }else{
+      elGridEmpty.style.display="block";
+    }
+  }
+
+  function renderRight(){
+    const cart = getActiveCart();
+    const {sum, cnt} = cartTotals(cart);
+
+    elTotal.textContent = KRW(sum);
+    elCount.textContent = cnt + "개";
+
+    // 받은돈/거스름돈
+    const received = getReceived();
+    elReceived.textContent = KRW(received);
+    const change = Math.max(0, received - sum);
+    elChange.textContent = KRW(change);
+
+    // 장바구니 렌더 (한 줄)
+    const ids = Object.keys(cart);
+    elCartList.innerHTML="";
+    if(ids.length===0){
+      elCartEmpty.style.display="block";
+    }else{
+      elCartEmpty.style.display="none";
+      // 장바구니 순서는 "추가 순"이 아니라 이름/ord 섞이지 않게 id 기준 유지
+      ids.forEach(id=>{
+        const it = items.find(x=>x.id===id);
+        if(!it) return;
+        const qty = cart[id]||0;
+        const row = document.createElement("div");
+        row.className="cartRow";
+
+        const main = document.createElement("div");
+        main.className="cartMain";
+        const nm = document.createElement("div");
+        nm.className="cartName";
+        nm.textContent = `${it.name} x${qty}`;
+        const sub = document.createElement("div");
+        sub.className="cartSub";
+        sub.textContent = `${KRW(it.price)} · ${KRW(it.price*qty)}`;
+        main.appendChild(nm); main.appendChild(sub);
+
+        const bMinus=document.createElement("button");
+        bMinus.className="cBtn"; bMinus.textContent="–";
+        bMinus.onclick=()=>addToCart(id,-1);
+
+        const bPlus=document.createElement("button");
+        bPlus.className="cBtn"; bPlus.textContent="+";
+        bPlus.onclick=()=>addToCart(id, +1);
+
+        const bDel=document.createElement("button");
+        bDel.className="cBtn del"; bDel.textContent="×";
+        bDel.onclick=()=>removeFromCart(id);
+
+        row.appendChild(main);
+        row.appendChild(bMinus);
+        row.appendChild(bPlus);
+        row.appendChild(bDel);
+        elCartList.appendChild(row);
+      });
+    }
+
+    // 미수 버튼 카운트
+    const dues = getDues();
+    elBtnDue.textContent = `미수(${dues.length})`;
+  }
+
+  function renderAll(){
+    buildTabs();
+    buildKeys();
+    renderPinnedAndGrid();
+    renderRight();
+  }
+
+  // ====== 미수 로직 ======
+  function nextDueKey(){
+    const dues = getDues();
+    // due_1, due_2 ...
+    let n=1;
+    const used = new Set(dues.map(d=>d.key));
+    while(used.has("due_"+n)) n++;
+    return "due_"+n;
+  }
+
+  function parkCurrentAsDue(){
+    const carts = getCarts();
+    const activeKey = getActiveKey();
+    const activeCart = carts[activeKey] || {};
+    const ids = Object.keys(activeCart);
+    if(ids.length===0){
+      alert("장바구니가 비어있습니다.");
+      return;
+    }
+
+    // 현재 active가 due_* 이어도 "그 상태"를 미수로 저장해도 되지만,
+    // 실무에서는 보통 current를 저장하고 current를 비우는 흐름이 편함.
+    // 그래서: 지금 active가 current가 아니면, 일단 current로 돌리도록 안내
+    // (하지만 강제하지는 않고 현재 active 그대로 저장)
+    const dueKey = nextDueKey();
+    carts[dueKey] = JSON.parse(JSON.stringify(activeCart));
+    setCarts(carts);
+
+    const dueArr = getDues();
+    const {sum, cnt} = cartTotals(activeCart);
+    dueArr.unshift({
+      key: dueKey,
+      createdAt: nowISO(),
+      total: sum,
+      count: cnt
+    });
+    setDues(dueArr);
+
+    // 저장 후: active를 current로 두고 current를 비워서 다음손님 바로 받게
+    setActiveKey("current");
+    carts["current"] = {};
+    setCarts(carts);
+
+    // 받은돈은 그대로 두면 헷갈리니 0으로
+    setReceived(0);
+
+    renderAll();
+  }
+
+  function openDrawer(){
+    drawer.classList.add("open");
+    renderDueDrawer();
+  }
+  function closeDrawer(){
+    drawer.classList.remove("open");
+  }
+
+  function renderDueDrawer(){
+    const dues = getDues();
+    dueSub.textContent = `${dues.length}건`;
+    dueListEl.innerHTML = "";
+    if(dues.length===0){
+      const d=document.createElement("div");
+      d.style.color="rgba(245,247,255,.65)";
+      d.style.padding="12px 4px";
+      d.textContent="미수 없음";
+      dueListEl.appendChild(d);
+      return;
+    }
+
+    const carts = getCarts();
+    dues.forEach(due=>{
+      const cart = carts[due.key] || {};
+      const {sum,cnt} = cartTotals(cart);
+
+      const card=document.createElement("div");
+      card.className="dueCard";
+
+      const top=document.createElement("div");
+      top.className="dueTop";
+
+      const id=document.createElement("div");
+      id.className="dueId";
+      id.textContent = due.key.replace("due_","미수 ");
+
+      const sumEl=document.createElement("div");
+      sumEl.className="dueSum";
+      sumEl.textContent = KRW(sum);
+
+      top.appendChild(id);
+      top.appendChild(sumEl);
+
+      const meta=document.createElement("div");
+      meta.className="dueMeta";
+      const dt = new Date(due.createdAt);
+      meta.textContent = `${dt.toLocaleString("ko-KR")} · ${cnt}개`;
+
+      const btns=document.createElement("div");
+      btns.className="dueBtns";
+
+      const bLoad=document.createElement("button");
+      bLoad.className="load";
+      bLoad.textContent="불러오기";
+      bLoad.onclick=()=>{
+        // 현재 active cart는 그대로 두고, due를 active로 전환
+        setActiveKey(due.key);
+        // 받은돈은 미수 건별로 따로 저장하면 더 복잡해져서,
+        // 미수 불러올 때는 받은돈 0으로 시작
+        setReceived(0);
+        closeDrawer();
+        renderAll();
+      };
+
+      const bDel=document.createElement("button");
+      bDel.className="del";
+      bDel.textContent="삭제";
+      bDel.onclick=()=>{
+        if(!confirm(`${due.key.replace("due_","미수 ")} 삭제?`)) return;
+        // carts에서 삭제
+        const carts2=getCarts();
+        delete carts2[due.key];
+        setCarts(carts2);
+        // dues에서 삭제
+        const dues2=getDues().filter(x=>x.key!==due.key);
+        setDues(dues2);
+
+        // active가 지워진 key면 current로
+        if(getActiveKey()===due.key){
+          setActiveKey("current");
+        }
+        renderDueDrawer();
+        renderRight();
+      };
+
+      btns.appendChild(bLoad);
+      btns.appendChild(bDel);
+
+      // 미수 상세(짧게)
+      const sample = Object.keys(cart).slice(0,3).map(id=>{
+        const it=items.find(x=>x.id===id);
+        const q=cart[id]||0;
+        return it? `${it.name} x${q}` : "";
+      }).filter(Boolean).join(" / ");
+      const meta2=document.createElement("div");
+      meta2.className="dueMeta";
+      meta2.textContent = sample + (Object.keys(cart).length>3 ? " …" : "");
+
+      card.appendChild(top);
+      card.appendChild(meta);
+      card.appendChild(meta2);
+      card.appendChild(btns);
+      dueListEl.appendChild(card);
+    });
+  }
+
+  // ====== 백업/복원 ======
+  function exportBackup(){
+    const payload = {
+      app: "umgane-pos2",
+      ver: APP_VER,
+      ts: nowISO(),
+      items: JSON.parse(localStorage.getItem(LS.ITEMS) || "[]"),
+      pins: JSON.parse(localStorage.getItem(LS.PINS) || "{}"),
+      carts: JSON.parse(localStorage.getItem(LS.CARTS) || "{}"),
+      dues: JSON.parse(localStorage.getItem(LS.DUES) || "[]"),
+      active: localStorage.getItem(LS.ACTIVE) || "current",
+      received: getReceived(),
+      sortMode: getSortMode(),
+      tab: getTab(),
+      q: elQ.value || "",
+      cho: getChoSel()
+    };
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const a=document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `umgane_pos2_backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  }
+
+  function importBackupFile(file){
+    const fr=new FileReader();
+    fr.onload=()=>{
+      try{
+        const data = JSON.parse(fr.result);
+        if(!data || typeof data!=="object") throw new Error("invalid");
+        if(!Array.isArray(data.items)) throw new Error("items missing");
+
+        saveItems(data.items.map(x=>({
+          ...x,
+          cat:normCat(x.cat),
+          price:parsePrice(x.price),
+          active: !!x.active,
+          cho: x.cho || toChosung(x.name),
+          nameLower: (x.name||"").toLowerCase()
+        })));
+
+        localStorage.setItem(LS.PINS, JSON.stringify(data.pins||{}));
+        localStorage.setItem(LS.CARTS, JSON.stringify(data.carts||{current:{}}));
+        localStorage.setItem(LS.DUES, JSON.stringify(data.dues||[]));
+        localStorage.setItem(LS.ACTIVE, data.active || "current");
+        setReceived(Number(data.received||0));
+        setSortMode(data.sortMode || "pin_ord");
+        setTab(data.tab || "과일");
+        setChoSel(data.cho || "");
+        setQ(data.q || "");
+        elQ.value = data.q || "";
+
+        items = loadItems();
+        renderAll();
+        alert("복원 완료");
+      }catch(e){
+        alert("복원 실패: 파일이 올바르지 않습니다.");
+      }
+    };
+    fr.readAsText(file);
+  }
+
+  // ====== 이벤트 ======
+  elQ.value = getQ();
+  elQ.addEventListener("input", ()=>{
+    setQ(elQ.value);
+    renderAll();
+  });
+
+  elSortBtn.addEventListener("click", ()=>{
+    // 현재는 고정+ord만 쓰되, 버튼은 남겨둠(나중에 확장)
+    alert("정렬은 현재 고정+ord로 고정되어 있습니다.");
+  });
+
+  // 금액 버튼
+  document.querySelectorAll("[data-add]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const add = Number(b.getAttribute("data-add"));
+      setReceived(getReceived() + add);
+      renderRight();
+    });
+  });
+
+  // 받은돈 초기화(받은돈만!)
+  elBtnResetReceived.addEventListener("click", ()=>{
+    setReceived(0);
+    renderRight();
+  });
+
+  // 새로고침(상태 초기화: 장바구니/미수/받은돈/핀)
+  elBtnResetAll.addEventListener("click", ()=>{
+    if(!confirm("상태 초기화?\n(장바구니/미수/받은돈/고정핀)\n※ 상품목록은 유지")) return;
+    localStorage.removeItem(LS.PINS);
+    localStorage.removeItem(LS.CARTS);
+    localStorage.removeItem(LS.ACTIVE);
+    localStorage.removeItem(LS.DUES);
+    localStorage.removeItem(LS.RECEIVED);
+    setTab("과일");
+    setChoSel("");
+    setQ("");
+    elQ.value="";
+    renderAll();
+  });
+
+  // 미수 열기
+  elBtnDue.addEventListener("click", openDrawer);
+  btnCloseDrawer.addEventListener("click", closeDrawer);
+  drawer.addEventListener("click", (e)=>{
+    if(e.target===drawer) closeDrawer();
+  });
+
+  // 현재로
+  btnBackToCurrent.addEventListener("click", ()=>{
+    setActiveKey("current");
+    setReceived(0);
+    closeDrawer();
+    renderAll();
+  });
+
+  // 미수 저장
+  elBtnParkDue.addEventListener("click", parkCurrentAsDue);
+
+  // 결제완료: 현재 active cart 비우고(결제완료), 받은돈 0
+  elBtnPay.addEventListener("click", ()=>{
+    const cart = getActiveCart();
+    if(Object.keys(cart).length===0){
+      alert("장바구니가 비어있습니다.");
+      return;
+    }
+    // 결제완료는 "현재 활성 장바구니"만 비움
+    const carts = getCarts();
+    const key = getActiveKey();
+    carts[key] = {};
+    setCarts(carts);
+
+    // 만약 미수(due_*)를 결제완료했다면, 미수 목록에서도 제거(실무)
+    if(key.startsWith("due_")){
+      const dues = getDues().filter(d=>d.key!==key);
+      setDues(dues);
+      // due cart도 제거
+      const carts2=getCarts();
+      delete carts2[key];
+      setCarts(carts2);
+      setActiveKey("current");
+    }
+    setReceived(0);
+    renderAll();
+  });
+
+  // 백업/복원
+  btnExport.addEventListener("click", exportBackup);
+  btnImport.addEventListener("click", ()=> importFile.click());
+  importFile.addEventListener("change", ()=>{
+    const f = importFile.files && importFile.files[0];
+    if(f) importBackupFile(f);
+    importFile.value="";
+  });
+
+  // ====== 최초 렌더 ======
+  renderAll();
+
+})();
+</script>
+</body>
+</html>
