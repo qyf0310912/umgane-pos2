@@ -10,202 +10,181 @@
     --panel:#111319;
     --line:rgba(255,255,255,.08);
     --text:#f5f7ff;
-    --muted:rgba(245,247,255,.62);
+    --muted:rgba(245,247,255,.65);
     --accent:#ff9f00;
     --good:#29d17e;
     --bad:#ff3b30;
     --shadow:0 12px 40px rgba(0,0,0,.35);
+    --r:18px;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
-    font-weight:400;
-  }
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial}
   button{border:0;border-radius:14px;cursor:pointer}
   .app{height:100%;display:grid;grid-template-columns: 1.25fr .75fr;gap:12px;padding:12px}
-
-  .panel{
-    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-    border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); overflow:hidden
-  }
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); overflow:hidden}
   .left,.right{display:flex;flex-direction:column;min-width:0}
 
-  /* ===== Left Top ===== */
+  /* Top controls */
   .topbar{padding:12px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
   .tabs{display:flex;gap:8px;flex-wrap:wrap}
-  .tab{padding:10px 14px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-weight:600}
+  .tab{padding:10px 14px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line); font-weight:800}
   .tab.active{outline:2px solid rgba(255,159,0,.55); background:rgba(255,159,0,.10)}
   .row{display:flex;gap:10px;align-items:center}
-  .search{
-    flex:1;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.03);
-    border:1px solid var(--line); border-radius:16px; padding:10px 12px; min-width:0
-  }
-  .search input{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:16px;min-width:0;font-weight:500}
-  .sortBtn{padding:10px 12px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-weight:700}
+  .search{flex:1;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.03);
+    border:1px solid var(--line); border-radius:16px; padding:10px 12px; min-width:0}
+  .search input{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:16px;min-width:0}
+  .sortBtn{padding:10px 12px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-weight:800}
   .keys{display:flex;gap:8px;flex-wrap:wrap}
-  .kbtn{width:44px;height:38px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);border-radius:12px;font-weight:800}
+  .kbtn{width:44px;height:38px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);border-radius:12px; font-weight:900}
   .kbtn.clear{background:rgba(255,59,48,.15);border-color:rgba(255,59,48,.25)}
   .hint{color:var(--muted);font-size:12px}
 
-  /* ===== Pinned strip ===== */
+  /* Pinned strip */
   .pinned{padding:10px 12px;border-bottom:1px solid var(--line)}
   .pinnedTitle{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:8px}
   .pinnedGrid{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:10px}
   .emptyPinned{color:var(--muted);font-size:13px}
 
-  /* ===== Items grid ===== */
+  /* Items grid */
   .itemsWrap{flex:1;min-height:0;overflow:auto;padding:12px}
-  .grid{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:12px}
-  .card{
-    position:relative; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:18px;
-    padding:12px; min-height:88px; display:flex; flex-direction:column; gap:8px
+
+  /* ✅ 기본 4열, 화면 넓으면 5열, 좁으면 3/2열 */
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(4, minmax(0,1fr))}
+  @media (min-width: 1240px){
+    .grid{grid-template-columns:repeat(5, minmax(0,1fr))}
   }
-  .name{font-size:20px;font-weight:800;letter-spacing:-.2px;line-height:1.05}
-  .price{font-size:13px;color:var(--muted);font-weight:700}
-  .pinIcon{
-    position:absolute; right:10px; bottom:10px; width:34px;height:34px;border-radius:12px;
+  @media (max-width: 980px){
+    .grid{grid-template-columns:repeat(3, minmax(0,1fr))}
+  }
+  @media (max-width: 520px){
+    .grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+  }
+
+  .card{position:relative; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:18px;
+    padding:12px; min-height:92px; display:flex; flex-direction:column; gap:8px}
+  .name{font-size:19px;font-weight:850;letter-spacing:-.3px;line-height:1.05}
+  .price{font-size:13px;color:var(--muted);font-weight:750}
+  .chip{align-self:flex-start;padding:6px 10px;border-radius:999px;font-size:12px;
+    background:rgba(255,255,255,.04);border:1px solid var(--line); color:var(--text)}
+  /* ✅ 빨간고정핀 "안쓰는거(=미고정)" 흐리게 */
+  .pinIcon{position:absolute; right:10px; bottom:10px; width:34px;height:34px;border-radius:12px;
     display:flex;align-items:center;justify-content:center;
-    background:rgba(255,159,0,.10); border:1px solid rgba(255,159,0,.20); color:var(--accent); font-weight:900
-  }
-  /* ✅ 빨간고정핀 사용안하는거 흐리게 */
-  .pinIcon.off{opacity:.18; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); color:rgba(245,247,255,.55)}
+    background:rgba(255,59,48,.16); border:1px solid rgba(255,59,48,.28); color:#ff6b66; font-weight:900}
+  .pinIcon.off{opacity:.20; background:rgba(255,255,255,.04); border:1px solid var(--line); color:var(--muted)}
   .card:active{transform:scale(.99)}
-  .card.pinnedCard{outline:2px solid rgba(255,159,0,.40)}
+  .card.pinnedCard{outline:2px solid rgba(255,59,48,.25)}
+  .meta{display:none} /* ✅ 사용 카운트 기본 숨김(원하면 true로 바꿔줄게) */
 
-  /* ===== Right panel (3/1 구조) ===== */
-  .rHead{
-    padding:12px;border-bottom:1px solid var(--line);
-    display:flex;justify-content:space-between;align-items:center;gap:10px
-  }
-  .rBtns{display:flex;gap:8px;align-items:center}
+  /* Right panel */
+  .rTop{padding:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .topBtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .btnMini{padding:10px 12px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-weight:800}
-  .btnMini.accent{background:rgba(255,159,0,.14);border-color:rgba(255,159,0,.22)}
-  .modeTag{
-    display:none;
-    padding:8px 10px;border-radius:999px;
-    background:rgba(41,209,126,.14);border:1px solid rgba(41,209,126,.22);
-    color:rgba(245,247,255,.92);font-weight:900;font-size:12px;
-  }
-  .modeTag.show{display:inline-flex}
+  .btnMini.accent{background:rgba(255,159,0,.14);border-color:rgba(255,159,0,.22);color:var(--text)}
+  .cartWrap{flex:1;min-height:0;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
 
-  /* 장바구니(최대한 많이 보이게) */
-  .cartWrap{flex:1;min-height:0;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+  /* ✅ 장바구니 한 줄: 품목명 … / 금액 폭 정렬 / 수량 - 숫자 + */
   .cartItem{
-    background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;
-    padding:8px 10px;
-    display:flex;align-items:center;justify-content:space-between;gap:10px
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:10px 10px;
+    display:grid;
+    grid-template-columns: 1fr 110px 150px;
+    gap:10px;
+    align-items:center;
   }
-  /* ✅ 한 줄 압축 */
-  .ciLine{
+  .ciNameLine{
     min-width:0;
     display:flex;
     align-items:center;
-    gap:10px;
-    font-size:15px;
-    font-weight:700;
-    line-height:1.2;
-  }
-  .ciName{
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    max-width: 220px;
-    font-weight:800;
-  }
-  .ciAmt{
+    gap:8px;
+    font-weight:850;
+    font-size:16px;
     white-space:nowrap;
-    color:rgba(245,247,255,.90);
-    font-weight:800;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
-  .ciRight{display:flex;align-items:center;gap:8px;flex:0 0 auto}
-  .qtyBtn{width:38px;height:32px;border-radius:12px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-size:18px;font-weight:900}
-  /* ✅ 장바구니목록에 삭제 X버튼 */
-  .delBtn{width:38px;height:32px;border-radius:12px;background:rgba(255,59,48,.16);color:var(--text);border:1px solid rgba(255,59,48,.28);font-size:18px;font-weight:900}
+  .ciQtyTag{
+    flex:0 0 auto;
+    font-size:12px;
+    font-weight:900;
+    color:rgba(245,247,255,.75);
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.04);
+    padding:4px 8px;
+    border-radius:999px;
+  }
+  .ciPrice{
+    text-align:right;
+    font-weight:900;
+    font-size:15px;
+    letter-spacing:-.2px;
+    white-space:nowrap;
+  }
+  .ciRight{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+  .qtyBtn{width:40px;height:32px;border-radius:12px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-size:18px;font-weight:900}
+  .qtyNum{
+    min-width:38px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    font-weight:900;
+    font-size:14px;
+  }
+  .delBtn{width:40px;height:32px;border-radius:12px;background:rgba(255,59,48,.16);color:var(--text);border:1px solid rgba(255,59,48,.28);font-size:18px;font-weight:900}
 
-  /* ===== Totals area: 장바구니 아래로 ===== */
-  .sumRow{
-    padding:12px;border-top:1px solid var(--line);
-    display:flex;flex-direction:column;gap:10px
-  }
-  .tLabel{color:var(--muted);font-size:12px;font-weight:700}
-  .tValue{font-size:38px;font-weight:900;letter-spacing:-.7px}
+  .sumRow{padding:10px 12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+  .moneyLine{display:flex;justify-content:space-between;align-items:center}
+  .moneyLine .lbl{color:var(--muted);font-size:13px}
+  .moneyLine .val{font-size:28px;font-weight:900}
 
-  /* 받은돈 | 거스름돈 (왼쪽정렬, 같은 열) */
-  .rcRow{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:14px;
-    position:relative;
-    padding-top:4px;
-  }
-  .rcRow:before{
-    content:"";
-    position:absolute;
-    left:50%;
-    top:0;
-    bottom:0;
-    width:1px;
-    background:rgba(255,255,255,.10);
-  }
-  .rcBox{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
-  .rcLbl{color:var(--muted);font-size:12px;font-weight:700}
-  .rcVal{font-size:28px;font-weight:900;letter-spacing:-.4px}
-
-  .btnGrid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px;margin-top:4px}
+  .btnGrid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px}
   .moneyBtn{height:48px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);border-radius:16px;font-size:16px;font-weight:900}
   .moneyBtn.reset{background:rgba(255,59,48,.16);border-color:rgba(255,59,48,.28)}
-
-  /* Bottom buttons (미수 작은, 결제완료 큰) */
-  .bottom{
-    padding:12px;border-top:1px solid var(--line);
-    display:grid;grid-template-columns: 1fr 2.2fr;gap:10px
-  }
-  .hold{
-    height:62px;border-radius:18px;background:rgba(255,255,255,.04);color:var(--text);
-    border:1px solid var(--line);font-size:18px;font-weight:900
-  }
-  .hold small{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-top:2px}
-  .checkout{
-    height:62px;border-radius:18px;background:linear-gradient(180deg, rgba(255,159,0,1), rgba(255,159,0,.85));
-    color:#101116;font-size:26px;font-weight:1000
-  }
-  .checkout small{display:block;font-size:12px;opacity:.75;font-weight:900}
+  .bottom{padding:12px;border-top:1px solid var(--line);display:flex;gap:10px}
+  .checkout{flex:1;height:62px;border-radius:18px;background:linear-gradient(180deg, rgba(255,159,0,1), rgba(255,159,0,.85));
+    color:#101116;font-size:22px;font-weight:900}
+  .hold{width:140px;height:62px;border-radius:18px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-size:18px;font-weight:900}
+  .hold small{display:block;font-size:12px;color:var(--muted);font-weight:700}
 
   /* Modal */
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:12px}
   .modal.show{display:flex}
-  .sheet{width:min(880px, 100%);max-height:85vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+  .sheet{width:min(860px, 100%);max-height:85vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
   .sheetHead{padding:12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
   .sheetHead .title{font-weight:900;font-size:18px}
   .sheetBody{padding:12px;display:flex;flex-direction:column;gap:10px}
-  .holdRow{
-    background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;
-    padding:10px;display:flex;justify-content:space-between;align-items:center;gap:10px
-  }
-  .holdLeft{min-width:0;display:flex;flex-direction:column;gap:6px}
-  .holdName{font-weight:900}
-  .holdItems{
-    color:rgba(245,247,255,.82);
-    font-weight:800;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    max-width: 520px;
-  }
-  .holdRight{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .holdRow{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .holdLeft{min-width:0}
+  .holdTitle{font-weight:900}
+  .holdSub{color:var(--muted);font-weight:800;font-size:12px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:560px}
+  .holdAmt{color:var(--text);font-weight:900;margin-top:6px}
+  .holdBtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .hBtn{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-weight:900}
   .hBtn.del{background:rgba(255,59,48,.16);border-color:rgba(255,59,48,.28)}
+  .hBtn.done{background:rgba(41,209,126,.14);border-color:rgba(41,209,126,.22)}
   .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(15,17,22,.95);
-    border:1px solid var(--line);border-radius:999px;padding:10px 14px;color:var(--text);font-weight:900;display:none}
+    border:1px solid var(--line);border-radius:999px;padding:10px 14px;color:var(--text);font-weight:800;display:none}
   .toast.show{display:block}
 
-  /* Responsive */
+  /* Responsive main layout */
   @media (max-width: 980px){
     .app{grid-template-columns:1fr;grid-template-rows:1.1fr .9fr}
-    .grid,.pinnedGrid{grid-template-columns:repeat(3, minmax(0,1fr))}
-    .holdItems{max-width: 420px}
+    .pinnedGrid{grid-template-columns:repeat(3, minmax(0,1fr))}
+    .cartItem{grid-template-columns:1fr 110px 150px}
   }
   @media (max-width: 520px){
-    .grid,.pinnedGrid{grid-template-columns:repeat(2, minmax(0,1fr))}
-    .tValue{font-size:34px}
-    .rcVal{font-size:24px}
-    .holdItems{max-width: 260px}
+    .pinnedGrid{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .moneyLine .val{font-size:24px}
+    .cartItem{grid-template-columns:1fr 96px 140px}
+    .ciNameLine{font-size:15px}
+    .ciPrice{font-size:14px}
   }
 </style>
 </head>
@@ -224,13 +203,13 @@
       </div>
 
       <div class="keys" id="chosungKeys"></div>
-      <div class="hint">• 클릭=담기 • 길게(0.45초)=고정/해제 • 📌 클릭=고정/해제 • 검색은 탭 무관 “전품목”</div>
+      <div class="hint">• 상품 클릭=담기  • 상품 길게(0.45초)=고정/해제  • 검색어 있으면 “전품목(탭 무시)”</div>
     </div>
 
     <div class="pinned" id="pinnedBox">
       <div class="pinnedTitle">
         <span>고정 · 상단</span>
-        <span class="hint">고정은 “길게” 또는 📌</span>
+        <span class="hint">고정은 “길게 눌러” 토글</span>
       </div>
       <div class="pinnedGrid" id="pinnedGrid"></div>
     </div>
@@ -241,35 +220,22 @@
   </section>
 
   <section class="panel right">
-    <!-- ✅ 3/1: 장바구니(00개) 미수 버튼이 상단 -->
-    <div class="rHead">
-      <div class="rBtns">
-        <button class="btnMini" id="cartBtn">장바구니(0개)</button>
+    <div class="rTop">
+      <div class="topBtns">
         <button class="btnMini accent" id="holdsBtn">미수(0)</button>
       </div>
-      <div class="modeTag" id="modeTag">미수 불러옴</div>
     </div>
 
-    <!-- 장바구니 목록 -->
     <div class="cartWrap" id="cartWrap"></div>
 
-    <!-- ✅ 총합계는 장바구니 목록 아래 -->
     <div class="sumRow">
-      <div>
-        <div class="tLabel" id="totalLabel">총합계 (0개)</div>
-        <div class="tValue" id="grandTotal">0원</div>
+      <div class="moneyLine">
+        <span class="lbl">받은돈</span>
+        <span class="val" id="receivedVal">0원</span>
       </div>
-
-      <!-- 받은돈 | 거스름돈 (왼쪽정렬) -->
-      <div class="rcRow">
-        <div class="rcBox">
-          <div class="rcLbl">받은돈</div>
-          <div class="rcVal" id="receivedVal">0원</div>
-        </div>
-        <div class="rcBox">
-          <div class="rcLbl">거스름돈</div>
-          <div class="rcVal" id="changeVal">0원</div>
-        </div>
+      <div class="moneyLine">
+        <span class="lbl">거스름돈</span>
+        <span class="val" id="changeVal">0원</span>
       </div>
 
       <div class="btnGrid">
@@ -287,10 +253,7 @@
         미수
         <small>현재장바구니 저장</small>
       </button>
-      <button class="checkout" id="checkout">
-        결제완료
-        <small id="checkoutHint">일반 결제</small>
-      </button>
+      <button class="checkout" id="checkout">결제완료</button>
     </div>
   </section>
 </div>
@@ -313,26 +276,28 @@
    ✅ 설정 (여기만 바꾸면 됨)
 ============================= */
 const CSV_URL = "https://docs.google.com/spreadsheets/d/1MK7TvyILEJ4_YKw1TmY1Au4Z_ZkGbF7LeRMsi89slbw/export?format=csv&gid=0";
-const APP_VER = "umgane_pos_v20251224_final_3by1_fix_1";
+const APP_VER = "umgane_pos_v20251224_final_2";
 
 /* =============================
    저장 키
 ============================= */
-const LS_VER="umgane_app_ver";
-const LS_ITEMS="umgane_items_v1";
-const LS_PINS="umgane_pins_v1";
-const LS_CART="umgane_cart_v1";
-const LS_REC="umgane_received_v1";
-const LS_USED="umgane_used_v1";
-const LS_HOLDS="umgane_holds_v1";
-const LS_CURH="umgane_current_hold_id";
+const LS_VER   = "umgane_app_ver";
+const LS_ITEMS = "umgane_items_v1";
+const LS_PINS  = "umgane_pins_v1";
+const LS_CART  = "umgane_cart_v1";
+const LS_REC   = "umgane_received_v1";
+const LS_USED  = "umgane_used_v1";
+const LS_HOLDS = "umgane_holds_v1";
 
 /* =============================
    유틸
 ============================= */
 const $ = (s)=>document.querySelector(s);
-const el = (tag, props={})=>Object.assign(document.createElement(tag), props);
-
+const el = (tag, props={})=>{
+  const n=document.createElement(tag);
+  Object.assign(n, props);
+  return n;
+};
 function toast(msg){
   const t=$("#toast");
   t.textContent=msg;
@@ -355,18 +320,16 @@ function parsePrice(v){
   return Math.round(num);
 }
 function normCat(c){
-  c=(c||"").trim();
-  if(c==="봉채소"||c==="봉지야채"||c==="봉지채소") c="봉지채소";
-  return c||"기타";
+  c = (c||"").trim();
+  if(c==="봉채소") c="봉지채소";
+  return c || "기타";
 }
 
 /* =============================
-   초성 검색(완전 수정)
-   - 초성만 입력(ㄱ, ㄱㅈ 등): 상품명 초성 "앞에서부터" 매칭
-   - 일반 텍스트(감자): 포함 매칭
+   ✅ 초성 유틸
 ============================= */
 const CHO = ["ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
-const CHOSET = new Set(CHO);
+const CHO_SET = new Set(CHO);
 function getChoChar(ch){
   const code = ch.charCodeAt(0);
   if(code < 0xAC00 || code > 0xD7A3) return ch;
@@ -376,36 +339,10 @@ function getChoChar(ch){
 function toChosung(str){
   return Array.from(String(str||"")).map(getChoChar).join("");
 }
-function normQ(q){ return String(q||"").trim().replace(/\s+/g,""); }
-function isChosungOnly(q){
-  if(!q) return false;
-  for(const ch of q){
-    if(!CHOSET.has(ch)) return false;
-  }
-  return true;
-}
-function matchItem(item, q){
-  const qq = normQ(q);
-  if(!qq) return true;
-
-  const name = String(item.name||"");
-  const nameLow = name.toLowerCase();
-
-  // ✅ 초성 전용: "앞에서부터" 매칭(엉뚱한 결과 방지)
-  if(isChosungOnly(qq)){
-    const cho = toChosung(name);
-    return cho.startsWith(qq);
-  }
-
-  // 일반 검색: 포함 + 초성 포함(혼합 입력도 지원)
-  const low = qq.toLowerCase();
-  if(nameLow.includes(low)) return true;
-
-  const cho = toChosung(name);
-  const qCho = toChosung(qq);
-  if(cho.includes(qCho)) return true;
-
-  return false;
+function isAllCho(q){
+  const arr = Array.from(String(q||"").trim());
+  if(!arr.length) return false;
+  return arr.every(ch => CHO_SET.has(ch));
 }
 
 /* =============================
@@ -420,7 +357,6 @@ function matchItem(item, q){
     localStorage.removeItem(LS_REC);
     localStorage.removeItem(LS_USED);
     localStorage.removeItem(LS_HOLDS);
-    localStorage.removeItem(LS_CURH);
   }
 })();
 
@@ -435,10 +371,9 @@ let cart = JSON.parse(localStorage.getItem(LS_CART)||"{}");
 let used = JSON.parse(localStorage.getItem(LS_USED)||"{}");
 let received = Number(localStorage.getItem(LS_REC)||"0") || 0;
 let holds = JSON.parse(localStorage.getItem(LS_HOLDS)||"[]");
-let currentHoldId = localStorage.getItem(LS_CURH) || "";
 
 /* =============================
-   CSV 파서
+   CSV 파서 (따옴표/콤마 안전)
 ============================= */
 function parseCSV(text){
   const rows=[];
@@ -487,7 +422,6 @@ async function loadItems(){
 
     const header = rows[0].map(h=>String(h||"").trim().toLowerCase());
     const idx = (k)=>header.indexOf(k);
-
     const iId = idx("id");
     const iCat = idx("cat");
     const iName = idx("name");
@@ -504,17 +438,18 @@ async function loadItems(){
       const price = parsePrice(line[iPrice]);
       const active = String(line[iActive]??"1").trim();
       const ordRaw = String(line[iOrd]??"").trim();
+      const ord = ordRaw==="" ? null : ordRaw;
       if(!id || !name) continue;
       if(active==="0" || active.toLowerCase()==="false") continue;
 
       out.push({
         id, cat, name, price,
+        ord,
         ordNum: ordRaw==="" ? 1e15 : Number(ordRaw)
       });
     }
 
     out.forEach(x=>{ if(!CATS.includes(x.cat)) x.cat="기타"; });
-
     items = out;
     localStorage.setItem(LS_ITEMS, JSON.stringify(items));
     renderAll();
@@ -525,7 +460,7 @@ async function loadItems(){
 }
 
 /* =============================
-   탭 / 초성키
+   렌더
 ============================= */
 function buildTabs(){
   const box = $("#tabs");
@@ -549,23 +484,29 @@ function buildChosungKeys(){
   box.appendChild(clr);
 }
 
-/* =============================
-   필터/정렬
-============================= */
-function getList(){
-  const q = $("#q").value;
-  const qq = normQ(q);
-  const searching = qq.length>0;
+function getFiltered(){
+  const q = $("#q").value.trim();
+  const qLow = q.toLowerCase();
+  const qCho = toChosung(q);
+  const onlyCho = isAllCho(q);
 
+  // ✅ 검색어 있으면 “전품목(탭 무시)”, 없으면 탭 기준
   let list = items.slice();
+  if(!q){
+    list = list.filter(x=>x.cat===activeCat);
+  }else{
+    list = list.filter(x=>{
+      const name = x.name.toLowerCase();
+      const nameCho = toChosung(x.name);
+      if(onlyCho) return nameCho.includes(q);              // 예: ㅅㄱ → 사과
+      return name.includes(qLow) || nameCho.includes(qCho); // 예: 감자 / ㄱㅈ
+    });
+  }
 
-  // ✅ 검색 중이면 전품목(탭 무시), 아니면 탭 기준
-  if(searching) list = list.filter(x=>matchItem(x, q));
-  else list = list.filter(x=>x.cat===activeCat);
-
+  // 정렬: 핀 우선 -> ord -> 이름
   list.sort((a,b)=>{
-    const ap = pins.has(a.id)?0:1;
-    const bp = pins.has(b.id)?0:1;
+    const ap = pins.has(a.id) ? 0 : 1;
+    const bp = pins.has(b.id) ? 0 : 1;
     if(ap!==bp) return ap-bp;
     if(a.ordNum!==b.ordNum) return a.ordNum-b.ordNum;
     return a.name.localeCompare(b.name,"ko");
@@ -574,17 +515,6 @@ function getList(){
   return list;
 }
 
-/* =============================
-   고정
-============================= */
-function savePins(){ localStorage.setItem(LS_PINS, JSON.stringify(Array.from(pins))); }
-function togglePin(id){
-  if(pins.has(id)) pins.delete(id);
-  else pins.add(id);
-  savePins();
-  renderAll();
-  toast(pins.has(id) ? "고정됨" : "고정해제");
-}
 function renderPinned(){
   const box = $("#pinnedGrid");
   box.innerHTML="";
@@ -593,36 +523,32 @@ function renderPinned(){
     .sort((a,b)=>a.ordNum-b.ordNum || a.name.localeCompare(b.name,"ko"));
 
   if(!pinnedItems.length){
-    box.innerHTML = `<div class="emptyPinned">고정 상품이 없습니다. (길게 또는 📌)</div>`;
+    box.innerHTML = `<div class="emptyPinned">고정 상품이 없습니다. (상품을 길게 눌러 고정)</div>`;
     return;
   }
-  pinnedItems.slice(0,12).forEach(x=>box.appendChild(makeCard(x,true)));
+  pinnedItems.slice(0,12).forEach(x=> box.appendChild(makeCard(x)));
 }
 
-/* =============================
-   카드
-============================= */
 function makeCard(x){
   const c = el("div",{className:"card"+(pins.has(x.id)?" pinnedCard":"")});
   const n = el("div",{className:"name", textContent:x.name});
   const p = el("div",{className:"price", textContent:krw(x.price)});
+  const chip = el("div",{className:"chip", textContent:x.cat});
   const pin = el("div",{className:"pinIcon "+(pins.has(x.id)?"":"off"), textContent:"📌"});
-  c.append(n,p,pin);
+  c.append(n,p,chip,pin);
 
-  // 클릭: 담기
   c.addEventListener("click", ()=>{
-    if(c._longFired){ c._longFired=false; return; }
-    addToCart(x.id,1);
+    if(c._longFired) { c._longFired=false; return; }
+    addToCart(x.id, 1);
   });
 
-  // 📌 클릭: 고정 토글
-  pin.addEventListener("click",(e)=>{ e.stopPropagation(); togglePin(x.id); });
-
-  // 길게: 고정 토글
   let tmr=null;
   c.addEventListener("pointerdown", ()=>{
     c._longFired=false;
-    tmr=setTimeout(()=>{ c._longFired=true; togglePin(x.id); }, 450);
+    tmr=setTimeout(()=>{
+      c._longFired=true;
+      togglePin(x.id);
+    }, 450);
   });
   ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
     c.addEventListener(ev, ()=>{ if(tmr) clearTimeout(tmr); });
@@ -630,39 +556,43 @@ function makeCard(x){
 
   return c;
 }
+
 function renderGrid(){
   const grid=$("#grid");
   grid.innerHTML="";
-  getList().forEach(x=>grid.appendChild(makeCard(x)));
+  const list=getFiltered();
+  list.forEach(x=>grid.appendChild(makeCard(x)));
 }
 
-/* =============================
-   장바구니
-============================= */
+function savePins(){ localStorage.setItem(LS_PINS, JSON.stringify(Array.from(pins))); }
+function togglePin(id){
+  if(pins.has(id)) pins.delete(id);
+  else pins.add(id);
+  savePins();
+  renderAll();
+  toast(pins.has(id) ? "고정됨" : "고정해제");
+}
+
 function saveCart(){ localStorage.setItem(LS_CART, JSON.stringify(cart)); }
+function saveUsed(){ localStorage.setItem(LS_USED, JSON.stringify(used)); }
 function saveReceived(){ localStorage.setItem(LS_REC, String(received)); }
 function saveHolds(){ localStorage.setItem(LS_HOLDS, JSON.stringify(holds)); }
-function setCurrentHold(id){
-  currentHoldId = id || "";
-  if(currentHoldId) localStorage.setItem(LS_CURH, currentHoldId);
-  else localStorage.removeItem(LS_CURH);
-
-  $("#modeTag").classList.toggle("show", !!currentHoldId);
-  $("#checkoutHint").textContent = currentHoldId ? "미수 결제(완료 시 목록에서 제거)" : "일반 결제";
-}
 
 function addToCart(id, d){
   cart[id] = (cart[id]||0) + d;
   if(cart[id] <= 0) delete cart[id];
-  saveCart();
+  used[id] = (used[id]||0) + 1;
+  saveCart(); saveUsed();
   renderCart();
 }
+
 function setQty(id, qty){
   if(qty<=0) delete cart[id];
   else cart[id]=qty;
   saveCart();
   renderCart();
 }
+
 function cartStats(){
   let total=0, cnt=0;
   for(const [id,qty] of Object.entries(cart)){
@@ -680,10 +610,10 @@ function renderCart(){
 
   const entries = Object.entries(cart);
   entries.sort((a,b)=>{
-    const ia=items.find(x=>x.id===a[0]); const ib=items.find(x=>x.id===b[0]);
-    if(!ia&&!ib) return 0;
+    const ia = items.find(x=>x.id===a[0]); const ib = items.find(x=>x.id===b[0]);
+    if(!ia && !ib) return 0;
     if(!ia) return 1; if(!ib) return -1;
-    const ap=pins.has(ia.id)?0:1, bp=pins.has(ib.id)?0:1;
+    const ap = pins.has(ia.id)?0:1, bp=pins.has(ib.id)?0:1;
     if(ap!==bp) return ap-bp;
     if(ia.ordNum!==ib.ordNum) return ia.ordNum-ib.ordNum;
     return ia.name.localeCompare(ib.name,"ko");
@@ -694,57 +624,73 @@ function renderCart(){
     if(!it) return;
 
     const row = el("div",{className:"cartItem"});
+    const nameLine = el("div",{className:"ciNameLine"});
+    const nameText = el("span",{textContent:it.name});
+    const qtyTag = el("span",{className:"ciQtyTag", textContent:`x${qty}`});
+    nameLine.append(nameText, qtyTag);
 
-    // ✅ 한줄 압축 (중복 가격 표시 제거)
-    const left = el("div",{className:"ciLine"});
-    const nm = el("div",{className:"ciName", textContent:`${it.name} x${qty}`});
-    const amt = el("div",{className:"ciAmt", textContent: krw(it.price*qty)});
-    left.append(nm, amt);
+    const price = el("div",{className:"ciPrice", textContent:krw(it.price*qty)});
 
     const right = el("div",{className:"ciRight"});
     const minus = el("button",{className:"qtyBtn", textContent:"–"});
+    const qn    = el("div",{className:"qtyNum", textContent:String(qty)});
     const plus  = el("button",{className:"qtyBtn", textContent:"+"});
     const del   = el("button",{className:"delBtn", textContent:"×"});
-    minus.onclick=()=>setQty(id, qty-1);
-    plus.onclick =()=>setQty(id, qty+1);
-    del.onclick  =()=>setQty(id, 0);
-    right.append(minus, plus, del);
 
-    row.append(left, right);
+    // ✅ 버튼만 클릭되게(행 전체 클릭 느낌 제거)
+    minus.onclick=(e)=>{ e.stopPropagation(); setQty(id, qty-1); };
+    plus.onclick =(e)=>{ e.stopPropagation(); setQty(id, qty+1); };
+    del.onclick  =(e)=>{ e.stopPropagation(); setQty(id, 0); };
+
+    right.append(minus, qn, plus, del);
+    row.append(nameLine, price, right);
     wrap.appendChild(row);
   });
 
-  // 최소 7줄 노출(빈줄 채우기)
-  const minRows=7;
-  const need=Math.max(0, minRows-entries.length);
+  // 최소 8줄 느낌 유지(빈줄)
+  const minRows = 8;
+  const need = Math.max(0, minRows - entries.length);
   for(let i=0;i<need;i++){
-    const dummy=el("div",{className:"cartItem"});
-    dummy.style.opacity=.18;
-    dummy.innerHTML = `<div style="height:18px"></div>`;
+    const dummy = el("div",{className:"cartItem"});
+    dummy.style.opacity = .18;
+    dummy.innerHTML = `<div></div><div></div><div></div>`;
     wrap.appendChild(dummy);
   }
 
   const {total,cnt}=cartStats();
-  $("#grandTotal").textContent = krw(total);
-  $("#totalLabel").textContent = `총합계 (${cnt.toLocaleString("ko-KR")}개)`;
-
   $("#receivedVal").textContent = krw(received);
   $("#changeVal").textContent = krw(Math.max(0, received - total));
-
-  $("#cartBtn").textContent = `장바구니(${cnt}개)`;
   $("#holdsBtn").textContent = `미수(${holds.length})`;
 }
 
+function renderAll(){
+  buildTabs();
+  renderPinned();
+  renderGrid();
+  renderCart();
+}
+
 /* =============================
-   미수
+   미수 기능
 ============================= */
+function summarizeHoldCart(h){
+  const names = [];
+  for(const [id,qty] of Object.entries(h.cart||{})){
+    const it = items.find(x=>x.id===id);
+    if(!it) continue;
+    names.push(qty>1 ? `${it.name}x${qty}` : it.name);
+  }
+  return names.join(" · ");
+}
+
 function pushHold(){
   const {total,cnt} = cartStats();
   if(cnt<=0){ toast("장바구니가 비었습니다"); return; }
+
   holds.unshift({
-    id:"H"+Date.now(),
-    ts:Date.now(),
-    cart:{...cart},
+    id: "H"+Date.now(),
+    ts: Date.now(),
+    cart: {...cart},
     total, cnt
   });
   saveHolds();
@@ -752,32 +698,16 @@ function pushHold(){
   cart = {};
   received = 0;
   saveCart(); saveReceived();
-  setCurrentHold("");
   renderCart();
-  toast("미수 저장됨");
-}
-
-function holdItemsSummary(h){
-  const parts=[];
-  for(const [id,qty] of Object.entries(h.cart||{})){
-    const it=items.find(x=>x.id===id);
-    if(!it) continue;
-    parts.push(qty>1 ? `${it.name}x${qty}` : `${it.name}`);
-  }
-  parts.sort((a,b)=>a.localeCompare(b,"ko"));
-  let text = parts.join(" · ");
-  const maxLen = 46;
-  if(text.length > maxLen) text = text.slice(0, maxLen-1) + "…";
-  return text || "(상품 없음)";
+  toast("미수로 저장됨");
 }
 
 function openHolds(){
   $("#modal").classList.add("show");
   renderHoldsList();
 }
-function closeHolds(){
-  $("#modal").classList.remove("show");
-}
+function closeHolds(){ $("#modal").classList.remove("show"); }
+
 function renderHoldsList(){
   const box=$("#holdsList");
   box.innerHTML="";
@@ -788,38 +718,46 @@ function renderHoldsList(){
 
   holds.forEach((h,idx)=>{
     const row = el("div",{className:"holdRow"});
-
     const left = el("div",{className:"holdLeft"});
     const t = new Date(h.ts);
     const time = `${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}`;
-    const name = el("div",{className:"holdName"});
-    name.innerHTML = `미수 ${idx+1} <span class="hint">(${time})</span>`;
-    const itemsLine = el("div",{className:"holdItems", textContent: holdItemsSummary(h)});
-    left.append(name, itemsLine);
 
-    const right = el("div",{className:"holdRight"});
+    const title = el("div",{className:"holdTitle", textContent:`미수 ${idx+1} (${time})`});
+    const amt = el("div",{className:"holdAmt", textContent:`${krw(h.total)} · ${h.cnt}개`});
+    const sub = el("div",{className:"holdSub", textContent:summarizeHoldCart(h) || "-"});
+    left.append(title, amt, sub);
+
+    const btns = el("div",{className:"holdBtns"});
     const load = el("button",{className:"hBtn", textContent:"불러오기"});
+    const done = el("button",{className:"hBtn done", textContent:"미수완료"});
     const del  = el("button",{className:"hBtn del", textContent:"삭제"});
 
     load.onclick=()=>{
       cart = {...h.cart};
       received = 0;
       saveCart(); saveReceived();
-      setCurrentHold(h.id);   // ✅ 미수 모드
       closeHolds();
       renderCart();
       toast("미수 불러옴");
     };
-    del.onclick=()=>{
+    done.onclick=()=>{
+      // ✅ 미수완료 = 목록에서 제거(정산 완료 처리)
       holds = holds.filter(x=>x.id!==h.id);
-      if(currentHoldId===h.id) setCurrentHold("");
       saveHolds();
       renderCart();
       renderHoldsList();
+      toast("미수완료 처리");
+    };
+    del.onclick=()=>{
+      holds = holds.filter(x=>x.id!==h.id);
+      saveHolds();
+      renderCart();
+      renderHoldsList();
+      toast("삭제됨");
     };
 
-    right.append(load, del);
-    row.append(left, right);
+    btns.append(load, done, del);
+    row.append(left, btns);
     box.appendChild(row);
   });
 }
@@ -829,7 +767,6 @@ function renderHoldsList(){
 ============================= */
 $("#q").addEventListener("input", ()=>renderAll());
 $("#sortBtn").onclick=()=>toast("정렬: 고정 + ord (고정)");
-
 document.querySelectorAll("[data-add]").forEach(b=>{
   b.onclick=()=>{
     received += Number(b.dataset.add);
@@ -845,22 +782,13 @@ $("#receivedReset").onclick=()=>{
 };
 
 $("#checkout").onclick=()=>{
-  const {cnt} = cartStats();
+  const {cnt,total}=cartStats();
   if(cnt<=0){ toast("장바구니가 비었습니다"); return; }
-
-  const ok = window.confirm("결제완료 하겠습니까?");
-  if(!ok) return;
-
-  // ✅ 미수 불러온 상태면: 결제완료 시 해당 미수 자동 제거 = 미수완료
-  if(currentHoldId){
-    holds = holds.filter(h=>h.id!==currentHoldId);
-    saveHolds();
-  }
+  if(!confirm(`결제완료 하겠습니까?\n\n총합계: ${krw(total)} (${cnt}개)`)) return;
 
   cart = {};
   received = 0;
   saveCart(); saveReceived();
-  setCurrentHold("");
   renderCart();
   toast("결제완료");
 };
@@ -871,31 +799,10 @@ $("#closeModal").onclick=closeHolds;
 $("#modal").addEventListener("click",(e)=>{ if(e.target.id==="modal") closeHolds(); });
 
 /* =============================
-   렌더
+   시작
 ============================= */
-function renderAll(){
-  buildTabs();
-  renderPinned();
-  renderGrid();
-  renderCart();
-}
-function renderPinned(){
-  const box = $("#pinnedGrid");
-  box.innerHTML="";
-  const pinnedItems = items.filter(x=>pins.has(x.id))
-    .sort((a,b)=>a.ordNum-b.ordNum || a.name.localeCompare(b.name,"ko"));
-
-  if(!pinnedItems.length){
-    box.innerHTML = `<div class="emptyPinned">고정 상품이 없습니다. (길게 또는 📌)</div>`;
-    return;
-  }
-  pinnedItems.slice(0,12).forEach(x=>box.appendChild(makeCard(x,true)));
-}
-
-/* 시작 */
 buildTabs();
 buildChosungKeys();
-setCurrentHold(currentHoldId);
 renderAll();
 loadItems();
 </script>
