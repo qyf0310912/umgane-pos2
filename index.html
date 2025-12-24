@@ -214,10 +214,8 @@
     color:rgba(245,247,255,.88);
   }
 
-  /* 카테고리 뱃지(봉지채소 등) -> 사용 안 함 (아예 숨김) */
   .cardBadge{ display:none !important; }
 
-  /* 핀 */
   .pin{
     position:absolute;
     right:10px; bottom:10px;
@@ -268,7 +266,6 @@
     padding:10px 10px 6px;
   }
 
-  /* “클릭되는 느낌” 방지: 행 자체는 클릭 이벤트 없음 + 선택 불가 */
   .cartRow{
     user-select:none;
     padding:10px 10px;
@@ -330,9 +327,10 @@
     font-weight:700;
   }
 
+  /* ✅ 장바구니 더 많이 보이게: 요약 영역 “세로 압축” */
   .summary{
     border-top:1px solid var(--line);
-    padding:12px;
+    padding:10px 12px;          /* 12 -> 10 */
   }
   .sumTitle{
     font-size:var(--fs-13);
@@ -340,20 +338,21 @@
     font-weight:var(--w-600);
   }
   .sumMoney{
-    margin-top:6px;
+    margin-top:4px;             /* 6 -> 4 */
     font-size:var(--fs-32);
     font-weight:700;
     letter-spacing:-.6px;
+    line-height:1.05;           /* 추가 */
   }
   .twoCol{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:10px;
-    margin-top:10px;
+    margin-top:8px;             /* 10 -> 8 */
   }
   .moneyBox{
     border-radius:16px;
-    padding:10px 12px;
+    padding:8px 12px;           /* 10 -> 8 */
     border:1px solid var(--line);
     background:rgba(255,255,255,.02);
   }
@@ -363,19 +362,20 @@
     font-weight:var(--w-600);
   }
   .moneyValue{
-    margin-top:4px;
-    font-size:var(--fs-24);
-    font-weight:700;
+    margin-top:3px;             /* 4 -> 3 */
+    font-size:22px;             /* 24 -> 22 (가독성 유지하면서 높이 절약) */
+    font-weight:800;
+    line-height:1.05;
   }
 
   .cashGrid{
-    margin-top:12px;
+    margin-top:10px;            /* 12 -> 10 */
     display:grid;
     grid-template-columns: repeat(3, 1fr);
     gap:10px;
   }
   .cashBtn{
-    padding:12px 10px;
+    padding:10px 10px;          /* 12 -> 10 */
     border-radius:14px;
     border:1px solid var(--line);
     background:rgba(255,255,255,.03);
@@ -389,32 +389,33 @@
   }
 
   .bottomRow{
-    margin-top:12px;
+    margin-top:10px;            /* 12 -> 10 */
     display:grid;
     grid-template-columns: 1fr 2fr;
     gap:10px;
     align-items:stretch;
   }
 
-  /* ✅ 미수 버튼 글씨 검정 방지(항상 흰색) */
   .misuBtn{
     border-radius:16px;
     border:1px solid var(--line);
     background:rgba(255,255,255,.03);
-    padding:10px 10px;
+    padding:9px 10px;           /* 10 -> 9 */
     text-align:left;
     color:var(--text);
   }
   .misuBtn .t{
-    font-weight:700;
+    font-weight:800;            /* 상단 pill 느낌 맞춤 */
     font-size:var(--fs-16);
     color:var(--text);
+    line-height:1.05;
   }
   .misuBtn .s{
     margin-top:3px;
     font-size:var(--fs-12);
     color:rgba(245,247,255,.65);
     font-weight:var(--w-600);
+    line-height:1.1;
   }
 
   .payBtn{
@@ -424,22 +425,24 @@
     font-weight:900;
     font-size:var(--fs-24);
     letter-spacing:-.6px;
+    padding:12px 10px;          /* 기본 버튼 높이 안정화 */
   }
 
   /* ===== 미수 모달 ===== */
   .modalBack{
     position:fixed; inset:0;
-    background:rgba(0,0,0,.5);
+    background:rgba(0,0,0,.62);
     display:none;
     align-items:center;
     justify-content:center;
     padding:16px;
   }
+  /* ✅ “불투명 고정” 핵심: modal 배경을 완전 불투명으로 */
   .modal{
     width:min(900px, 96vw);
     max-height:84vh;
     overflow:auto;
-    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    background:var(--panel);    /* 불투명 */
     border:1px solid var(--line);
     border-radius:22px;
     box-shadow:0 30px 80px rgba(0,0,0,.55);
@@ -479,7 +482,6 @@
     align-items:center;
   }
 
-  /* ✅ 3줄 → 2줄로 축소: (제목+금액) / (품목) */
   .misuInfo .t{
     font-size:var(--fs-14);
     font-weight:700;
@@ -530,7 +532,6 @@
     border-color:rgba(41,209,126,.30);
   }
 
-  /* ===== 반응형: 화면이 아주 좁으면 (PC 작업용 최소) ===== */
   @media (max-width: 980px){
     .app{ grid-template-columns: 1fr; }
     :root{ --right-w: 100%; }
@@ -571,7 +572,6 @@
   <section class="panel right">
     <div class="rightTop">
       <div class="rightTitle"><span class="pill accent" id="misuPill">미수(0)</span></div>
-      <!-- ✅ 장바구니 버튼 의미없음 -> 리셋으로 변경 -->
       <div class="rightTitle"><span class="pill" id="cartPill">리셋</span></div>
     </div>
 
@@ -607,7 +607,6 @@
           <div class="s">현재장바구니 저장</div>
         </button>
 
-        <!-- ✅ (일반결제) 텍스트 삭제 -->
         <button class="payBtn" id="payBtn">결제완료</button>
       </div>
     </div>
@@ -1172,12 +1171,12 @@ function renderSummary(){
   const total = cartTotal();
   const change = Math.max(0, (Number(paid)||0) - total);
 
-  elSumCnt.textContent = String(cnt);
-  elSumMoney.textContent = won(total);
-  elPaidMoney.textContent = won(paid||0);
-  elChangeMoney.textContent = won(change);
+  document.getElementById("sumCnt").textContent = String(cnt);
+  document.getElementById("sumMoney").textContent = won(total);
+  document.getElementById("paidMoney").textContent = won(paid||0);
+  document.getElementById("changeMoney").textContent = won(change);
 
-  elMisuPill.textContent = `미수(${misu.length})`;
+  document.getElementById("misuPill").textContent = `미수(${misu.length})`;
 }
 
 /* =========================================================
@@ -1200,33 +1199,33 @@ function renderAll(){
 /* =========================================================
    이벤트
 ========================================================= */
-elQ.addEventListener("input", ()=>{
-  query = elQ.value;
+document.getElementById("q").addEventListener("input", ()=>{
+  query = document.getElementById("q").value;
   renderAll();
 });
 
 document.querySelectorAll(".cashBtn[data-add]").forEach(b=>{
   b.addEventListener("click", ()=> addPaid(Number(b.dataset.add||0)));
 });
-elPaidReset.addEventListener("click", ()=>{
+document.getElementById("paidReset").addEventListener("click", ()=>{
   paid = 0;
   save(LS_PAID, paid);
   renderAll();
 });
 
-elPayBtn.addEventListener("click", doPay);
+document.getElementById("payBtn").addEventListener("click", doPay);
 
-elSaveMisu.addEventListener("click", saveMisuNow);
-elMisuPill.addEventListener("click", openMisu);
+document.getElementById("saveMisu").addEventListener("click", saveMisuNow);
+document.getElementById("misuPill").addEventListener("click", openMisu);
 
-elCartPill.addEventListener("click", resetCartAll); /* ✅ 리셋 */
+document.getElementById("cartPill").addEventListener("click", resetCartAll);
 
-elModalBack.addEventListener("click", (e)=>{
-  if(e.target === elModalBack) closeMisu();
+document.getElementById("modalBack").addEventListener("click", (e)=>{
+  if(e.target === document.getElementById("modalBack")) closeMisu();
 });
-elMClose.addEventListener("click", closeMisu);
+document.getElementById("mClose").addEventListener("click", closeMisu);
 
-elSortBtn.addEventListener("click", ()=>{
+document.getElementById("sortBtn").addEventListener("click", ()=>{
   alert("현재 정렬은 '고정 + ord' 고정입니다.");
 });
 
