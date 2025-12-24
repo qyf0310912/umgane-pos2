@@ -61,7 +61,8 @@
   .pinIcon{position:absolute; right:10px; bottom:10px; width:34px;height:34px;border-radius:12px;
     display:flex;align-items:center;justify-content:center;
     background:rgba(255,159,0,.10); border:1px solid rgba(255,159,0,.20); color:var(--accent); font-weight:900}
-  .pinIcon.off{opacity:.25; background:rgba(255,255,255,.04); border:1px solid var(--line); color:var(--muted)}
+  /* ✅ 고정핀 미사용(OFF) 더 흐리게 */
+  .pinIcon.off{opacity:.12; filter:saturate(.3); background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); color:rgba(245,247,255,.45)}
   .card:active{transform:scale(.99)}
   .card.pinnedCard{outline:2px solid rgba(255,159,0,.40)}
   .meta{position:absolute; left:10px; bottom:10px; font-size:11px; color:rgba(245,247,255,.45)}
@@ -83,6 +84,7 @@
   .ciRight{display:flex;align-items:center;gap:8px}
   .qtyBtn{width:42px;height:34px;border-radius:12px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-size:18px}
   .delBtn{width:42px;height:34px;border-radius:12px;background:rgba(255,59,48,.16);color:var(--text);border:1px solid rgba(255,59,48,.28);font-size:18px}
+
   .sumRow{padding:10px 12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
   .moneyLine{display:flex;justify-content:space-between;align-items:center}
   .moneyLine .lbl{color:var(--muted);font-size:13px}
@@ -90,11 +92,24 @@
   .btnGrid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px}
   .moneyBtn{height:48px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);border-radius:16px;font-size:16px;font-weight:900}
   .moneyBtn.reset{background:rgba(255,59,48,.16);border-color:rgba(255,59,48,.28)}
+
+  /* ✅ 결제영역: 미수/미수완료 + 결제완료(큰 버튼 고정) */
   .bottom{padding:12px;border-top:1px solid var(--line);display:flex;gap:10px}
-  .checkout{flex:1;height:62px;border-radius:18px;background:linear-gradient(180deg, rgba(255,159,0,1), rgba(255,159,0,.85));
-    color:#101116;font-size:22px;font-weight:900}
-  .hold{width:120px;height:62px;border-radius:18px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-size:18px;font-weight:900}
-  .hold small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+  .sideBtns{width:160px;display:flex;flex-direction:column;gap:10px}
+  .staffBtn{
+    height:56px;border-radius:18px;background:rgba(255,255,255,.04);color:var(--text);
+    border:1px solid var(--line);font-size:18px;font-weight:900
+  }
+  .staffBtn.ok{
+    background:rgba(41,209,126,.14);
+    border-color:rgba(41,209,126,.22);
+  }
+  .staffBtn small{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-top:2px}
+  .checkout{
+    flex:1;height:122px;border-radius:18px;background:linear-gradient(180deg, rgba(255,159,0,1), rgba(255,159,0,.85));
+    color:#101116;font-size:26px;font-weight:900
+  }
+  .checkout small{display:block;font-size:13px;opacity:.75;font-weight:900}
 
   /* Modal */
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:12px}
@@ -106,7 +121,7 @@
   .holdRow{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
   .holdRow .hName{font-weight:900}
   .holdRow .hAmt{color:var(--muted);font-weight:800}
-  .holdRow .hBtns{display:flex;gap:8px}
+  .holdRow .hBtns{display:flex;gap:8px;flex-wrap:wrap}
   .hBtn{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line);font-weight:900}
   .hBtn.del{background:rgba(255,59,48,.16);border-color:rgba(255,59,48,.28)}
   .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(15,17,22,.95);
@@ -117,10 +132,16 @@
   @media (max-width: 980px){
     .app{grid-template-columns:1fr;grid-template-rows:1.1fr .9fr}
     .grid,.pinnedGrid{grid-template-columns:repeat(3, minmax(0,1fr))}
+    .sideBtns{width:220px;flex-direction:row}
+    .staffBtn{height:62px}
+    .checkout{height:62px;font-size:22px}
   }
   @media (max-width: 520px){
     .grid,.pinnedGrid{grid-template-columns:repeat(2, minmax(0,1fr))}
     .tot{font-size:34px}
+    .bottom{flex-direction:column}
+    .sideBtns{width:100%;flex-direction:row}
+    .checkout{height:68px}
   }
 </style>
 </head>
@@ -133,19 +154,19 @@
       <div class="row">
         <div class="search">
           <span style="opacity:.8">🔎</span>
-          <input id="q" placeholder="전카테고리 검색 (예: 감자, ㄱㅈ, ㄱ)" autocomplete="off" />
+          <input id="q" placeholder="전품목 검색 (예: 감자, ㄱㅈ, ㄱ)" autocomplete="off" />
         </div>
         <button class="sortBtn" id="sortBtn">정렬: 고정 + ord</button>
       </div>
 
       <div class="keys" id="chosungKeys"></div>
-      <div class="hint">• 상품 클릭=담기  • 상품 길게(0.45초)=고정/해제  • 검색은 탭과 무관하게 “전체품목”</div>
+      <div class="hint">• 상품 클릭=담기  • 상품 길게(0.45초)=고정/해제  • 📌 클릭=고정/해제  • 검색은 카테고리 무관 “전품목”</div>
     </div>
 
     <div class="pinned" id="pinnedBox">
       <div class="pinnedTitle">
         <span>고정 · 상단</span>
-        <span class="hint">고정은 “길게 눌러” 토글</span>
+        <span class="hint">고정은 “길게” 또는 📌 클릭</span>
       </div>
       <div class="pinnedGrid" id="pinnedGrid"></div>
     </div>
@@ -192,12 +213,23 @@
       </div>
     </div>
 
+    <!-- ✅ 결제영역: 미수 / 미수완료 / 결제완료 -->
     <div class="bottom">
-      <button class="hold" id="holdNow">
-        미수
-        <small>현재장바구니 저장</small>
+      <div class="sideBtns">
+        <button class="staffBtn" id="holdNow">
+          미수
+          <small>대기 저장</small>
+        </button>
+        <button class="staffBtn ok" id="holdDone">
+          미수완료
+          <small>불러온 건 완료</small>
+        </button>
+      </div>
+
+      <button class="checkout" id="checkout">
+        결제완료
+        <small id="modeHint">일반 결제</small>
       </button>
-      <button class="checkout" id="checkout">결제완료</button>
     </div>
   </section>
 </div>
@@ -219,11 +251,8 @@
 /* =============================
    ✅ 설정 (여기만 바꾸면 됨)
 ============================= */
-// ✅ 구글시트 CSV URL (공유/게시 필요)
 const CSV_URL = "https://docs.google.com/spreadsheets/d/1MK7TvyILEJ4_YKw1TmY1Au4Z_ZkGbF7LeRMsi89slbw/export?format=csv&gid=0";
-
-// ✅ 앱 버전(바꾸면 로컬 꼬임 자동정리)
-const APP_VER = "umgane_pos_v20251224_final_1";
+const APP_VER = "umgane_pos_v20251224_staff_fast_1";
 
 /* =============================
    저장 키
@@ -234,7 +263,8 @@ const LS_PINS  = "umgane_pins_v1";
 const LS_CART  = "umgane_cart_v1";
 const LS_REC   = "umgane_received_v1";
 const LS_USED  = "umgane_used_v1";
-const LS_HOLDS = "umgane_holds_v1"; // 미수 목록
+const LS_HOLDS = "umgane_holds_v1";
+const LS_CURH  = "umgane_current_hold_id"; // ✅ 현재 불러온 미수(있을 때만)
 
 /* =============================
    유틸
@@ -263,25 +293,24 @@ function parsePrice(v){
   if(v==null) return 0;
   const s = String(v).trim();
   if(!s) return 0;
-  // "5,000.00" / "5000.00" / "5000" / "5,000"
-  const cleaned = s.replace(/[^\d.]/g,""); // 숫자와 .만
+  const cleaned = s.replace(/[^\d.]/g,"");
   if(!cleaned) return 0;
   const num = Number(cleaned);
   if(!isFinite(num)) return 0;
-  return Math.round(num); // 소수점 버림(원 단위)
+  return Math.round(num);
 }
 
 function normCat(c){
   c = (c||"").trim();
-  // 혹시 띄어쓰기/오타 방지(필요 시 추가)
-  if(c==="봉채소") c="봉지채소";
+  // ✅ 봉채소/봉지채소/봉지야채 → 봉지채소로 통일
+  if(c==="봉채소" || c==="봉지야채" || c==="봉지채소") c="봉지채소";
   return c || "기타";
 }
 
 const CHO = ["ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
 function getChoChar(ch){
   const code = ch.charCodeAt(0);
-  if(code < 0xAC00 || code > 0xD7A3) return ch; // 한글 아니면 그대로
+  if(code < 0xAC00 || code > 0xD7A3) return ch;
   const idx = Math.floor((code - 0xAC00) / (21*28));
   return CHO[idx] || ch;
 }
@@ -295,31 +324,38 @@ function toChosung(str){
 (function ensureVersion(){
   const prev = localStorage.getItem(LS_VER);
   if(prev !== APP_VER){
-    // 상품 캐시는 살리고, 상태값은 전부 초기화(꼬임 제거)
     localStorage.setItem(LS_VER, APP_VER);
     localStorage.removeItem(LS_PINS);
     localStorage.removeItem(LS_CART);
     localStorage.removeItem(LS_REC);
     localStorage.removeItem(LS_USED);
     localStorage.removeItem(LS_HOLDS);
+    localStorage.removeItem(LS_CURH);
   }
 })();
 
 /* =============================
    상태
 ============================= */
-const CATS = ["과일","야채","봉채소","생선","기타"];
-let activeCat = "과일";   // 기본탭
-let sortMode = "pin+ord"; // 고정+ord
+const CATS = ["과일","야채","봉지채소","생선","기타"]; // ✅ 요청대로 변경
+let activeCat = "과일";
 let items = [];
 let pins = new Set(JSON.parse(localStorage.getItem(LS_PINS)||"[]"));
 let cart = JSON.parse(localStorage.getItem(LS_CART)||"{}"); // {id:qty}
 let used = JSON.parse(localStorage.getItem(LS_USED)||"{}"); // {id:count}
 let received = Number(localStorage.getItem(LS_REC)||"0") || 0;
-let holds = JSON.parse(localStorage.getItem(LS_HOLDS)||"[]"); // [{id,ts,cart,received,total,count}]
+let holds = JSON.parse(localStorage.getItem(LS_HOLDS)||"[]"); // [{id,ts,cart,total,cnt}]
+let currentHoldId = localStorage.getItem(LS_CURH) || ""; // ✅ 불러온 미수 id
+
+function setCurrentHold(id){
+  currentHoldId = id || "";
+  if(currentHoldId) localStorage.setItem(LS_CURH, currentHoldId);
+  else localStorage.removeItem(LS_CURH);
+  $("#modeHint").textContent = currentHoldId ? "미수 불러온 상태" : "일반 결제";
+}
 
 /* =============================
-   CSV 파서 (따옴표/콤마 안전)
+   CSV 파서
 ============================= */
 function parseCSV(text){
   const rows=[];
@@ -340,7 +376,6 @@ function parseCSV(text){
       cur+=ch;
     }
   }
-  // last
   if(cur.length || row.length){ pushCell(); pushRow(); }
   return rows;
 }
@@ -387,17 +422,16 @@ async function loadItems(){
       const price = parsePrice(line[iPrice]);
       const active = String(line[iActive]??"1").trim();
       const ordRaw = String(line[iOrd]??"").trim();
-      const ord = ordRaw==="" ? null : ordRaw; // 문자열 유지(001, 01 등 보존)
+      const ord = ordRaw==="" ? null : ordRaw;
       if(!id || !name) continue;
       if(active==="0" || active.toLowerCase()==="false") continue;
       out.push({
         id, cat, name, price,
         ord,
-        ordNum: ordRaw==="" ? 1e15 : Number(ordRaw) // 정렬용 숫자(없으면 뒤로)
+        ordNum: ordRaw==="" ? 1e15 : Number(ordRaw)
       });
     }
 
-    // cat 정리: 지정 외는 기타로
     out.forEach(x=>{
       if(!CATS.includes(x.cat)) x.cat="기타";
     });
@@ -407,10 +441,7 @@ async function loadItems(){
     renderAll();
     toast("상품 업데이트 완료");
   }catch(e){
-    // 캐시라도 있으면 OK
-    if(!items.length){
-      toast("CSV 로드 실패(시트 공유/게시 확인)");
-    }
+    if(!items.length) toast("CSV 로드 실패(시트 공유/게시 확인)");
   }
 }
 
@@ -447,36 +478,34 @@ function buildChosungKeys(){
   box.appendChild(clr);
 }
 
+/* ✅ 핵심: 검색은 "전품목(전체 items)" 기준으로 필터링 */
 function getFiltered(){
   const q = $("#q").value.trim();
   const qLow = q.toLowerCase();
   const qCho = toChosung(q);
 
-  // ✅ 검색은 “전체 품목” 대상, 탭은 ‘표시’에만 영향
   let list = items.slice();
 
-  // 탭 필터(검색어가 없을 때만 탭 의미 있게 / 검색 중엔 전체에서 걸러도 최종은 탭별로 보여주길 원하면 바꿔도 됨)
-  // 지금은: "표시는 탭 기준" 유지하되, 검색은 탭과 무관하게 필터가 걸리게
-  // => 탭 기준 먼저, 그 안에서 검색
-  list = list.filter(x=>x.cat===activeCat);
-
   if(q){
+    // 전품목 검색
     list = list.filter(x=>{
       const name = x.name.toLowerCase();
       const cat = x.cat.toLowerCase();
       const cho = toChosung(x.name);
       return name.includes(qLow) || cat.includes(qLow) || cho.includes(qCho);
     });
+    // ✅ 검색 중에는 탭 무시(전품목 결과 그대로 보여줌)
+  }else{
+    // 검색 없을 때만 탭 적용
+    list = list.filter(x=>x.cat===activeCat);
   }
 
-  // 정렬
+  // 정렬: 고정 우선 + ord
   list.sort((a,b)=>{
     const ap = pins.has(a.id) ? 0 : 1;
     const bp = pins.has(b.id) ? 0 : 1;
     if(ap!==bp) return ap-bp;
-    // ord 우선
     if(a.ordNum!==b.ordNum) return a.ordNum-b.ordNum;
-    // 많이 찍힌 순(옵션)
     const au = -(used[a.id]||0);
     const bu = -(used[b.id]||0);
     if(au!==bu) return au-bu;
@@ -494,16 +523,13 @@ function renderPinned(){
     .sort((a,b)=>a.ordNum-b.ordNum || a.name.localeCompare(b.name,"ko"));
 
   if(!pinnedItems.length){
-    box.innerHTML = `<div class="emptyPinned">고정 상품이 없습니다. (상품을 길게 눌러 고정)</div>`;
+    box.innerHTML = `<div class="emptyPinned">고정 상품이 없습니다. (길게 또는 📌 클릭)</div>`;
     return;
   }
-
-  pinnedItems.slice(0,12).forEach(x=>{
-    box.appendChild(makeCard(x, true));
-  });
+  pinnedItems.slice(0,12).forEach(x=>box.appendChild(makeCard(x)));
 }
 
-function makeCard(x, forcePinnedRow=false){
+function makeCard(x){
   const c = el("div",{className:"card"+(pins.has(x.id)?" pinnedCard":"")});
   const n = el("div",{className:"name", textContent:x.name});
   const p = el("div",{className:"price", textContent:krw(x.price)});
@@ -512,9 +538,14 @@ function makeCard(x, forcePinnedRow=false){
   const meta = el("div",{className:"meta", textContent:"사용 "+(used[x.id]||0)});
   c.append(n,p,chip,pin,meta);
 
+  // 📌 클릭 = 고정/해제 (PC 실무)
+  pin.addEventListener("click",(e)=>{
+    e.stopPropagation();
+    togglePin(x.id);
+  });
+
   // 클릭: 담기
-  c.addEventListener("click", (e)=>{
-    // 길게눌러에서 click도 들어오는 경우 방지
+  c.addEventListener("click", ()=>{
     if(c._longFired) { c._longFired=false; return; }
     addToCart(x.id, 1);
   });
@@ -542,9 +573,7 @@ function renderGrid(){
   list.forEach(x=>grid.appendChild(makeCard(x)));
 }
 
-function savePins(){
-  localStorage.setItem(LS_PINS, JSON.stringify(Array.from(pins)));
-}
+function savePins(){ localStorage.setItem(LS_PINS, JSON.stringify(Array.from(pins))); }
 function togglePin(id){
   if(pins.has(id)) pins.delete(id);
   else pins.add(id);
@@ -588,9 +617,8 @@ function renderCart(){
   const wrap=$("#cartWrap");
   wrap.innerHTML="";
 
-  // 최소 7줄 보이게(빈줄 채우기)
   const entries = Object.entries(cart);
-  // 표시 순서: 현재 탭 무관, 고정/ord 기준으로 보기 좋게
+
   entries.sort((a,b)=>{
     const ia = items.find(x=>x.id===a[0]); const ib = items.find(x=>x.id===b[0]);
     if(!ia && !ib) return 0;
@@ -623,7 +651,7 @@ function renderCart(){
     wrap.appendChild(row);
   });
 
-  // 빈줄 채우기
+  // 최소 7줄 보이게
   const minRows = 7;
   const need = Math.max(0, minRows - entries.length);
   for(let i=0;i<need;i++){
@@ -633,16 +661,15 @@ function renderCart(){
     wrap.appendChild(dummy);
   }
 
-  // totals
   const {total,cnt}=cartStats();
   $("#grandTotal").textContent = krw(total);
   $("#countLine").textContent = cnt.toLocaleString("ko-KR")+"개";
-
   $("#receivedVal").textContent = krw(received);
   $("#changeVal").textContent = krw(Math.max(0, received - total));
-
-  // 미수 버튼 표시
   $("#holdsBtn").textContent = `미수(${holds.length})`;
+
+  // 모드 힌트
+  setCurrentHold(currentHoldId);
 }
 
 function renderAll(){
@@ -653,7 +680,9 @@ function renderAll(){
 }
 
 /* =============================
-   미수(여러명) 기능
+   ✅ 미수(직원 빠른회전)
+   - 미수: 현재 장바구니 저장 후 즉시 비움(다음 손님)
+   - 미수완료: "불러온 미수" 건을 완료 처리(삭제) + 장바구니/받은돈 리셋
 ============================= */
 function pushHold(){
   const {total,cnt} = cartStats();
@@ -663,19 +692,41 @@ function pushHold(){
     id: "H"+Date.now(),
     ts: Date.now(),
     cart: {...cart},
-    received: received||0,
     total, cnt
   });
   saveHolds();
 
-  // 현재 계산은 비우고 다음 손님
+  // 다음 손님
   cart = {};
   received = 0;
   saveCart(); saveReceived();
+  // 불러온 미수 상태였으면 해제(새 손님)
+  setCurrentHold("");
   renderCart();
-  toast("미수로 저장됨");
+  toast("미수 저장됨");
 }
 
+function completeCurrentHold(){
+  if(!currentHoldId){
+    toast("불러온 미수가 없습니다");
+    return;
+  }
+  // 현재 미수 삭제(완료)
+  holds = holds.filter(h=>h.id !== currentHoldId);
+  saveHolds();
+
+  // 결제/완료 후 초기화
+  cart = {};
+  received = 0;
+  saveCart(); saveReceived();
+  setCurrentHold("");
+  renderCart();
+  toast("미수완료");
+}
+
+/* =============================
+   미수 목록 모달
+============================= */
 function openHolds(){
   $("#modal").classList.add("show");
   renderHoldsList();
@@ -696,21 +747,25 @@ function renderHoldsList(){
     const left = el("div",{});
     const t = new Date(h.ts);
     const time = `${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}`;
-    left.innerHTML = `<div class="hName">미수 ${idx+1} <span class="hint">(${time})</span></div>
+    const mark = (h.id===currentHoldId) ? " <span class='hint'>(불러옴)</span>" : "";
+    left.innerHTML = `<div class="hName">미수 ${idx+1}${mark} <span class="hint">(${time})</span></div>
                       <div class="hAmt">${krw(h.total)} · ${h.cnt}개</div>`;
+
     const btns = el("div",{className:"hBtns"});
     const load = el("button",{className:"hBtn", textContent:"불러오기"});
     const del  = el("button",{className:"hBtn del", textContent:"삭제"});
     load.onclick=()=>{
       cart = {...h.cart};
-      received = 0; // 새 결제 흐름으로 (원하면 h.received로 복원도 가능)
+      received = 0;
       saveCart(); saveReceived();
+      setCurrentHold(h.id);
       closeHolds();
       renderCart();
       toast("미수 불러옴");
     };
     del.onclick=()=>{
       holds = holds.filter(x=>x.id!==h.id);
+      if(h.id===currentHoldId) setCurrentHold("");
       saveHolds();
       renderCart();
       renderHoldsList();
@@ -725,11 +780,7 @@ function renderHoldsList(){
    이벤트
 ============================= */
 $("#q").addEventListener("input", ()=>renderAll());
-
-$("#sortBtn").onclick=()=>{
-  // 지금은 고정+ord 고정(실무 단순)
-  toast("정렬: 고정 + ord (고정)");
-};
+$("#sortBtn").onclick=()=>toast("정렬: 고정 + ord (고정)");
 
 document.querySelectorAll("[data-add]").forEach(b=>{
   b.onclick=()=>{
@@ -752,11 +803,15 @@ $("#checkout").onclick=()=>{
   cart = {};
   received = 0;
   saveCart(); saveReceived();
+  // 일반 결제하면 미수모드 해제(실무 혼선 방지)
+  setCurrentHold("");
   renderCart();
   toast("결제완료");
 };
 
 $("#holdNow").onclick=pushHold;
+$("#holdDone").onclick=completeCurrentHold;
+
 $("#holdsBtn").onclick=openHolds;
 $("#closeModal").onclick=closeHolds;
 $("#modal").addEventListener("click",(e)=>{ if(e.target.id==="modal") closeHolds(); });
@@ -768,6 +823,7 @@ $("#reloadBtn").onclick=()=>{ loadItems(); toast("새로고침"); };
 ============================= */
 buildTabs();
 buildChosungKeys();
+setCurrentHold(currentHoldId);
 renderAll();
 loadItems();
 </script>
