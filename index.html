@@ -725,13 +725,12 @@ const iOrd =
 
     const id = String(row[iId] ?? "").trim();
     let cat = String(row[iCat] ?? "").trim();
+    cat = cat.replace(/\s+/g,"").replace(/\u00A0/g,"");
+if (cat === "봉채소") cat = "봉지채소";
     const name = String(row[iName] ?? "").trim();
     const price = toNumber(row[iPrice]);
 
     if (!id || !name) continue;
-
-    /* ✅ 카테고리 자동 통일(봉채소 -> 봉지채소) */
-    if (cat === "봉채소") cat = "봉지채소";
 
     const active = (iActive >= 0) ? normalizeActive(row[iActive]) : 1;
     const ord = (iOrd >= 0) ? toInt(row[iOrd], 0) : 0;
