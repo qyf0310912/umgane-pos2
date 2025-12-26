@@ -681,12 +681,39 @@ async function syncItemsFromSheet({force=false} = {}) {
   const header = rows[0].map(h => String(h).trim());
   const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
 
-  const iId = idx("id");
-  const iCat = idx("cat");
-  const iName = idx("name");
-  const iPrice = idx("price");
-  const iActive = idx("active");
-  const iOrd = idx("ord");
+const iId =
+  idx("id") >= 0 ? idx("id") :
+  idx("ID") >= 0 ? idx("ID") :
+  idx("상품ID") >= 0 ? idx("상품ID") :
+  idx("코드");
+
+const iCat =
+  idx("cat") >= 0 ? idx("cat") :
+  idx("카테고리") >= 0 ? idx("카테고리") :
+  idx("분류");
+
+const iName =
+  idx("name") >= 0 ? idx("name") :
+  idx("품목") >= 0 ? idx("품목") :
+  idx("품목명") >= 0 ? idx("품목명") :
+  idx("상품명");
+
+const iPrice =
+  idx("price") >= 0 ? idx("price") :
+  idx("가격") >= 0 ? idx("가격") :
+  idx("단가");
+
+const iActive =
+  idx("active") >= 0 ? idx("active") :
+  idx("사용") >= 0 ? idx("사용") :
+  idx("활성") >= 0 ? idx("활성") :
+  idx("노출");
+
+const iOrd =
+  idx("ord") >= 0 ? idx("ord") :
+  idx("정렬") >= 0 ? idx("정렬") :
+  idx("순서");
+
 
   if (iId < 0 || iCat < 0 || iName < 0 || iPrice < 0) {
     throw new Error("시트 헤더가 부족함: id/cat/name/price 필수");
