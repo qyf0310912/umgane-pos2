@@ -515,23 +515,56 @@
 <div class="app">
   <section class="panel left">
     <div class="top">
-      <div class="tabs" id="tabs"></div>
+ <style>
+  .topRow{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:8px;
+  }
+  .leftGroup{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  #tabs{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .rightGroup{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+  }
+</style>
 
-      <div class="searchRow">
-        <div class="search">
-          <span class="muted">🔎</span>
-          <input id="q" placeholder="전카테고리 검색 (예: 감자, ㄱㅈ, ㄱㄴㄷ)" autocomplete="off" />
-        </div>
-        <button class="chipBtn" id="sortBtn">정렬: 고정 + ord</button>
-      </div>
+<div class="topRow">
+  <!-- ⬅️ 왼쪽 : 카테고리 -->
+  <div class="leftGroup">
+    <div id="tabs"></div>
+  </div>
 
-      <!-- ✅ 실무자용 새로고침 버튼 + 마지막 동기화 -->
-      <div class="syncWrap">
-        <button class="chipBtn" id="syncBtn">📄 상품 새로고침</button>
-        <div class="syncInfo" id="syncInfo">📅 오늘: - · ⏱ 마지막 동기화: -</div>
-      </div>
+  <!-- ➡️ 오른쪽 : 새로고침 / 정렬 -->
+  <div class="rightGroup">
+    <button class="chipBtn" id="syncBtn">📄 상품 새로고침</button>
+    <div class="syncInfo" id="syncInfo">오늘: - · 마지막 동기화: -</div>
+    <button class="chipBtn" id="sortBtn">정렬: 고정 + ord</button>
+  </div>
+</div>
 
-      <div class="chosungRow" id="keys"></div>
+<!-- 🔍 검색 -->
+<div class="searchRow">
+  <div class="search">
+    <span class="muted">🔍</span>
+    <input id="q" placeholder="전카테고리 검색 (예: 감자, ㄱㅈ, ㄱㄷ)" autocomplete="off" />
+  </div>
+</div>
+
+<div class="choseongRow" id="keys"></div>
 
       <div class="hint">
         검색=전품목(초성 가능) · 길게=고정/해제(PC 우클릭) · 클릭=담기
