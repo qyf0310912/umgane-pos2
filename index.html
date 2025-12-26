@@ -126,6 +126,10 @@
     white-space:nowrap;
   }
 
+  /* ✅ 실무자용: 동기화 버튼 + 마지막시간 */
+  .syncWrap{display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap;}
+  .syncInfo{font-size:12px; color:rgba(245,247,255,.65); white-space:nowrap;}
+
   .chosungRow{
     display:flex; gap:6px; flex-wrap:wrap;
     padding:10px 0 0;
@@ -458,11 +462,11 @@
     padding:12px;
     margin-bottom:10px;
     display:grid;
-    grid-template-columns: minmax(0,1fr) auto; /* 핵심 */
+    grid-template-columns: minmax(0,1fr) auto;
     gap:10px;
     align-items:center;
   }
-  .misuInfo{ min-width:0; } /* 핵심 */
+  .misuInfo{ min-width:0; }
 
   .misuInfo .t{
     font-size:var(--fs-14);
@@ -477,7 +481,6 @@
   .misuInfo .amt{ font-weight:800; color:rgba(245,247,255,.95); }
   .misuInfo .time{ color:rgba(245,247,255,.55); font-weight:600; font-size:var(--fs-12); }
 
-  /* ✅ 여기서 실제로 ... 먹게 */
   .misuInfo .d{
     margin-top:6px;
     font-size:var(--fs-13);
@@ -520,6 +523,12 @@
           <input id="q" placeholder="전카테고리 검색 (예: 감자, ㄱㅈ, ㄱㄴㄷ)" autocomplete="off" />
         </div>
         <button class="chipBtn" id="sortBtn">정렬: 고정 + ord</button>
+      </div>
+
+      <!-- ✅ 실무자용 새로고침 버튼 + 마지막 동기화 -->
+      <div class="syncWrap">
+        <button class="chipBtn" id="syncBtn">📄 상품 새로고침</button>
+        <div class="syncInfo" id="syncInfo">📅 오늘: - · ⏱ 마지막 동기화: -</div>
       </div>
 
       <div class="chosungRow" id="keys"></div>
@@ -681,39 +690,12 @@ async function syncItemsFromSheet({force=false} = {}) {
   const header = rows[0].map(h => String(h).trim());
   const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
 
-const iId =
-  idx("id") >= 0 ? idx("id") :
-  idx("ID") >= 0 ? idx("ID") :
-  idx("상품ID") >= 0 ? idx("상품ID") :
-  idx("코드");
-
-const iCat =
-  idx("cat") >= 0 ? idx("cat") :
-  idx("카테고리") >= 0 ? idx("카테고리") :
-  idx("분류");
-
-const iName =
-  idx("name") >= 0 ? idx("name") :
-  idx("품목") >= 0 ? idx("품목") :
-  idx("품목명") >= 0 ? idx("품목명") :
-  idx("상품명");
-
-const iPrice =
-  idx("price") >= 0 ? idx("price") :
-  idx("가격") >= 0 ? idx("가격") :
-  idx("단가");
-
-const iActive =
-  idx("active") >= 0 ? idx("active") :
-  idx("사용") >= 0 ? idx("사용") :
-  idx("활성") >= 0 ? idx("활성") :
-  idx("노출");
-
-const iOrd =
-  idx("ord") >= 0 ? idx("ord") :
-  idx("정렬") >= 0 ? idx("정렬") :
-  idx("순서");
-
+  const iId = idx("id");
+  const iCat = idx("cat");
+  const iName = idx("name");
+  const iPrice = idx("price");
+  const iActive = idx("active");
+  const iOrd = idx("ord");
 
   if (iId < 0 || iCat < 0 || iName < 0 || iPrice < 0) {
     throw new Error("시트 헤더가 부족함: id/cat/name/price 필수");
@@ -724,9 +706,11 @@ const iOrd =
     const row = rows[r];
 
     const id = String(row[iId] ?? "").trim();
+
     let cat = String(row[iCat] ?? "").trim();
-    cat = cat.replace(/\s+/g,"").replace(/\u00A0/g,"");
-if (cat === "봉채소") cat = "봉지채소";
+    cat = cat.replace(/\s+/g,"").replace(/\u00A0/g,""); // ✅ 공백/특수공백 제거
+    if (cat === "봉채소") cat = "봉지채소";            // ✅ 카테고리 통일
+
     const name = String(row[iName] ?? "").trim();
     const price = toNumber(row[iPrice]);
 
@@ -842,6 +826,10 @@ const elSaveMisu = document.getElementById("saveMisu");
 const elModalBack = document.getElementById("modalBack");
 const elMClose = document.getElementById("mClose");
 const elMisuList = document.getElementById("misuList");
+
+/* ✅ 동기화 버튼/표시 */
+const syncBtn = document.getElementById("syncBtn");
+const syncInfo = document.getElementById("syncInfo");
 
 /* ===============================
    유틸
@@ -1078,7 +1066,6 @@ function restoreMisu(idx){
   save(LS_CART, cart);
   save(LS_PAID, paid);
 
-  // 불러오면 모달 자동 닫힘(헷갈림 방지)
   closeMisu();
   renderAll();
 }
@@ -1102,7 +1089,7 @@ function settleMisu(idx){
 function deleteMisu(idx){
   const ok = confirm("이 미수를 삭제할까요?");
   if(!ok) return;
-  misu.splice(idx,1); /* ✅ 오타 수정(여기 때문에 안 뜨던 적 있음) */
+  misu.splice(idx,1);
   save(LS_MISU, misu);
 
   if(loadedMisuIndex === idx) loadedMisuIndex = null;
@@ -1341,7 +1328,88 @@ elSortBtn.addEventListener("click", ()=>{
   alert("현재 정렬은 '고정 + ord' 고정입니다.");
 });
 
+/* ===============================
+   ✅ 실무자용 동기화(버튼+자동)
+   - 버튼: 언제든 OK
+   - 자동: 장바구니 0개일 때만
+   - 동기화 중 잠금 + 10초 쿨다운
+   - 오늘 날짜 + 마지막 동기화 시간 표시
+================================= */
+const LS_LASTSYNC_UI = "umgane_lastSync_ui_v1";
+let syncing = false;
+let lastSyncTryAt = 0;
+
+function fmtKST(ts){
+  const d = new Date(ts);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mi = String(d.getMinutes()).padStart(2,"0");
+  return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+}
+function todayKST(){
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+function setSyncInfo(){
+  const t = Number(localStorage.getItem(LS_LASTSYNC_UI) || 0);
+  if (!syncInfo) return;
+  syncInfo.textContent = t
+    ? `📅 오늘: ${todayKST()} · ⏱ 마지막 동기화: ${fmtKST(t)}`
+    : `📅 오늘: ${todayKST()} · ⏱ 마지막 동기화: -`;
+}
+
+async function runSync({force=true, silent=false} = {}){
+  if (syncing) return;
+
+  const now = Date.now();
+  if (now - lastSyncTryAt < 10_000) { // ✅ 10초 쿨다운(연타 방지)
+    if(!silent) alert("⚠️ 잠깐만요. 10초 후 다시 눌러주세요.");
+    return;
+  }
+  lastSyncTryAt = now;
+
+  syncing = true;
+  if (syncBtn){
+    syncBtn.disabled = true;
+    syncBtn.textContent = "⏳ 동기화중...";
+  }
+
+  try{
+    await umganeSyncFromSheet({ force });
+    localStorage.setItem(LS_LASTSYNC_UI, String(Date.now()));
+    setSyncInfo();
+    if(!silent) alert("✅ 상품 새로고침 완료");
+  }catch(e){
+    if(!silent) alert("❌ 동기화 실패 (인터넷/시트 확인)");
+  }finally{
+    syncing = false;
+    if (syncBtn){
+      syncBtn.disabled = false;
+      syncBtn.textContent = "📄 상품 새로고침";
+    }
+  }
+}
+
+// ✅ 버튼 클릭 = 언제든 강제 새로고침
+syncBtn?.addEventListener("click", ()=> runSync({force:true, silent:false}));
+
+// ✅ 자동갱신(2분마다): 장바구니가 비었을 때만 (오늘 이미 동기화면 내부 로직이 스킵할 수 있음)
+setInterval(()=>{
+  try{
+    const cnt = cartCount();
+    if(cnt === 0){
+      runSync({force:false, silent:true});
+    }
+  }catch(e){}
+}, 120_000);
+
 /* 시작 */
+setSyncInfo();
 renderAll();
 </script>
 </body>
