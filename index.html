@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>엄가네 POS</title>
 
+<!-- favicon 404 없애기(선택) -->
+<link rel="icon" href="data:,">
+
 <style>
   :root{
     --bg:#0b0c10;
@@ -44,9 +47,8 @@
   }
 
   *{box-sizing:border-box}
-  html,body{
-    height:100%;margin:0;background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",Helvetica,Arial,sans-serif;
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
   }
   button{cursor:pointer;border:0;border-radius:12px}
   .mono{font-variant-numeric:tabular-nums;}
@@ -74,9 +76,18 @@
     padding:12px;
     border-bottom:1px solid var(--line);
   }
+
+  /* ✅ 탭 왼쪽 / 새로고침 오른쪽 */
+  .tabsRow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+  }
   .tabs{
     display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-    margin-bottom:10px;
   }
   .tab{
     padding:8px 12px;
@@ -92,7 +103,26 @@
     color:#fff;
   }
 
-  /* ✅ 검색줄: 정렬버튼 삭제해서 1줄만 */
+  .chipBtn{
+    padding:10px 12px;
+    font-size:var(--fs-13);
+    font-weight:var(--w-600);
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    color:rgba(245,247,255,.95);
+    border-radius:14px;
+    white-space:nowrap;
+  }
+
+  .syncWrap{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .syncInfo{font-size:12px; color:rgba(245,247,255,.65); white-space:nowrap;}
+
   .searchRow{
     display:grid;
     grid-template-columns: 1fr;
@@ -117,32 +147,18 @@
     font-size:var(--fs-14);
     font-weight:var(--w-500);
   }
-  .chipBtn{
-    padding:10px 12px;
-    font-size:var(--fs-13);
-    font-weight:var(--w-600);
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:rgba(245,247,255,.95);
-    border-radius:14px;
-    white-space:nowrap;
-  }
 
-  /* ✅ 실무자용: 동기화 버튼 + 마지막시간 */
-  .syncWrap{display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap;}
-  .syncInfo{font-size:12px; color:rgba(245,247,255,.65); white-space:nowrap;}
-
-  /* ✅ 초성키: 무조건 가로(줄바꿈)로 유지 */
+  /* ✅ 초성키: 가로 고정 */
   .chosungRow{
     display:flex;
-    flex-direction:row;
+    flex-direction:row !important;
     gap:6px;
     flex-wrap:wrap;
     padding:10px 0 0;
     align-items:center;
+    justify-content:flex-start;
   }
   .key{
-    flex: 0 0 auto;
     width:38px;height:34px;
     display:flex;align-items:center;justify-content:center;
     border:1px solid var(--line);
@@ -461,7 +477,6 @@
     font-weight:700;
   }
 
-  /* ✅ 미수 리스트 버튼 밀림 방지 + ... 처리 */
   .misuItem{
     border:1px solid var(--line);
     background:rgba(255,255,255,.02);
@@ -474,7 +489,6 @@
     align-items:center;
   }
   .misuInfo{ min-width:0; }
-
   .misuInfo .t{
     font-size:var(--fs-14);
     font-weight:700;
@@ -487,7 +501,6 @@
   }
   .misuInfo .amt{ font-weight:800; color:rgba(245,247,255,.95); }
   .misuInfo .time{ color:rgba(245,247,255,.55); font-weight:600; font-size:var(--fs-12); }
-
   .misuInfo .d{
     margin-top:6px;
     font-size:var(--fs-13);
@@ -497,7 +510,6 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
-
   .misuBtns{ display:flex; gap:8px; }
   .btn2{
     padding:10px 12px;
@@ -522,19 +534,22 @@
 <div class="app">
   <section class="panel left">
     <div class="top">
-      <div class="tabs" id="tabs"></div>
+
+      <!-- ✅ 탭(왼쪽) / 새로고침(오른쪽) -->
+      <div class="tabsRow">
+        <div class="tabs" id="tabs"></div>
+
+        <div class="syncWrap">
+          <button class="chipBtn" id="syncBtn">📄 상품 새로고침</button>
+          <div class="syncInfo" id="syncInfo">📅 오늘: - · ⏱ 마지막 동기화: -</div>
+        </div>
+      </div>
 
       <div class="searchRow">
         <div class="search">
           <span class="muted">🔎</span>
           <input id="q" placeholder="전카테고리 검색 (예: 감자, ㄱㅈ, ㄱㄴㄷ)" autocomplete="off" />
         </div>
-      </div>
-
-      <!-- ✅ 실무자용 새로고침 버튼 + 마지막 동기화 -->
-      <div class="syncWrap">
-        <button class="chipBtn" id="syncBtn">📄 상품 새로고침</button>
-        <div class="syncInfo" id="syncInfo">📅 오늘: - · ⏱ 마지막 동기화: -</div>
       </div>
 
       <div class="chosungRow" id="keys"></div>
@@ -665,14 +680,12 @@ function saveItemsToLS(items){
   localStorage.setItem(LS_ITEMS, JSON.stringify(items));
   localStorage.setItem(LS_LASTSYNC, nowISO());
 }
-
 function loadItemsFromLS(){
   try {
     const raw = localStorage.getItem(LS_ITEMS);
     return raw ? JSON.parse(raw) : [];
   } catch { return []; }
 }
-
 function isSameDay(isoA, isoB){
   try{
     const a = new Date(isoA), b = new Date(isoB);
@@ -714,7 +727,7 @@ async function syncItemsFromSheet({force=false} = {}) {
 
     let cat = String(row[iCat] ?? "").trim();
     cat = cat.replace(/\s+/g,"").replace(/\u00A0/g,"");
-    if (cat === "봉채소") cat = "봉지채소";
+    if (cat === "봉채소") cat = "봉지채소"; // 카테고리 통일
 
     const name = String(row[iName] ?? "").trim();
     const price = toNumber(row[iPrice]);
@@ -732,19 +745,16 @@ async function syncItemsFromSheet({force=false} = {}) {
   }
 
   saveItemsToLS(items);
-
   try { renderAll(); } catch {}
   return { ok:true, skipped:false, count: items.length };
 }
 
 window.umganeSyncFromSheet = syncItemsFromSheet;
 
+// 페이지 열릴 때 1회 자동 동기화(오늘 했으면 스킵)
 (async () => {
-  try {
-    await syncItemsFromSheet({ force:false });
-  } catch (e) {
-    console.warn("[SHEET SYNC FAIL]", e?.message || e);
-  }
+  try { await syncItemsFromSheet({ force:false }); }
+  catch (e) { console.warn("[SHEET SYNC FAIL]", e?.message || e); }
 })();
 
 /* ===============================
@@ -753,6 +763,7 @@ window.umganeSyncFromSheet = syncItemsFromSheet;
 const CATS = ["전체","과일","야채","봉지채소","생선","기타"];
 const CHO_KEYS = ["ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
 const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+
 function getChosungChar(ch){
   const code = ch.charCodeAt(0);
   if(code < 0xAC00 || code > 0xD7A3) return ch;
@@ -765,17 +776,50 @@ function toChosung(str){
 function normalize(str){ return (str||"").toString().trim().toLowerCase(); }
 
 /* ===============================
-   로드/세이브
+   로드/세이브 + ✅ 안정화(형태 섞임 방지)
 ================================= */
-function load(key, fallback){
+function loadRaw(key, fallback){
   try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
   catch(e){ return fallback; }
 }
 function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
 
-/* ✅ 시드: 상품이 없으면 자동 생성 */
+/* ✅ cart가 배열/객체 섞여도 무조건 객체로 정리 */
+function normalizeCart(v){
+  if (!v) return {};
+  if (Array.isArray(v)){
+    const out = {};
+    v.forEach(x=>{
+      if(!x) return;
+      const id = String(x.id ?? x.name ?? "");
+      if(!id) return;
+      out[id] = { id, name:String(x.name||""), price:Number(x.price||0), qty:Number(x.qty||1) };
+    });
+    return out;
+  }
+  if (typeof v === "object"){
+    // 값이 배열로 들어있는 케이스까지 방어
+    const out = {};
+    for(const k of Object.keys(v)){
+      const x = v[k];
+      if(!x) continue;
+      if(Array.isArray(x)) continue;
+      const id = String(x.id ?? k);
+      out[id] = { id, name:String(x.name||""), price:Number(x.price||0), qty:Number(x.qty||1) };
+    }
+    return out;
+  }
+  return {};
+}
+
+function normalizePins(v){
+  if (!v) return {};
+  if (typeof v === "object" && !Array.isArray(v)) return v;
+  return {};
+}
+
 function seedItemsIfEmpty(){
-  const existing = load(LS_ITEMS, null);
+  const existing = loadRaw(LS_ITEMS, null);
   if(existing && Array.isArray(existing) && existing.length) return;
 
   const sample = [
@@ -792,15 +836,15 @@ seedItemsIfEmpty();
 /* ===============================
    상태
 ================================= */
-let items = load(LS_ITEMS, []);
-let pins  = load(LS_PINS, {});
-let cart  = load(LS_CART, {});
-let paid  = load(LS_PAID, 0);
-let misu  = load(LS_MISU, []);
+let items = loadRaw(LS_ITEMS, []);
+let pins  = normalizePins(loadRaw(LS_PINS, {}));
+let cart  = normalizeCart(loadRaw(LS_CART, {}));
+let paid  = loadRaw(LS_PAID, 0);
+let misu  = loadRaw(LS_MISU, []);
 let activeCat = "전체";
 let query = "";
 
-/* ✅ “미수 불러오기 후 결제” 중복 방지용 */
+/* 미수 불러오기 중복 방지 */
 let loadedMisuIndex = null;
 
 /* ===============================
@@ -828,7 +872,7 @@ const elModalBack = document.getElementById("modalBack");
 const elMClose = document.getElementById("mClose");
 const elMisuList = document.getElementById("misuList");
 
-/* ✅ 동기화 버튼/표시 */
+/* 동기화 버튼/표시 */
 const syncBtn = document.getElementById("syncBtn");
 const syncInfo = document.getElementById("syncInfo");
 
@@ -851,13 +895,15 @@ function matchItem(it, q){
   const name = normalize(it.name);
   const qn = normalize(q);
   if(name.includes(qn)) return true;
+
   const nameCho = toChosung(it.name);
   const qCho = qn.replace(/\s+/g,"");
   if(nameCho.includes(qCho)) return true;
+
   return false;
 }
 
-/* ✅ 핵심: 검색어가 있으면 카테고리 무시하고 '전체'에서 검색 */
+/* ✅ 검색/초성은 항상 전카테고리 */
 function visibleItems(){
   const q = query.trim();
   let list = items.filter(it => Number(it.active) === 1);
@@ -900,6 +946,7 @@ function renderKeys(){
     };
     elKeys.appendChild(d);
   });
+
   const del = document.createElement("div");
   del.className = "key danger";
   del.textContent = "X";
@@ -924,14 +971,20 @@ function togglePin(id){
 /* ===============================
    장바구니
 ================================= */
+function persistCart(){
+  cart = normalizeCart(cart);
+  save(LS_CART, cart);
+}
+
 function addToCart(it){
   if(Number(it.active)!==1) return;
-  if(!cart[it.id]){
-    cart[it.id] = {id:it.id, name:it.name, price:Number(it.price||0), qty:1};
+  const id = it.id;
+  if(!cart[id]){
+    cart[id] = {id, name:it.name, price:Number(it.price||0), qty:1};
   }else{
-    cart[it.id].qty += 1;
+    cart[id].qty += 1;
   }
-  save(LS_CART, cart);
+  persistCart();
   renderAll();
 }
 
@@ -939,13 +992,13 @@ function setQty(id, qty){
   if(!cart[id]) return;
   cart[id].qty = qty;
   if(cart[id].qty <= 0) delete cart[id];
-  save(LS_CART, cart);
+  persistCart();
   renderAll();
 }
 
 function removeCart(id){
   delete cart[id];
-  save(LS_CART, cart);
+  persistCart();
   renderAll();
 }
 
@@ -960,7 +1013,7 @@ function resetCartAll(){
   renderAll();
 }
 
-function cartEntries(){ return Object.values(cart); }
+function cartEntries(){ return Object.values(normalizeCart(cart)); }
 function cartCount(){ return cartEntries().reduce((a,x)=>a+(x.qty||0),0); }
 function cartTotal(){ return cartEntries().reduce((a,x)=>a+(x.qty||0)*(x.price||0),0); }
 
@@ -991,7 +1044,7 @@ function doPay(){
   beep();
 
   if(loadedMisuIndex !== null){
-    misu = load(LS_MISU, misu);
+    misu = loadRaw(LS_MISU, misu);
     if(misu[loadedMisuIndex]){
       misu.splice(loadedMisuIndex, 1);
       save(LS_MISU, misu);
@@ -1006,7 +1059,6 @@ function doPay(){
   renderAll();
 }
 
-/* 받은돈 */
 function addPaid(n){
   paid = Math.max(0, (Number(paid)||0) + Number(n||0));
   save(LS_PAID, paid);
@@ -1028,10 +1080,10 @@ function saveMisuNow(){
   if(amount<=0 || entries.length===0) return;
 
   const now = new Date();
-  const id = "미수 " + (load(LS_MISU, misu).length + 1);
+  const id = "미수 " + (loadRaw(LS_MISU, misu).length + 1);
   const names = entries.map(x=>({name:x.name, qty:x.qty}));
 
-  misu = load(LS_MISU, misu);
+  misu = loadRaw(LS_MISU, misu);
   misu.unshift({ id, at: now.toISOString(), items: names, amount });
   save(LS_MISU, misu);
 
@@ -1202,7 +1254,7 @@ function renderGrid(){
 }
 
 /* ===============================
-   장바구니 렌더
+   장바구니 렌더 (✅ forEach 에러 방지)
 ================================= */
 function renderCart(){
   elCartList.innerHTML = "";
@@ -1263,7 +1315,6 @@ function renderCart(){
   });
 }
 
-/* 합계/받은돈/거스름돈/미수수 */
 function renderSummary(){
   const cnt = cartCount();
   const total = cartTotal();
@@ -1277,15 +1328,18 @@ function renderSummary(){
   elMisuPill.textContent = `미수(${misu.length})`;
 }
 
-/* 전체 렌더 */
 function renderAll(){
   seedItemsIfEmpty();
 
-  items = load(LS_ITEMS, items);
-  pins  = load(LS_PINS, pins);
-  cart  = load(LS_CART, cart);
-  paid  = load(LS_PAID, paid);
-  misu  = load(LS_MISU, misu);
+  items = loadRaw(LS_ITEMS, items);
+  pins  = normalizePins(loadRaw(LS_PINS, pins));
+  cart  = normalizeCart(loadRaw(LS_CART, cart));
+  paid  = loadRaw(LS_PAID, paid);
+  misu  = loadRaw(LS_MISU, misu);
+
+  // 🔥 혹시 예전 데이터 섞여있으면 여기서 한번 저장해 정리
+  save(LS_CART, cart);
+  save(LS_PINS, pins);
 
   renderTabs();
   renderKeys();
@@ -1325,7 +1379,7 @@ elModalBack.addEventListener("click", (e)=>{
 elMClose.addEventListener("click", closeMisu);
 
 /* ===============================
-   ✅ 실무자용 동기화(버튼+자동)
+   동기화 UI
 ================================= */
 const LS_LASTSYNC_UI = "umgane_lastSync_ui_v1";
 let syncing = false;
@@ -1349,7 +1403,6 @@ function todayKST(){
 }
 function setSyncInfo(){
   const t = Number(localStorage.getItem(LS_LASTSYNC_UI) || 0);
-  if (!syncInfo) return;
   syncInfo.textContent = t
     ? `📅 오늘: ${todayKST()} · ⏱ 마지막 동기화: ${fmtKST(t)}`
     : `📅 오늘: ${todayKST()} · ⏱ 마지막 동기화: -`;
@@ -1366,10 +1419,8 @@ async function runSync({force=true, silent=false} = {}){
   lastSyncTryAt = now;
 
   syncing = true;
-  if (syncBtn){
-    syncBtn.disabled = true;
-    syncBtn.textContent = "⏳ 동기화중...";
-  }
+  syncBtn.disabled = true;
+  syncBtn.textContent = "⏳ 동기화중...";
 
   try{
     await umganeSyncFromSheet({ force });
@@ -1380,14 +1431,12 @@ async function runSync({force=true, silent=false} = {}){
     if(!silent) alert("❌ 동기화 실패 (인터넷/시트 확인)");
   }finally{
     syncing = false;
-    if (syncBtn){
-      syncBtn.disabled = false;
-      syncBtn.textContent = "📄 상품 새로고침";
-    }
+    syncBtn.disabled = false;
+    syncBtn.textContent = "📄 상품 새로고침";
   }
 }
 
-syncBtn?.addEventListener("click", ()=> runSync({force:true, silent:false}));
+syncBtn.addEventListener("click", ()=> runSync({force:true, silent:false}));
 
 setInterval(()=>{
   try{
@@ -1398,7 +1447,6 @@ setInterval(()=>{
   }catch(e){}
 }, 120_000);
 
-/* 시작 */
 setSyncInfo();
 renderAll();
 </script>
