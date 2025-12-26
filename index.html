@@ -18,6 +18,7 @@
     --bad:#ff3b30;
     --r:18px;
 
+    /* ===== “마지막 사진” 기준 폰트/굵기 ===== */
     --fs-12:12px;
     --fs-13:13px;
     --fs-14:14px;
@@ -30,15 +31,19 @@
     --w-500:500;
     --w-600:600;
 
+    /* 오른쪽 결제창 폭 (PC 스샷 기준) */
     --right-w: 420px;
 
+    /* 장바구니 한 줄 정렬 폭 */
     --cart-price-w: 92px;
     --cart-qty-w:   120px;
     --cart-x-w:      44px;
 
+    /* 카드 최소 폭 (이 값으로 4↔5열 자동 전환됨) */
     --card-min: 210px;
   }
 
+  /* iPad 가로(대부분 1024~1366)에서도 PC 스샷 느낌 “고정” */
   @media (min-width:1024px) and (max-width:1400px){
     :root{
       --right-w:420px;
@@ -55,6 +60,7 @@
   .muted{color:var(--muted)}
   .hide{display:none !important;}
 
+  /* ===== 레이아웃 ===== */
   .app{
     height:100%;
     display:grid;
@@ -72,6 +78,7 @@
   .left{display:flex; flex-direction:column;}
   .right{display:flex; flex-direction:column;}
 
+  /* ===== 상단(카테고리/검색) ===== */
   .top{
     padding:12px;
     border-bottom:1px solid var(--line);
@@ -150,6 +157,7 @@
     border-color:rgba(255,59,48,.35);
   }
 
+  /* ✅ 안내문구 2줄 → 1줄 */
   .hint{
     margin-top:8px;
     font-size:var(--fs-12);
@@ -160,6 +168,7 @@
     text-overflow:ellipsis;
   }
 
+  /* ===== 상품 그리드 (자동 4↔5열) ===== */
   .gridWrap{
     padding:12px;
     overflow:auto;
@@ -224,6 +233,7 @@
     filter:grayscale(.55);
   }
 
+  /* ===== 오른쪽 장바구니 ===== */
   .rightTop{
     padding:12px;
     border-bottom:1px solid var(--line);
@@ -317,6 +327,7 @@
     font-weight:700;
   }
 
+  /* ✅ 장바구니 더 많이 보이게: 요약 영역 “세로 압축” */
   .summary{
     border-top:1px solid var(--line);
     padding:10px 12px;
@@ -417,6 +428,7 @@
     padding:12px 10px;
   }
 
+  /* ===== 미수 모달 ===== */
   .modalBack{
     position:fixed; inset:0;
     background:rgba(0,0,0,.62);
@@ -529,6 +541,7 @@
 <body>
 <div class="app">
 
+  <!-- ================== LEFT ================== -->
   <section class="panel left">
     <div class="top">
       <div class="tabs" id="tabs"></div>
@@ -554,6 +567,7 @@
     </div>
   </section>
 
+  <!-- ================== RIGHT ================== -->
   <section class="panel right">
     <div class="rightTop">
       <div class="rightTitle"><span class="pill accent" id="misuPill">미수(0)</span></div>
@@ -598,6 +612,7 @@
   </section>
 </div>
 
+<!-- ================== 미수 모달 ================== -->
 <div class="modalBack" id="modalBack">
   <div class="modal">
     <div class="modalHead">
@@ -618,9 +633,19 @@ const LS_CART  = "umgane_cart_v2";
 const LS_PAID  = "umgane_paid_v2";
 const LS_MISU  = "umgane_misu_v2";
 
+/* =========================================================
+   카테고리
+========================================================= */
 const CATS = ["전체","과일","야채","봉지채소","생선","기타"];
+
+/* =========================================================
+   초성 키패드
+========================================================= */
 const CHO_KEYS = ["ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
 
+/* =========================================================
+   초성 추출
+========================================================= */
 const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
 function getChosungChar(ch){
   const code = ch.charCodeAt(0);
@@ -635,6 +660,9 @@ function normalize(str){
   return (str||"").toString().trim().toLowerCase();
 }
 
+/* =========================================================
+   데이터 로드/세이브
+========================================================= */
 function load(key, fallback){
   try{
     const v = localStorage.getItem(key);
@@ -645,6 +673,9 @@ function save(key, value){
   localStorage.setItem(key, JSON.stringify(value));
 }
 
+/* =========================================================
+   아이템 데이터
+========================================================= */
 function seedItemsIfEmpty(){
   const existing = load(LS_ITEMS, null);
   if(existing && Array.isArray(existing) && existing.length) return;
@@ -660,6 +691,9 @@ function seedItemsIfEmpty(){
 }
 seedItemsIfEmpty();
 
+/* =========================================================
+   상태
+========================================================= */
 let items = load(LS_ITEMS, []);
 let pins  = load(LS_PINS, {});
 let cart  = load(LS_CART, {});
@@ -669,6 +703,12 @@ let misu  = load(LS_MISU, []);
 let activeCat = "전체";
 let query = "";
 
+/* ✅ 추가: “불러온 미수” 추적 (결제완료 시 자동 삭제용) */
+let currentMisuIndex = null;
+
+/* =========================================================
+   UI 엘리먼트
+========================================================= */
 const elTabs = document.getElementById("tabs");
 const elKeys = document.getElementById("keys");
 const elGrid = document.getElementById("grid");
@@ -676,16 +716,33 @@ const elQ = document.getElementById("q");
 const elSortBtn = document.getElementById("sortBtn");
 
 const elCartList = document.getElementById("cartList");
+const elSumCnt = document.getElementById("sumCnt");
+const elSumMoney = document.getElementById("sumMoney");
+const elPaidMoney = document.getElementById("paidMoney");
+const elChangeMoney = document.getElementById("changeMoney");
+
+const elCartPill = document.getElementById("cartPill");
+const elMisuPill = document.getElementById("misuPill");
+
+const elPayBtn = document.getElementById("payBtn");
+const elPaidReset = document.getElementById("paidReset");
+const elSaveMisu = document.getElementById("saveMisu");
 
 const elModalBack = document.getElementById("modalBack");
 const elMClose = document.getElementById("mClose");
 const elMisuList = document.getElementById("misuList");
 
+/* =========================================================
+   숫자 포맷
+========================================================= */
 function won(n){
   const x = Math.round(Number(n)||0);
   return x.toLocaleString("ko-KR") + "원";
 }
 
+/* =========================================================
+   정렬
+========================================================= */
 function getSorted(list){
   const pinned = [];
   const normal = [];
@@ -698,6 +755,9 @@ function getSorted(list){
   return [...pinned, ...normal];
 }
 
+/* =========================================================
+   검색 필터
+========================================================= */
 function matchItem(it, q){
   if(!q) return true;
 
@@ -726,6 +786,9 @@ function visibleItems(){
   return getSorted(list);
 }
 
+/* =========================================================
+   렌더: 탭/키패드
+========================================================= */
 function renderTabs(){
   elTabs.innerHTML = "";
   CATS.forEach(cat=>{
@@ -765,12 +828,18 @@ function renderKeys(){
   elKeys.appendChild(del);
 }
 
+/* =========================================================
+   고정(핀)
+========================================================= */
 function togglePin(id){
   pins[id] = !pins[id];
   save(LS_PINS, pins);
   renderAll();
 }
 
+/* =========================================================
+   장바구니
+========================================================= */
 function addToCart(it){
   if(Number(it.active)!==1) return;
   if(!cart[it.id]){
@@ -800,6 +869,7 @@ function resetCartAll(){
   paid = 0;
   save(LS_CART, cart);
   save(LS_PAID, paid);
+  currentMisuIndex = null; // ✅ 미수 불러온 상태도 해제
   renderAll();
 }
 function cartEntries(){
@@ -812,6 +882,9 @@ function cartTotal(){
   return cartEntries().reduce((a,x)=>a+(x.qty||0)*(x.price||0),0);
 }
 
+/* =========================================================
+   삑 소리
+========================================================= */
 let audioCtx=null;
 function beep(){
   try{
@@ -827,6 +900,9 @@ function beep(){
   }catch(e){}
 }
 
+/* =========================================================
+   결제완료
+========================================================= */
 function doPay(){
   const total = cartTotal();
   if(total<=0) return;
@@ -835,6 +911,14 @@ function doPay(){
   if(!ok) return;
 
   beep();
+
+  /* ✅ 핵심: “미수 불러온 결제”면 결제완료 순간에 미수도 자동 삭제 */
+  if(currentMisuIndex !== null && misu[currentMisuIndex]){
+    misu.splice(currentMisuIndex, 1);
+    save(LS_MISU, misu);
+    currentMisuIndex = null;
+  }
+
   cart = {};
   paid = 0;
   save(LS_CART, cart);
@@ -842,15 +926,18 @@ function doPay(){
   renderAll();
 }
 
+/* =========================================================
+   받은돈
+========================================================= */
 function addPaid(n){
   paid = Math.max(0, (Number(paid)||0) + Number(n||0));
   save(LS_PAID, paid);
   renderAll();
 }
 
-/* =========================
+/* =========================================================
    미수
-========================= */
+========================================================= */
 function openMisu(){
   elModalBack.style.display = "flex";
   renderMisuList();
@@ -859,7 +946,7 @@ function closeMisu(){
   elModalBack.style.display = "none";
 }
 
-/* ✅ 저장 구조 업그레이드: id/name/qty/price 저장 */
+/* ✅ 변경1: 미수 저장은 “저장만” (모달 자동오픈 제거) */
 function saveMisuNow(){
   const entries = cartEntries();
   const amount = cartTotal();
@@ -867,15 +954,9 @@ function saveMisuNow(){
 
   const now = new Date();
   const id = "미수 " + (misu.length + 1);
+  const names = entries.map(x=>({name:x.name, qty:x.qty}));
 
-  const savedItems = entries.map(x=>({
-    id: x.id,
-    name: x.name,
-    qty: x.qty,
-    price: x.price
-  }));
-
-  misu.unshift({ id, at: now.toISOString(), items: savedItems, amount });
+  misu.unshift({ id, at: now.toISOString(), items: names, amount });
   save(LS_MISU, misu);
 
   cart = {};
@@ -883,313 +964,29 @@ function saveMisuNow(){
   save(LS_CART, cart);
   save(LS_PAID, paid);
 
+  currentMisuIndex = null;
   renderAll();
-  openMisu();
+  alert("미수 저장 완료");
 }
 
-/* ✅ 불러오기 방탄: 옛날(name/qty만) 미수도 복원 가능 */
+/* ✅ 불러오기: 장바구니로 가져오면서 “이 미수에서 왔다” 표시 */
 function restoreMisu(idx){
   const m = misu[idx];
   if(!m) return;
 
   const next = {};
-
-  for(const it of (m.items||[])){
-    // 신버전(id가 있으면) 우선
-    if(it.id && items.find(x=>x.id===it.id)){
-      const found = items.find(x=>x.id===it.id);
-      next[found.id] = {
-        id: found.id,
-        name: found.name,
-        price: Number(found.price||0),
-        qty: Number(it.qty||1)
-      };
-      continue;
-    }
-
-    // 구버전(name/qty만) 매칭
-    const foundByName = items.find(x=>x.name===it.name) || items.find(x=>normalize(x.name)===normalize(it.name));
-    if(foundByName){
-      next[foundByName.id] = {
-        id: foundByName.id,
-        name: foundByName.name,
-        price: Number(foundByName.price||0),
-        qty: Number(it.qty||1)
-      };
+  for(const it of m.items){
+    const found = items.find(x=>x.name===it.name);
+    if(found){
+      next[found.id] = {id:found.id, name:found.name, price:Number(found.price||0), qty:Number(it.qty||1)};
     }else{
-      const tmpId = "TMP_" + (it.name||"미확인");
-      next[tmpId] = { id: tmpId, name: it.name||"미확인", price: Number(it.price||0), qty: Number(it.qty||1) };
+      const tmpId = "TMP_"+it.name;
+      next[tmpId] = {id:tmpId, name:it.name, price:0, qty:Number(it.qty||1)};
     }
   }
-
   cart = next;
   paid = 0;
   save(LS_CART, cart);
   save(LS_PAID, paid);
 
-  renderAll();
-  closeMisu();
-}
-
-function settleMisu(idx){
-  const m = misu[idx];
-  if(!m) return;
-  const ok = confirm(`${m.id} (${won(m.amount||0)}) 결제완료 처리할까요?`);
-  if(!ok) return;
-  beep();
-  misu.splice(idx,1);
-  save(LS_MISU, misu);
-  renderMisuList();
-  renderAll();
-}
-function deleteMisu(idx){
-  const ok = confirm("이 미수를 삭제할까요?");
-  if(!ok) return;
-  misu.splice(idx,1);
-  save(LS_MISU, misu);
-  renderMisuList();
-  renderAll();
-}
-function renderMisuList(){
-  elMisuList.innerHTML = "";
-  if(!misu.length){
-    elMisuList.innerHTML = `<div class="muted" style="padding:8px 6px;">미수 내역이 없습니다.</div>`;
-    return;
-  }
-
-  misu.forEach((m, idx)=>{
-    const date = new Date(m.at);
-    const hh = String(date.getHours()).padStart(2,"0");
-    const mm = String(date.getMinutes()).padStart(2,"0");
-
-    const itemsText = (m.items||[]).map(x=>{
-      const nm = x.name || "미확인";
-      const q = x.qty || 1;
-      return `${nm}x${q}`;
-    }).join(" · ");
-
-    const wrap = document.createElement("div");
-    wrap.className = "misuItem";
-
-    const left = document.createElement("div");
-    left.className = "misuInfo";
-    left.innerHTML = `
-      <div class="t">
-        <span>${m.id}</span>
-        <span class="amt mono">· ${won(m.amount||0)}</span>
-        <span class="time">(${hh}:${mm})</span>
-      </div>
-      <div class="d">${itemsText}</div>
-    `;
-
-    const right = document.createElement("div");
-    right.className = "misuBtns";
-
-    const bPay = document.createElement("button");
-    bPay.className = "btn2 good";
-    bPay.textContent = "결제완료";
-    bPay.onclick = ()=>settleMisu(idx);
-
-    const bLoad = document.createElement("button");
-    bLoad.className = "btn2";
-    bLoad.textContent = "불러오기";
-    bLoad.onclick = ()=>restoreMisu(idx);
-
-    const bDel = document.createElement("button");
-    bDel.className = "btn2 danger";
-    bDel.textContent = "삭제";
-    bDel.onclick = ()=>deleteMisu(idx);
-
-    right.appendChild(bPay);
-    right.appendChild(bLoad);
-    right.appendChild(bDel);
-
-    wrap.appendChild(left);
-    wrap.appendChild(right);
-    elMisuList.appendChild(wrap);
-  });
-}
-
-let pressTimer=null;
-function renderGrid(){
-  const list = visibleItems();
-  elGrid.innerHTML = "";
-
-  list.forEach(it=>{
-    const card = document.createElement("div");
-    card.className = "card" + (Number(it.active)!==1 ? " inactive":"");
-
-    const n = document.createElement("div");
-    n.className = "cardName";
-    n.textContent = it.name;
-
-    const p = document.createElement("div");
-    p.className = "cardPrice mono";
-    p.textContent = won(it.price||0);
-
-    const pin = document.createElement("div");
-    pin.className = "pin " + (pins[it.id] ? "" : "off");
-    pin.textContent = "📌";
-    pin.title = "고정";
-    pin.onclick = (e)=>{
-      e.stopPropagation();
-      togglePin(it.id);
-    };
-
-    card.onclick = ()=>addToCart(it);
-
-    card.oncontextmenu = (e)=>{
-      e.preventDefault();
-      togglePin(it.id);
-      return false;
-    };
-    card.addEventListener("touchstart", ()=>{
-      pressTimer = setTimeout(()=>togglePin(it.id), 450);
-    }, {passive:true});
-    card.addEventListener("touchend", ()=>{
-      if(pressTimer) clearTimeout(pressTimer);
-    }, {passive:true});
-
-    card.appendChild(n);
-    card.appendChild(p);
-    card.appendChild(pin);
-
-    elGrid.appendChild(card);
-  });
-}
-
-function renderCart(){
-  elCartList.innerHTML = "";
-
-  const entries = cartEntries();
-  if(!entries.length){
-    elCartList.innerHTML = `<div class="muted" style="padding:10px 8px;">—</div>`;
-    return;
-  }
-
-  const orderMap = new Map(items.map(x=>[x.id, Number(x.ord||0)]));
-  entries.sort((a,b)=> (orderMap.get(a.id)||9999)-(orderMap.get(b.id)||9999));
-
-  entries.forEach(x=>{
-    const row = document.createElement("div");
-    row.className = "cartRow";
-
-    const name = document.createElement("div");
-    name.className = "cartName";
-    name.textContent = `${x.name} x${x.qty}`;
-
-    const price = document.createElement("div");
-    price.className = "cartPrice mono";
-    price.textContent = won((x.price||0)*(x.qty||0));
-
-    const qty = document.createElement("div");
-    qty.className = "qtyBox";
-
-    const minus = document.createElement("button");
-    minus.className = "qBtn";
-    minus.textContent = "−";
-    minus.onclick = (e)=>{ e.stopPropagation(); setQty(x.id, (x.qty||1)-1); };
-
-    const num = document.createElement("div");
-    num.className = "qNum mono";
-    num.textContent = String(x.qty||1);
-
-    const plus = document.createElement("button");
-    plus.className = "qBtn";
-    plus.textContent = "+";
-    plus.onclick = (e)=>{ e.stopPropagation(); setQty(x.id, (x.qty||0)+1); };
-
-    qty.appendChild(minus);
-    qty.appendChild(num);
-    qty.appendChild(plus);
-
-    const del = document.createElement("button");
-    del.className = "xBtn";
-    del.textContent = "×";
-    del.onclick = (e)=>{ e.stopPropagation(); removeCart(x.id); };
-
-    row.appendChild(name);
-    row.appendChild(price);
-    row.appendChild(qty);
-    row.appendChild(del);
-
-    elCartList.appendChild(row);
-  });
-}
-
-function renderSummary(){
-  const cnt = cartCount();
-  const total = cartTotal();
-  const change = Math.max(0, (Number(paid)||0) - total);
-
-  document.getElementById("sumCnt").textContent = String(cnt);
-  document.getElementById("sumMoney").textContent = won(total);
-  document.getElementById("paidMoney").textContent = won(paid||0);
-  document.getElementById("changeMoney").textContent = won(change);
-
-  document.getElementById("misuPill").textContent = `미수(${misu.length})`;
-}
-
-function renderAll(){
-  items = load(LS_ITEMS, items);
-  pins  = load(LS_PINS, pins);
-  cart  = load(LS_CART, cart);
-  paid  = load(LS_PAID, paid);
-  misu  = load(LS_MISU, misu);
-
-  renderTabs();
-  renderKeys();
-  renderGrid();
-  renderCart();
-  renderSummary();
-}
-
-/* ===== 이벤트: 방탄 바인딩 ===== */
-function on(id, ev, fn){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.addEventListener(ev, fn);
-}
-function onAll(sel, ev, fn){
-  document.querySelectorAll(sel).forEach(el=>{
-    el.addEventListener(ev, fn);
-  });
-}
-
-on("q", "input", ()=>{
-  const qEl = document.getElementById("q");
-  query = qEl ? qEl.value : "";
-  renderAll();
-});
-
-onAll(".cashBtn[data-add]", "click", (e)=>{
-  const btn = e.currentTarget;
-  addPaid(Number(btn.dataset.add||0));
-});
-
-on("paidReset", "click", ()=>{
-  paid = 0;
-  save(LS_PAID, paid);
-  renderAll();
-});
-
-on("payBtn", "click", doPay);
-on("saveMisu", "click", saveMisuNow);
-on("misuPill", "click", openMisu);
-on("cartPill", "click", resetCartAll);
-
-on("modalBack", "click", (e)=>{
-  const back = document.getElementById("modalBack");
-  if(e.target === back) closeMisu();
-});
-on("mClose", "click", closeMisu);
-
-on("sortBtn", "click", ()=>{
-  alert("현재 정렬은 '고정 + ord' 고정입니다.");
-});
-
-/* 시작 */
-renderAll();
-</script>
-</body>
-</html>
+  currentMisuIndex = idx;
