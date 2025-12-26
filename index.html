@@ -330,7 +330,7 @@
   /* ✅ 장바구니 더 많이 보이게: 요약 영역 “세로 압축” */
   .summary{
     border-top:1px solid var(--line);
-    padding:10px 12px;          /* 12 -> 10 */
+    padding:10px 12px;
   }
   .sumTitle{
     font-size:var(--fs-13);
@@ -338,21 +338,21 @@
     font-weight:var(--w-600);
   }
   .sumMoney{
-    margin-top:4px;             /* 6 -> 4 */
+    margin-top:4px;
     font-size:var(--fs-32);
     font-weight:700;
     letter-spacing:-.6px;
-    line-height:1.05;           /* 추가 */
+    line-height:1.05;
   }
   .twoCol{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:10px;
-    margin-top:8px;             /* 10 -> 8 */
+    margin-top:8px;
   }
   .moneyBox{
     border-radius:16px;
-    padding:8px 12px;           /* 10 -> 8 */
+    padding:8px 12px;
     border:1px solid var(--line);
     background:rgba(255,255,255,.02);
   }
@@ -362,20 +362,20 @@
     font-weight:var(--w-600);
   }
   .moneyValue{
-    margin-top:3px;             /* 4 -> 3 */
-    font-size:22px;             /* 24 -> 22 (가독성 유지하면서 높이 절약) */
+    margin-top:3px;
+    font-size:22px;
     font-weight:800;
     line-height:1.05;
   }
 
   .cashGrid{
-    margin-top:10px;            /* 12 -> 10 */
+    margin-top:10px;
     display:grid;
     grid-template-columns: repeat(3, 1fr);
     gap:10px;
   }
   .cashBtn{
-    padding:10px 10px;          /* 12 -> 10 */
+    padding:10px 10px;
     border-radius:14px;
     border:1px solid var(--line);
     background:rgba(255,255,255,.03);
@@ -389,7 +389,7 @@
   }
 
   .bottomRow{
-    margin-top:10px;            /* 12 -> 10 */
+    margin-top:10px;
     display:grid;
     grid-template-columns: 1fr 2fr;
     gap:10px;
@@ -400,12 +400,12 @@
     border-radius:16px;
     border:1px solid var(--line);
     background:rgba(255,255,255,.03);
-    padding:9px 10px;           /* 10 -> 9 */
+    padding:9px 10px;
     text-align:left;
     color:var(--text);
   }
   .misuBtn .t{
-    font-weight:800;            /* 상단 pill 느낌 맞춤 */
+    font-weight:800;
     font-size:var(--fs-16);
     color:var(--text);
     line-height:1.05;
@@ -425,7 +425,7 @@
     font-weight:900;
     font-size:var(--fs-24);
     letter-spacing:-.6px;
-    padding:12px 10px;          /* 기본 버튼 높이 안정화 */
+    padding:12px 10px;
   }
 
   /* ===== 미수 모달 ===== */
@@ -437,12 +437,11 @@
     justify-content:center;
     padding:16px;
   }
-  /* ✅ “불투명 고정” 핵심: modal 배경을 완전 불투명으로 */
   .modal{
     width:min(900px, 96vw);
     max-height:84vh;
     overflow:auto;
-    background:var(--panel);    /* 불투명 */
+    background:var(--panel);
     border:1px solid var(--line);
     border-radius:22px;
     box-shadow:0 30px 80px rgba(0,0,0,.55);
@@ -787,6 +786,8 @@ function visibleItems(){
 /* =========================================================
    렌더: 탭/키패드
 ========================================================= */
+let delTimer = null;
+
 function renderTabs(){
   elTabs.innerHTML = "";
   CATS.forEach(cat=>{
@@ -814,15 +815,32 @@ function renderKeys(){
     };
     elKeys.appendChild(d);
   });
+
+  // ✅ X = 한 글자 지우기 / 길게 누르면 전체 삭제
   const del = document.createElement("div");
   del.className = "key danger";
   del.textContent = "X";
+
   del.onclick = ()=>{
-    elQ.value = "";
-    query = "";
+    elQ.value = elQ.value.slice(0, -1);
+    query = elQ.value;
     renderAll();
     elQ.focus();
   };
+
+  del.addEventListener("touchstart", ()=>{
+    delTimer = setTimeout(()=>{
+      elQ.value = "";
+      query = "";
+      renderAll();
+      elQ.focus();
+    }, 500);
+  }, {passive:true});
+
+  del.addEventListener("touchend", ()=>{
+    if(delTimer) clearTimeout(delTimer);
+  }, {passive:true});
+
   elKeys.appendChild(del);
 }
 
@@ -941,9 +959,16 @@ function saveMisuNow(){
 
   const now = new Date();
   const id = "미수 " + (misu.length + 1);
-  const names = entries.map(x=>({name:x.name, qty:x.qty}));
 
-  misu.unshift({ id, at: now.toISOString(), items: names, amount });
+  // ✅ 안정화: 미수는 id/price까지 저장 (불러오기/새로고침 안전)
+  const savedItems = entries.map(x=>({
+    id: x.id,
+    name: x.name,
+    qty: Number(x.qty||1),
+    price: Number(x.price||0)
+  }));
+
+  misu.unshift({ id, at: now.toISOString(), items: savedItems, amount });
   save(LS_MISU, misu);
 
   cart = {};
@@ -958,15 +983,16 @@ function restoreMisu(idx){
   const m = misu[idx];
   if(!m) return;
 
+  // ✅ 안정화: 저장된 id/price 그대로 복원
   const next = {};
-  for(const it of m.items){
-    const found = items.find(x=>x.name===it.name);
-    if(found){
-      next[found.id] = {id:found.id, name:found.name, price:Number(found.price||0), qty:Number(it.qty||1)};
-    }else{
-      const tmpId = "TMP_"+it.name;
-      next[tmpId] = {id:tmpId, name:it.name, price:0, qty:Number(it.qty||1)};
-    }
+  for(const it of (m.items||[])){
+    if(!it || !it.id) continue;
+    next[it.id] = {
+      id: it.id,
+      name: it.name || it.id,
+      price: Number(it.price||0),
+      qty: Number(it.qty||1)
+    };
   }
   cart = next;
   paid = 0;
