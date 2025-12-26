@@ -882,6 +882,9 @@ function renderTabs(){
     b.onclick = ()=>{ activeCat = cat; renderAll(); };
     elTabs.appendChild(b);
   });
+    const sortBtn = document.getElementById("sortBtn");
+  if (sortBtn) elTabs.appendChild(sortBtn);
+
 }
 
 function renderKeys(){
