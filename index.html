@@ -1449,6 +1449,21 @@ setInterval(()=>{
 
 setSyncInfo();
 renderAll();
+  
+const ITEMS_API =
+  "https://script.google.com/macros/s/AKfycbyiOcWFHx0nsFt-5P-aJ07HgeDGuZIuZLxiw_jiHGYJVsvud99DnfT9nxQTvkRcrF2m/exec?action=items";
+
+async function loadItems(){
+  const res = await fetch(ITEMS_API);
+  const data = await res.json();
+  if(!data.ok) {
+    alert("상품 불러오기 실패");
+    return;
+  }
+  console.log("상품", data.items);
+}
+
+loadItems();
 </script>
 </body>
 </html>
