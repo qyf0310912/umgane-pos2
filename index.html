@@ -16,558 +16,349 @@
     --accent:#ff9f00;
     --good:#29d17e;
     --bad:#ff3b30;
-    --r:18px;
-
-    --fs-12:12px;
-    --fs-13:13px;
-    --fs-14:14px;
-    --fs-16:16px;
-    --fs-18:18px;
-    --fs-24:24px;
-    --fs-32:32px;
-
-    --w-400:400;
-    --w-500:500;
-    --w-600:600;
-
-    --right-w: 420px;
-
-    --cart-price-w: 92px;
-    --cart-qty-w:   120px;
-    --cart-x-w:      44px;
-
-    --card-min: 210px;
+    --r:16px;
+    --shadow:0 12px 40px rgba(0,0,0,.35);
   }
-
-  @media (min-width:1024px) and (max-width:1400px){
-    :root{ --right-w:420px; --card-min:210px; }
-  }
-
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
-  }
-  button{cursor:pointer;border:0;border-radius:12px}
-  .mono{font-variant-numeric:tabular-nums;}
-  .muted{color:var(--muted)}
-  .hide{display:none !important;}
-
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial}
+  button{cursor:pointer;border:0}
   .app{
     height:100%;
     display:grid;
-    grid-template-columns: 1fr var(--right-w);
+    grid-template-columns: 1.25fr .9fr;
     gap:12px;
     padding:12px;
   }
   .panel{
-    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
     border:1px solid var(--line);
-    border-radius:22px;
-    box-shadow:0 16px 50px rgba(0,0,0,.38);
+    border-radius:20px;
+    box-shadow:var(--shadow);
     overflow:hidden;
+    min-height:0;
   }
-  .left{display:flex; flex-direction:column;}
-  .right{display:flex; flex-direction:column;}
+  .left{display:flex;flex-direction:column;min-height:0}
+  .right{display:flex;flex-direction:column;min-height:0}
 
+  /* ===== TOP BAR ===== */
   .top{
     padding:12px;
     border-bottom:1px solid var(--line);
+    background:rgba(0,0,0,.18);
   }
-  .tabs{
-    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-    margin-bottom:10px;
-  }
-  .tab{
-    padding:8px 12px;
-    font-size:var(--fs-14);
-    font-weight:var(--w-600);
-    color:rgba(245,247,255,.9);
-    background:rgba(255,255,255,.03);
-    border:1px solid var(--line);
-  }
-  .tab.active{
-    border-color:rgba(255,159,0,.45);
-    box-shadow:0 0 0 2px rgba(255,159,0,.12) inset;
-    color:#fff;
+  .topRow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    justify-content:space-between; /* ✅ 카테고리 왼쪽 / 새로고침 오른쪽 */
+    flex-wrap:wrap;
   }
 
+  /* tabs */
+  .tabs{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .tab{
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    font-weight:700;
+    letter-spacing:.2px;
+  }
+  .tab.active{
+    border-color:rgba(255,159,0,.55);
+    box-shadow:0 0 0 1px rgba(255,159,0,.2) inset;
+  }
+
+  /* sync button (right aligned area) */
+  .syncBox{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .chipBtn{
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    padding:8px 12px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    font-weight:700;
+  }
+  .syncInfo{
+    color:var(--muted);
+    font-size:12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    white-space:nowrap;
+  }
+
+  /* search */
   .searchRow{
-    display:grid;
-    grid-template-columns: 1fr auto;
+    margin-top:10px;
+    display:flex;
     gap:10px;
     align-items:center;
   }
   .search{
+    flex:1;
     display:flex;
+    gap:8px;
     align-items:center;
-    gap:10px;
     padding:10px 12px;
-    border-radius:16px;
+    border-radius:14px;
     border:1px solid var(--line);
-    background:rgba(255,255,255,.02);
+    background:rgba(0,0,0,.18);
   }
   .search input{
-    width:100%;
+    flex:1;
     background:transparent;
     border:0;
     outline:none;
     color:var(--text);
-    font-size:var(--fs-14);
-    font-weight:var(--w-500);
+    font-size:14px;
   }
-  .chipBtn{
-    padding:10px 12px;
-    font-size:var(--fs-13);
-    font-weight:var(--w-600);
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:rgba(245,247,255,.95);
-    border-radius:14px;
-    white-space:nowrap;
+  .muted{color:var(--muted)}
+  .hint{
+    margin-top:10px;
+    color:var(--muted);
+    font-size:12px;
   }
 
-  /* ✅ 실무자용: 동기화 버튼 + 마지막시간 */
-  .syncWrap{display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap;}
-  .syncInfo{font-size:12px; color:rgba(245,247,255,.65); white-space:nowrap;}
-
+  /* ===== 초성 키패드 (가로 고정) ===== */
   .chosungRow{
-    display:flex; gap:6px; flex-wrap:wrap;
-    padding:10px 0 0;
+    margin-top:10px;
+    display:flex;              /* ✅ 무조건 가로 */
+    flex-direction:row;        /* ✅ 세로 방지 */
+    flex-wrap:wrap;            /* ✅ 줄바꿈으로 가로 유지 */
+    gap:8px;
     align-items:center;
+    justify-content:flex-start;
   }
   .key{
-    width:38px;height:34px;
-    display:flex;align-items:center;justify-content:center;
+    min-width:40px;
+    height:36px;
+    padding:0 10px;
+    border-radius:12px;
     border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:rgba(245,247,255,.92);
-    border-radius:10px;
-    font-size:var(--fs-14);
-    font-weight:var(--w-600);
+    background:rgba(255,255,255,.05);
+    color:var(--text);
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     user-select:none;
   }
   .key.danger{
-    background:rgba(255,59,48,.12);
     border-color:rgba(255,59,48,.35);
+    background:rgba(255,59,48,.12);
   }
 
-  .hint{
-    margin-top:8px;
-    font-size:var(--fs-12);
-    color:rgba(245,247,255,.65);
-    line-height:1.25;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
+  /* ===== grid ===== */
   .gridWrap{
     padding:12px;
-    overflow:auto;
-    flex:1;
-  }
-  .pinBarTitle{
-    font-size:var(--fs-12);
-    color:rgba(245,247,255,.65);
-    margin:0 0 8px;
-  }
-  .grid{
-    display:grid;
-    gap:10px;
-    grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
-  }
-
-  .card{
-    position:relative;
-    border-radius:18px;
-    padding:14px 14px 12px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.02);
-    min-height:86px;
+    min-height:0;
     display:flex;
     flex-direction:column;
-    justify-content:space-between;
-  }
-  .card:hover{ background:rgba(255,255,255,.028); }
-  .cardName{
-    font-size:var(--fs-18);
-    font-weight:var(--w-600);
-    letter-spacing:-.2px;
-    line-height:1.12;
-    margin:0;
-    white-space:nowrap;
+    gap:10px;
     overflow:hidden;
-    text-overflow:ellipsis;
   }
-  .cardPrice{
-    margin-top:6px;
-    font-size:var(--fs-14);
-    font-weight:var(--w-600);
-    color:rgba(245,247,255,.88);
+  .pinBarTitle{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:2px;
   }
-
-  .pin{
-    position:absolute;
-    right:10px; bottom:10px;
-    width:34px;height:34px;
-    border-radius:12px;
+  .grid{
+    min-height:0;
+    overflow:auto;
+    padding-right:6px;
+  }
+  .grid::-webkit-scrollbar{width:10px}
+  .grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:10px}
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(6, minmax(160px, 1fr));
+    gap:10px;
+    padding-bottom:12px;
+  }
+  .card{
     border:1px solid var(--line);
-    background:rgba(0,0,0,.18);
-    display:flex;align-items:center;justify-content:center;
-    color:rgba(255,159,0,.95);
-    font-size:14px;
+    background:rgba(0,0,0,.20);
+    border-radius:16px;
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-height:72px;
   }
-  .pin.off{ color:rgba(255,255,255,.18); filter:grayscale(1); opacity:.35; }
-  .card.inactive{ opacity:.35; filter:grayscale(.55); }
+  .cardName{font-weight:900;font-size:16px;line-height:1.1}
+  .cardPrice{font-weight:900;color:var(--text)}
+  .cardMeta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
 
+  /* ===== right ===== */
   .rightTop{
     padding:12px;
     border-bottom:1px solid var(--line);
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:10px;
-  }
-  .rightTitle{
-    font-size:var(--fs-14);
-    font-weight:var(--w-600);
-    color:rgba(245,247,255,.92);
   }
   .pill{
-    padding:7px 10px;
-    border-radius:999px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    font-size:var(--fs-13);
-    font-weight:var(--w-600);
-  }
-  .pill.accent{
-    border-color:rgba(255,159,0,.45);
-    box-shadow:0 0 0 2px rgba(255,159,0,.12) inset;
-  }
-
-  .cartList{
-    flex:1;
-    overflow:auto;
-    padding:10px 10px 6px;
-  }
-
-  .cartRow{
-    user-select:none;
-    padding:10px 10px;
-    border-radius:16px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.02);
-    display:grid;
-    grid-template-columns: 1fr var(--cart-price-w) var(--cart-qty-w) var(--cart-x-w);
-    align-items:center;
-    gap:10px;
-    margin-bottom:8px;
-  }
-
-  .cartName{
-    font-size:var(--fs-14);
-    font-weight:var(--w-500);
-    color:rgba(245,247,255,.95);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    letter-spacing:-.1px;
-  }
-  .cartPrice{
-    text-align:right;
-    font-size:var(--fs-14);
-    font-weight:var(--w-600);
-    color:rgba(245,247,255,.85);
-  }
-
-  .qtyBox{
-    display:flex;
-    justify-content:flex-end;
+    display:inline-flex;
     align-items:center;
     gap:8px;
-  }
-  .qBtn{
-    width:34px;height:32px;
-    border-radius:10px;
+    padding:8px 12px;
+    border-radius:999px;
     border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:rgba(245,247,255,.95);
-    font-weight:700;
-    font-size:14px;
-    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.06);
+    font-weight:900;
   }
-  .qNum{
-    width:26px;
-    text-align:center;
-    font-size:var(--fs-14);
-    font-weight:var(--w-600);
-    color:rgba(245,247,255,.95);
+  .pill.accent{
+    border-color:rgba(255,159,0,.55);
   }
-  .xBtn{
-    width:40px;height:32px;
-    border-radius:10px;
-    border:1px solid rgba(255,59,48,.32);
-    background:rgba(255,59,48,.12);
-    color:rgba(255,245,245,.95);
-    font-weight:700;
+  .cart{
+    padding:12px;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    overflow:hidden;
   }
-
-  .summary{
+  .cartList{
+    min-height:0;
+    overflow:auto;
+    padding-right:6px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:rgba(0,0,0,.18);
+    padding:10px;
+  }
+  .cartItem{
+    display:grid;
+    grid-template-columns: 1fr 70px 32px 32px 32px;
+    gap:8px;
+    align-items:center;
+    padding:8px 6px;
+    border-bottom:1px dashed rgba(255,255,255,.08);
+  }
+  .cartItem:last-child{border-bottom:0}
+  .cartItem .nm{font-weight:900}
+  .cartItem .pr{font-weight:900;text-align:right}
+  .miniBtn{
+    width:32px;height:32px;border-radius:10px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    font-weight:900;
+  }
+  .miniBtn.danger{background:rgba(255,59,48,.14);border-color:rgba(255,59,48,.35)}
+  .sumBox{
     border-top:1px solid var(--line);
-    padding:10px 12px;
+    padding-top:10px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
   }
-  .sumTitle{
-    font-size:var(--fs-13);
-    color:rgba(245,247,255,.7);
-    font-weight:var(--w-600);
+  .sumBig{
+    font-size:38px;
+    font-weight:1000;
+    letter-spacing:.5px;
   }
-  .sumMoney{
-    margin-top:4px;
-    font-size:var(--fs-32);
-    font-weight:700;
-    letter-spacing:-.6px;
-    line-height:1.05;
-  }
-  .twoCol{
+  .twoCols{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:10px;
-    margin-top:8px;
   }
-  .moneyBox{
-    border-radius:16px;
-    padding:8px 12px;
+  .field{
     border:1px solid var(--line);
-    background:rgba(255,255,255,.02);
+    border-radius:16px;
+    padding:10px;
+    background:rgba(0,0,0,.18);
   }
-  .moneyLabel{
-    font-size:var(--fs-12);
-    color:rgba(245,247,255,.65);
-    font-weight:var(--w-600);
-  }
-  .moneyValue{
-    margin-top:3px;
-    font-size:22px;
-    font-weight:800;
-    line-height:1.05;
-  }
-
-  .cashGrid{
-    margin-top:10px;
+  .field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px;font-weight:800}
+  .field .val{font-size:24px;font-weight:1000}
+  .cashBtns{
     display:grid;
     grid-template-columns: repeat(3, 1fr);
     gap:10px;
   }
-  .cashBtn{
-    padding:10px 10px;
+  .cashBtns button{
+    height:44px;
     border-radius:14px;
     border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:rgba(245,247,255,.95);
-    font-weight:var(--w-600);
-    font-size:var(--fs-14);
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    font-weight:1000;
   }
-  .cashBtn.reset{
-    background:rgba(255,59,48,.12);
-    border-color:rgba(255,59,48,.28);
-  }
-
-  .bottomRow{
-    margin-top:10px;
+  .cashBtns button.danger{background:rgba(255,59,48,.14);border-color:rgba(255,59,48,.35)}
+  .payRow{
     display:grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr;
     gap:10px;
-    align-items:stretch;
+    margin-top:auto;
   }
-
-  .misuBtn{
-    border-radius:16px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    padding:9px 10px;
-    text-align:left;
-    color:var(--text);
-  }
-  .misuBtn .t{
-    font-weight:800;
-    font-size:var(--fs-16);
-    color:var(--text);
-    line-height:1.05;
-  }
-  .misuBtn .s{
-    margin-top:3px;
-    font-size:var(--fs-12);
-    color:rgba(245,247,255,.65);
-    font-weight:var(--w-600);
-    line-height:1.1;
-  }
-
   .payBtn{
-    border-radius:16px;
+    height:64px;
+    border-radius:18px;
     background:var(--accent);
     color:#111;
-    font-weight:900;
-    font-size:var(--fs-24);
-    letter-spacing:-.6px;
-    padding:12px 10px;
+    font-weight:1000;
+    font-size:22px;
   }
-
-  .modalBack{
-    position:fixed; inset:0;
-    background:rgba(0,0,0,.62);
-    display:none;
+  .misuSave{
+    height:46px;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    font-weight:900;
+    display:flex;
     align-items:center;
     justify-content:center;
-    padding:16px;
-  }
-  .modal{
-    width:min(900px, 96vw);
-    max-height:84vh;
-    overflow:auto;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:22px;
-    box-shadow:0 30px 80px rgba(0,0,0,.55);
-    padding:14px;
-  }
-  .modalHead{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
     gap:10px;
-    padding:6px 6px 12px;
-    border-bottom:1px solid var(--line);
-    margin-bottom:12px;
-  }
-  .modalHead h3{
-    margin:0;
-    font-size:var(--fs-18);
-    font-weight:700;
-  }
-  .mClose{
-    padding:10px 12px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:rgba(245,247,255,.95);
-    border-radius:14px;
-    font-weight:700;
   }
 
-  /* ✅ 미수 리스트 버튼 밀림 방지 + ... 처리 */
-  .misuItem{
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.02);
-    border-radius:18px;
-    padding:12px;
-    margin-bottom:10px;
-    display:grid;
-    grid-template-columns: minmax(0,1fr) auto;
-    gap:10px;
-    align-items:center;
-  }
-  .misuInfo{ min-width:0; }
-
-  .misuInfo .t{
-    font-size:var(--fs-14);
-    font-weight:700;
-    display:flex;
-    gap:8px;
-    align-items:baseline;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .misuInfo .amt{ font-weight:800; color:rgba(245,247,255,.95); }
-  .misuInfo .time{ color:rgba(245,247,255,.55); font-weight:600; font-size:var(--fs-12); }
-
-  .misuInfo .d{
-    margin-top:6px;
-    font-size:var(--fs-13);
-    font-weight:600;
-    color:rgba(245,247,255,.8);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
-  .misuBtns{ display:flex; gap:8px; }
-  .btn2{
-    padding:10px 12px;
-    border-radius:14px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:rgba(245,247,255,.95);
-    font-weight:700;
-    white-space:nowrap;
-  }
-  .btn2.danger{ background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.30); }
-  .btn2.good{ background:rgba(41,209,126,.12); border-color:rgba(41,209,126,.30); }
-
-  @media (max-width: 980px){
-    .app{ grid-template-columns: 1fr; }
-    :root{ --right-w: 100%; }
+  @media (max-width: 1300px){
+    .app{grid-template-columns:1fr}
+    .cards{grid-template-columns:repeat(4, minmax(150px, 1fr))}
   }
 </style>
 </head>
 
 <body>
 <div class="app">
+
+  <!-- LEFT -->
   <section class="panel left">
     <div class="top">
- <style>
-  .topRow{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom:8px;
-  }
-  .leftGroup{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    flex-wrap:wrap;
-  }
-  #tabs{
-    display:flex;
-    gap:6px;
-    flex-wrap:wrap;
-  }
-  .rightGroup{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    white-space:nowrap;
-  }
-</style>
+      <div class="topRow">
+        <div class="tabs" id="tabs"></div>
 
-<div class="topRow">
-  <!-- ⬅️ 왼쪽 : 카테고리 -->
-  <div class="leftGroup">
-    <div id="tabs"></div>
-  </div>
-
-  <!-- ➡️ 오른쪽 : 새로고침 / 정렬 -->
-  <div class="rightGroup">
-    <button class="chipBtn" id="syncBtn">📄 상품 새로고침</button>
-    <div class="syncInfo" id="syncInfo">오늘: - · 마지막 동기화: -</div>
-  </div>
-</div>
-
-<!-- 🔍 검색 -->
-<div class="searchRow">
-  <div class="search">
-    <span class="muted">🔍</span>
-    <input id="q" placeholder="전카테고리 검색 (예: 감자, ㄱㅈ, ㄱㄷ)" autocomplete="off" />
-  </div>
-</div>
-
-<div class="choseongRow" id="keys"></div>
-
-      <div class="hint">
-        검색=전품목(초성 가능) · 길게=고정/해제(PC 우클릭) · 클릭=담기
+        <!-- ✅ 새로고침 오른쪽 -->
+        <div class="syncBox">
+          <button class="chipBtn" id="syncBtn">📄 상품 새로고침</button>
+          <div class="syncInfo" id="syncInfo">오늘: - · 🕒 마지막 동기화: -</div>
+        </div>
       </div>
+
+      <div class="searchRow">
+        <div class="search">
+          <span class="muted">🔎</span>
+          <input id="q" placeholder="전카테고리 검색 (예: 감자, ㅈㅅ, ㄱㄴㄷ)" autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- ✅ 초성키 가로 -->
+      <div class="chosungRow" id="keys"></div>
+
+      <div class="hint">검색=전품목(초성 가능) · 클릭=담기</div>
     </div>
 
     <div class="gridWrap">
@@ -576,212 +367,66 @@
     </div>
   </section>
 
+  <!-- RIGHT -->
   <section class="panel right">
     <div class="rightTop">
-      <div class="rightTitle"><span class="pill accent" id="misuPill">미수(0)</span></div>
-      <div class="rightTitle"><span class="pill" id="cartPill">리셋</span></div>
+      <div class="pill accent" id="misuPill">미수(0)</div>
+      <button class="chipBtn" id="resetAllBtn">리셋</button>
     </div>
 
-    <div class="cartList" id="cartList"></div>
+    <div class="cart">
+      <div class="cartList" id="cartList"></div>
 
-    <div class="summary">
-      <div class="sumTitle">총합계(<span id="sumCnt">0</span>개)</div>
-      <div class="sumMoney mono" id="sumMoney">0원</div>
-
-      <div class="twoCol">
-        <div class="moneyBox">
-          <div class="moneyLabel">받은돈</div>
-          <div class="moneyValue mono" id="paidMoney">0원</div>
+      <div class="sumBox">
+        <div>
+          <div class="muted" id="sumCaption">총합계(0개)</div>
+          <div class="sumBig" id="sumBig">0원</div>
         </div>
-        <div class="moneyBox">
-          <div class="moneyLabel">거스름돈</div>
-          <div class="moneyValue mono" id="changeMoney">0원</div>
+
+        <div class="twoCols">
+          <div class="field">
+            <label>받은돈</label>
+            <div class="val" id="paidVal">0원</div>
+          </div>
+          <div class="field">
+            <label>거스름돈</label>
+            <div class="val" id="changeVal">0원</div>
+          </div>
         </div>
-      </div>
 
-      <div class="cashGrid">
-        <button class="cashBtn" data-add="500">500</button>
-        <button class="cashBtn" data-add="1000">1천</button>
-        <button class="cashBtn" data-add="5000">5천</button>
-        <button class="cashBtn" data-add="10000">1만</button>
-        <button class="cashBtn" data-add="50000">5만</button>
-        <button class="cashBtn reset" id="paidReset">초기화</button>
-      </div>
+        <div class="cashBtns">
+          <button data-add="500">500</button>
+          <button data-add="1000">1천</button>
+          <button data-add="5000">5천</button>
+          <button data-add="10000">1만</button>
+          <button data-add="50000">5만</button>
+          <button class="danger" id="resetPaidBtn">초기화</button>
+        </div>
 
-      <div class="bottomRow">
-        <button class="misuBtn" id="saveMisu">
-          <div class="t">미수</div>
-          <div class="s">현재장바구니 저장</div>
-        </button>
+        <button class="misuSave" id="misuSaveBtn">미수 <span class="muted">현제장바구니 저장</span></button>
 
-        <button class="payBtn" id="payBtn">결제완료</button>
+        <div class="payRow">
+          <button class="payBtn" id="payBtn">결제완료</button>
+        </div>
       </div>
     </div>
   </section>
-</div>
 
-<div class="modalBack" id="modalBack">
-  <div class="modal">
-    <div class="modalHead">
-      <h3>미수 목록</h3>
-      <button class="mClose" id="mClose">계산으로</button>
-    </div>
-    <div id="misuList"></div>
-  </div>
 </div>
 
 <script>
-/* ===============================
-   저장 키
-================================= */
-const LS_ITEMS = "umgane_items_v2";
-const LS_PINS  = "umgane_pins_v2";
-const LS_CART  = "umgane_cart_v2";
-const LS_PAID  = "umgane_paid_v2";
-const LS_MISU  = "umgane_misu_v2";
+/* =========================================================
+   ✅ 설정: 구글시트 CSV(게시/퍼블리시) 주소 넣는 곳
+   - 예) https://docs.google.com/spreadsheets/d/e/....../pub?output=csv
+========================================================= */
+const SHEET_CSV_URL = ""; // ⬅️ 여기만 네 CSV 주소로 넣으면 됨 (비워두면 로컬 데이터만 사용)
 
-/* ===============================
-   ✅ 구글시트(CSV) → 상품마스터 동기화
-   - umgane_items_v2만 업데이트
-================================= */
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZMLZiCqXn-YKsOwR_RR1nZudB1VqAKI652Aje2p3Ytjqfzx5YhcLtEHyuiCSFKPqZ8e1xvbF3JCU4/pub?output=csv";
-const LS_LASTSYNC = "umgane_items_lastSync_v1";
-
-/* ✅ 콤마/따옴표 안전 CSV 파서 */
-function parseCSV(text) {
-  const rows = [];
-  let cur = "", inQ = false;
-  let row = [];
-  function pushCell(){ row.push(cur); cur=""; }
-  function pushRow(){ rows.push(row); row=[]; }
-
-  for (let i=0;i<text.length;i++){
-    const ch = text[i];
-    if (ch === '"') {
-      if (inQ && text[i+1] === '"') { cur += '"'; i++; }
-      else inQ = !inQ;
-    } else if (ch === ',' && !inQ) {
-      pushCell();
-    } else if ((ch === '\n' || ch === '\r') && !inQ) {
-      if (ch === '\r' && text[i+1] === '\n') i++;
-      pushCell(); pushRow();
-    } else {
-      cur += ch;
-    }
-  }
-  if (cur.length > 0 || row.length > 0) { pushCell(); pushRow(); }
-  return rows.filter(r => r.some(c => (c || "").trim() !== ""));
-}
-
-function toNumber(v) {
-  const s = String(v ?? "").replace(/[^\d.-]/g, "");
-  const n = Number(s);
-  return Number.isFinite(n) ? n : 0;
-}
-function toInt(v, def=0){
-  const n = parseInt(String(v ?? "").trim(), 10);
-  return Number.isFinite(n) ? n : def;
-}
-function normalizeActive(v){
-  const s = String(v ?? "").trim().toLowerCase();
-  return (s === "1" || s === "true" || s === "y" || s === "yes" || s === "on") ? 1 : 0;
-}
-function nowISO(){ return new Date().toISOString(); }
-
-function saveItemsToLS(items){
-  localStorage.setItem(LS_ITEMS, JSON.stringify(items));
-  localStorage.setItem(LS_LASTSYNC, nowISO());
-}
-
-function loadItemsFromLS(){
-  try {
-    const raw = localStorage.getItem(LS_ITEMS);
-    return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
-}
-
-function isSameDay(isoA, isoB){
-  try{
-    const a = new Date(isoA), b = new Date(isoB);
-    return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
-  }catch{ return false; }
-}
-
-async function syncItemsFromSheet({force=false} = {}) {
-  const last = localStorage.getItem(LS_LASTSYNC);
-  if (!force && last && isSameDay(last, nowISO())) {
-    return { ok:true, skipped:true, count: (loadItemsFromLS()||[]).length };
-  }
-
-  const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-  if (!res.ok) throw new Error("CSV 불러오기 실패: " + res.status);
-
-  const csv = await res.text();
-  const rows = parseCSV(csv);
-
-  const header = rows[0].map(h => String(h).trim());
-  const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
-
-  const iId = idx("id");
-  const iCat = idx("cat");
-  const iName = idx("name");
-  const iPrice = idx("price");
-  const iActive = idx("active");
-  const iOrd = idx("ord");
-
-  if (iId < 0 || iCat < 0 || iName < 0 || iPrice < 0) {
-    throw new Error("시트 헤더가 부족함: id/cat/name/price 필수");
-  }
-
-  const items = [];
-  for (let r=1; r<rows.length; r++){
-    const row = rows[r];
-
-    const id = String(row[iId] ?? "").trim();
-
-    let cat = String(row[iCat] ?? "").trim();
-    cat = cat.replace(/\s+/g,"").replace(/\u00A0/g,""); // ✅ 공백/특수공백 제거
-    if (cat === "봉채소") cat = "봉지채소";            // ✅ 카테고리 통일
-
-    const name = String(row[iName] ?? "").trim();
-    const price = toNumber(row[iPrice]);
-
-    if (!id || !name) continue;
-
-    const active = (iActive >= 0) ? normalizeActive(row[iActive]) : 1;
-    const ord = (iOrd >= 0) ? toInt(row[iOrd], 0) : 0;
-
-    items.push({ id, cat, name, price, active, ord });
-  }
-
-  if (items.length < 3) {
-    throw new Error("가져온 상품이 너무 적음(저장 중단) - 시트/게시 확인 필요");
-  }
-
-  saveItemsToLS(items);
-
-  // 화면 갱신
-  try { renderAll(); } catch {}
-  return { ok:true, skipped:false, count: items.length };
-}
-
-// 콘솔/버튼에서 실행 가능
-window.umganeSyncFromSheet = syncItemsFromSheet;
-
-// 페이지 열릴 때 1회 자동 동기화(오늘 했으면 스킵)
-(async () => {
-  try {
-    await syncItemsFromSheet({ force:false });
-  } catch (e) {
-    console.warn("[SHEET SYNC FAIL]", e?.message || e);
-  }
-})();
-
-/* ===============================
-   카테고리 / 초성
-================================= */
+/* =========================================================
+   기본: 카테고리/초성
+========================================================= */
 const CATS = ["전체","과일","야채","봉지채소","생선","기타"];
-const CHO_KEYS = ["ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+const CHO_KEYS = ["ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ","X"];
+
 const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
 function getChosungChar(ch){
   const code = ch.charCodeAt(0);
@@ -789,122 +434,91 @@ function getChosungChar(ch){
   const idx = Math.floor((code - 0xAC00) / 588);
   return CHO[idx] || ch;
 }
-function toChosung(str){
-  return [...(str||"")].map(getChosungChar).join("");
-}
+function toChosung(str){ return [...(str||"")].map(getChosungChar).join(""); }
 function normalize(str){ return (str||"").toString().trim().toLowerCase(); }
 
-/* ===============================
-   로드/세이브
-================================= */
+function todayStr(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${dd}`;
+}
+function timeStr(){
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  return `${hh}:${mm}`;
+}
+
+/* =========================================================
+   저장소 키
+========================================================= */
+const LS_ITEMS = "umgane_items_v2";
+const LS_PIN = "umgane_pins_v2";
+const LS_CART = "umgane_cart_v2";
+const LS_PAID = "umgane_paid_v2";
+const LS_LASTSYNC = "umgane_lastsync_v2";
+const LS_MISU = "umgane_misu_v2";
+
 function load(key, fallback){
-  try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-  catch(e){ return fallback; }
+  try{
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  }catch(e){ return fallback; }
 }
-function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
-
-/* ✅ 시드: 상품이 없으면 자동 생성 */
-function seedItemsIfEmpty(){
-  const existing = load(LS_ITEMS, null);
-  if(existing && Array.isArray(existing) && existing.length) return;
-
-  const sample = [
-    {id:"S01", cat:"과일", name:"바나나", price:2500, active:1, ord:1},
-    {id:"S02", cat:"과일", name:"단감/3개", price:5000, active:1, ord:2},
-    {id:"S03", cat:"야채", name:"감자", price:3000, active:1, ord:1},
-    {id:"S04", cat:"봉지채소", name:"시금치/1봉지", price:2000, active:1, ord:1},
-    {id:"S05", cat:"생선", name:"동태/1마리", price:3000, active:1, ord:1},
-  ];
-  save(LS_ITEMS, sample);
+function save(key, value){
+  localStorage.setItem(key, JSON.stringify(value));
 }
-seedItemsIfEmpty();
 
-/* ===============================
-   상태
-================================= */
+/* =========================================================
+   데이터 구조
+   item = { id, cat, name, price, active, ord }
+========================================================= */
 let items = load(LS_ITEMS, []);
-let pins  = load(LS_PINS, {});
-let cart  = load(LS_CART, {});
+let pins  = load(LS_PIN, {});          // {cat:[id,...]}
+let cart  = load(LS_CART, []);         // [{id, qty}]
 let paid  = load(LS_PAID, 0);
-let misu  = load(LS_MISU, []);
+let misu  = load(LS_MISU, []);         // 단순 저장만
 let activeCat = "전체";
 let query = "";
 
-/* ✅ “미수 불러오기 후 결제” 중복 방지용 */
-let loadedMisuIndex = null;
+/* =========================================================
+   기본 샘플 데이터 (시트가 비어있거나 최초 진입 시)
+========================================================= */
+function ensureSeed(){
+  if(Array.isArray(items) && items.length >= 3) return;
+  items = [
+    {id:"A1", cat:"야채", name:"감자", price:3000, active:1, ord:10},
+    {id:"A2", cat:"야채", name:"양파", price:2500, active:1, ord:20},
+    {id:"A3", cat:"과일", name:"바나나", price:2500, active:1, ord:30},
+    {id:"A4", cat:"봉지채소", name:"시금치/1봉지", price:2000, active:1, ord:40},
+    {id:"A5", cat:"생선", name:"동태/1마리", price:3000, active:1, ord:50},
+  ];
+  save(LS_ITEMS, items);
+}
+ensureSeed();
 
-/* ===============================
-   엘리먼트
-================================= */
+/* =========================================================
+   UI 엘리먼트
+========================================================= */
 const elTabs = document.getElementById("tabs");
 const elKeys = document.getElementById("keys");
-const elGrid = document.getElementById("grid");
 const elQ = document.getElementById("q");
-const elSortBtn = document.getElementById("sortBtn");
-
+const elGrid = document.getElementById("grid");
 const elCartList = document.getElementById("cartList");
-const elSumCnt = document.getElementById("sumCnt");
-const elSumMoney = document.getElementById("sumMoney");
-const elPaidMoney = document.getElementById("paidMoney");
-const elChangeMoney = document.getElementById("changeMoney");
-
-const elCartPill = document.getElementById("cartPill");
+const elSumBig = document.getElementById("sumBig");
+const elSumCaption = document.getElementById("sumCaption");
+const elPaidVal = document.getElementById("paidVal");
+const elChangeVal = document.getElementById("changeVal");
+const elSyncInfo = document.getElementById("syncInfo");
+const elPinTitle = document.getElementById("pinTitle");
 const elMisuPill = document.getElementById("misuPill");
 
-const elPayBtn = document.getElementById("payBtn");
-const elPaidReset = document.getElementById("paidReset");
-const elSaveMisu = document.getElementById("saveMisu");
-
-const elModalBack = document.getElementById("modalBack");
-const elMClose = document.getElementById("mClose");
-const elMisuList = document.getElementById("misuList");
-
-/* ✅ 동기화 버튼/표시 */
-const syncBtn = document.getElementById("syncBtn");
-const syncInfo = document.getElementById("syncInfo");
-
-/* ===============================
-   유틸
-================================= */
-function won(n){ const x = Math.round(Number(n)||0); return x.toLocaleString("ko-KR") + "원"; }
-
-function getSorted(list){
-  const pinned = [];
-  const normal = [];
-  for(const it of list){ (pins[it.id] ? pinned : normal).push(it); }
-  const byOrd = (a,b)=> (Number(a.ord||0)-Number(b.ord||0)) || a.name.localeCompare(b.name,"ko");
-  pinned.sort(byOrd); normal.sort(byOrd);
-  return [...pinned, ...normal];
-}
-
-function matchItem(it, q){
-  if(!q) return true;
-  const name = normalize(it.name);
-  const qn = normalize(q);
-  if(name.includes(qn)) return true;
-  const nameCho = toChosung(it.name);
-  const qCho = qn.replace(/\s+/g,"");
-  if(nameCho.includes(qCho)) return true;
-  return false;
-}
-
-function visibleItems(){
-  const q = query.trim();
-  let list = items.filter(it => Number(it.active) === 1);
-
-  if(q){
-    list = list.filter(it => matchItem(it, q));
-  }else{
-    if(activeCat !== "전체"){
-      list = list.filter(it => it.cat === activeCat);
-    }
-  }
-  return getSorted(list);
-}
-
-/* ===============================
-   탭/키패드
-================================= */
+/* =========================================================
+   렌더: 탭 / 키패드
+   - ✅ 정렬 버튼(고정/ord) 자체를 UI에서 제거 (아예 없음)
+========================================================= */
 function renderTabs(){
   elTabs.innerHTML = "";
   CATS.forEach(cat=>{
@@ -914,538 +528,437 @@ function renderTabs(){
     b.onclick = ()=>{ activeCat = cat; renderAll(); };
     elTabs.appendChild(b);
   });
-    const sortBtn = document.getElementById("sortBtn");
-  if (sortBtn) elTabs.appendChild(sortBtn);
-
 }
 
 function renderKeys(){
   elKeys.innerHTML = "";
   CHO_KEYS.forEach(k=>{
     const d = document.createElement("div");
-    d.className = "key";
+    d.className = "key" + (k==="X" ? " danger":"");
     d.textContent = k;
     d.onclick = ()=>{
-      elQ.value += k;
-      query = elQ.value;
+      if(k==="X"){
+        elQ.value = "";
+        query = "";
+      }else{
+        elQ.value = (elQ.value||"") + k;
+        query = elQ.value;
+      }
       renderAll();
       elQ.focus();
     };
     elKeys.appendChild(d);
   });
-  const del = document.createElement("div");
-  del.className = "key danger";
-  del.textContent = "X";
-  del.onclick = ()=>{
-    elQ.value = "";
-    query = "";
-    renderAll();
-    elQ.focus();
-  };
-  elKeys.appendChild(del);
 }
 
-/* ===============================
-   고정
-================================= */
-function togglePin(id){
-  pins[id] = !pins[id];
-  save(LS_PINS, pins);
-  renderAll();
+/* =========================================================
+   필터/정렬
+   - 기본은 고정(핀) 먼저, 그 다음 ord, 그 다음 이름
+========================================================= */
+function getActiveItems(){
+  const q = normalize(query);
+  const qCho = toChosung(query);
+
+  return items
+    .filter(x => Number(x.active||1) === 1)
+    .filter(x => activeCat==="전체" ? true : (x.cat===activeCat))
+    .filter(x=>{
+      if(!q) return true;
+      const name = x.name || "";
+      const cat = x.cat || "";
+      const merged = `${name} ${cat}`;
+      // 초성 검색 + 일반 문자열 검색 둘 다
+      if(normalize(merged).includes(q)) return true;
+      if(toChosung(name).includes(qCho)) return true;
+      return false;
+    });
 }
 
-/* ===============================
-   장바구니
-================================= */
-function addToCart(it){
-  if(Number(it.active)!==1) return;
-  if(!cart[it.id]){
-    cart[it.id] = {id:it.id, name:it.name, price:Number(it.price||0), qty:1};
-  }else{
-    cart[it.id].qty += 1;
-  }
+function getPinListForCat(cat){
+  const key = cat || "전체";
+  return (pins && pins[key]) ? pins[key] : [];
+}
+
+function sortWithPins(list){
+  const pinList = getPinListForCat(activeCat==="전체" ? "전체" : activeCat);
+  const pinSet = new Set(pinList);
+
+  const pinned = [];
+  const normal = [];
+
+  list.forEach(it => (pinSet.has(it.id) ? pinned : normal).push(it));
+
+  pinned.sort((a,b)=> (a.ord||0)-(b.ord||0) || (a.name||"").localeCompare(b.name||""));
+  normal.sort((a,b)=> (a.ord||0)-(b.ord||0) || (a.name||"").localeCompare(b.name||""));
+
+  return { pinned, normal };
+}
+
+/* =========================================================
+   렌더: 상품 카드
+========================================================= */
+function fmt(n){ return (Number(n)||0).toLocaleString("ko-KR")+"원"; }
+
+function addToCart(id){
+  const found = cart.find(x=>x.id===id);
+  if(found) found.qty += 1;
+  else cart.push({id, qty:1});
   save(LS_CART, cart);
-  renderAll();
+  renderCart();
 }
 
-function setQty(id, qty){
-  if(!cart[id]) return;
-  cart[id].qty = qty;
-  if(cart[id].qty <= 0) delete cart[id];
-  save(LS_CART, cart);
-  renderAll();
-}
-
-function removeCart(id){
-  delete cart[id];
-  save(LS_CART, cart);
-  renderAll();
-}
-
-function resetCartAll(){
-  const ok = confirm("장바구니/받은돈을 리셋할까요?");
-  if(!ok) return;
-  cart = {};
-  paid = 0;
-  loadedMisuIndex = null;
-  save(LS_CART, cart);
-  save(LS_PAID, paid);
-  renderAll();
-}
-
-function cartEntries(){ return Object.values(cart); }
-function cartCount(){ return cartEntries().reduce((a,x)=>a+(x.qty||0),0); }
-function cartTotal(){ return cartEntries().reduce((a,x)=>a+(x.qty||0)*(x.price||0),0); }
-
-/* 삑 */
-let audioCtx=null;
-function beep(){
-  try{
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type="square"; o.frequency.value=880; g.gain.value=0.06;
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start();
-    setTimeout(()=>{ o.stop(); }, 120);
-  }catch(e){}
-}
-
-/* ===============================
-   결제완료
-================================= */
-function doPay(){
-  const total = cartTotal();
-  if(total<=0) return;
-
-  const ok = confirm("결제완료 하겠습니까?");
-  if(!ok) return;
-
-  beep();
-
-  // 미수 불러온 상태로 결제하면 해당 미수 자동 제거
-  if(loadedMisuIndex !== null){
-    misu = load(LS_MISU, misu);
-    if(misu[loadedMisuIndex]){
-      misu.splice(loadedMisuIndex, 1);
-      save(LS_MISU, misu);
-    }
-    loadedMisuIndex = null;
-  }
-
-  cart = {};
-  paid = 0;
-  save(LS_CART, cart);
-  save(LS_PAID, paid);
-  renderAll();
-}
-
-/* 받은돈 */
-function addPaid(n){
-  paid = Math.max(0, (Number(paid)||0) + Number(n||0));
-  save(LS_PAID, paid);
-  renderAll();
-}
-
-/* ===============================
-   미수
-================================= */
-function openMisu(){
-  elModalBack.style.display = "flex";
-  renderMisuList();
-}
-function closeMisu(){ elModalBack.style.display = "none"; }
-
-function saveMisuNow(){
-  const entries = cartEntries();
-  const amount = cartTotal();
-  if(amount<=0 || entries.length===0) return;
-
-  const now = new Date();
-  const id = "미수 " + (load(LS_MISU, misu).length + 1);
-  const names = entries.map(x=>({name:x.name, qty:x.qty}));
-
-  misu = load(LS_MISU, misu);
-  misu.unshift({ id, at: now.toISOString(), items: names, amount });
-  save(LS_MISU, misu);
-
-  cart = {};
-  paid = 0;
-  loadedMisuIndex = null;
-
-  save(LS_CART, cart);
-  save(LS_PAID, paid);
-
-  renderAll();
-  openMisu();
-}
-
-function restoreMisu(idx){
-  const m = misu[idx];
-  if(!m) return;
-
-  const next = {};
-  for(const it of m.items){
-    const found = items.find(x=>x.name===it.name);
-    if(found){
-      next[found.id] = {id:found.id, name:found.name, price:Number(found.price||0), qty:Number(it.qty||1)};
-    }else{
-      const tmpId = "TMP_"+it.name;
-      next[tmpId] = {id:tmpId, name:it.name, price:0, qty:Number(it.qty||1)};
-    }
-  }
-  cart = next;
-  paid = 0;
-  loadedMisuIndex = idx;
-
-  save(LS_CART, cart);
-  save(LS_PAID, paid);
-
-  closeMisu();
-  renderAll();
-}
-
-function settleMisu(idx){
-  const m = misu[idx];
-  if(!m) return;
-  const ok = confirm(`${m.id} (${won(m.amount||0)}) 결제완료 처리할까요?`);
-  if(!ok) return;
-  beep();
-  misu.splice(idx,1);
-  save(LS_MISU, misu);
-
-  if(loadedMisuIndex === idx) loadedMisuIndex = null;
-  if(loadedMisuIndex !== null && loadedMisuIndex > idx) loadedMisuIndex -= 1;
-
-  renderMisuList();
-  renderAll();
-}
-
-function deleteMisu(idx){
-  const ok = confirm("이 미수를 삭제할까요?");
-  if(!ok) return;
-  misu.splice(idx,1);
-  save(LS_MISU, misu);
-
-  if(loadedMisuIndex === idx) loadedMisuIndex = null;
-  if(loadedMisuIndex !== null && loadedMisuIndex > idx) loadedMisuIndex -= 1;
-
-  renderMisuList();
-  renderAll();
-}
-
-function renderMisuList(){
-  elMisuList.innerHTML = "";
-  if(!misu.length){
-    elMisuList.innerHTML = `<div class="muted" style="padding:8px 6px;">미수 내역이 없습니다.</div>`;
-    return;
-  }
-
-  misu.forEach((m, idx)=>{
-    const date = new Date(m.at);
-    const hh = String(date.getHours()).padStart(2,"0");
-    const mm = String(date.getMinutes()).padStart(2,"0");
-
-    /* ✅ 3~4개만 + … 표시 */
-    const all = (m.items||[]).map(x=>`${x.name}x${x.qty}`);
-    const itemsText = all.slice(0,4).join(" · ") + (all.length>4 ? ` · …(+${all.length-4})` : "");
-
-    const wrap = document.createElement("div");
-    wrap.className = "misuItem";
-
-    const left = document.createElement("div");
-    left.className = "misuInfo";
-    left.innerHTML = `
-      <div class="t">
-        <span>${m.id}</span>
-        <span class="amt mono">· ${won(m.amount||0)}</span>
-        <span class="time">(${hh}:${mm})</span>
-      </div>
-      <div class="d">${itemsText}</div>
-    `;
-
-    const right = document.createElement("div");
-    right.className = "misuBtns";
-
-    const bPay = document.createElement("button");
-    bPay.className = "btn2 good";
-    bPay.textContent = "결제완료";
-    bPay.onclick = ()=>settleMisu(idx);
-
-    const bLoad = document.createElement("button");
-    bLoad.className = "btn2";
-    bLoad.textContent = "불러오기";
-    bLoad.onclick = ()=>restoreMisu(idx);
-
-    const bDel = document.createElement("button");
-    bDel.className = "btn2 danger";
-    bDel.textContent = "삭제";
-    bDel.onclick = ()=>deleteMisu(idx);
-
-    right.appendChild(bPay);
-    right.appendChild(bLoad);
-    right.appendChild(bDel);
-
-    wrap.appendChild(left);
-    wrap.appendChild(right);
-    elMisuList.appendChild(wrap);
-  });
-}
-
-/* ===============================
-   상품 카드 렌더
-================================= */
-let pressTimer=null;
 function renderGrid(){
-  const list = visibleItems();
-  elGrid.innerHTML = "";
+  const list = getActiveItems();
 
-  list.forEach(it=>{
-    const card = document.createElement("div");
-    card.className = "card" + (Number(it.active)!==1 ? " inactive":"");
+  const {pinned, normal} = sortWithPins(list);
+  elPinTitle.textContent = `고정(${activeCat}) · 상단 1줄`;
 
-    const n = document.createElement("div");
-    n.className = "cardName";
-    n.textContent = it.name;
+  const all = [...pinned, ...normal];
 
-    const p = document.createElement("div");
-    p.className = "cardPrice mono";
-    p.textContent = won(it.price||0);
+  const wrap = document.createElement("div");
+  wrap.className = "cards";
 
-    const pin = document.createElement("div");
-    pin.className = "pin " + (pins[it.id] ? "" : "off");
-    pin.textContent = "📌";
-    pin.title = "고정";
-    pin.onclick = (e)=>{ e.stopPropagation(); togglePin(it.id); };
+  all.forEach(it=>{
+    const c = document.createElement("div");
+    c.className = "card";
+    c.onclick = ()=> addToCart(it.id);
 
-    card.onclick = ()=>addToCart(it);
-    card.oncontextmenu = (e)=>{ e.preventDefault(); togglePin(it.id); return false; };
+    const nm = document.createElement("div");
+    nm.className = "cardName";
+    nm.textContent = it.name || "-";
 
-    card.addEventListener("touchstart", ()=>{
-      pressTimer = setTimeout(()=>togglePin(it.id), 450);
-    }, {passive:true});
-    card.addEventListener("touchend", ()=>{
-      if(pressTimer) clearTimeout(pressTimer);
-    }, {passive:true});
+    const pr = document.createElement("div");
+    pr.className = "cardPrice";
+    pr.textContent = fmt(it.price);
 
-    card.appendChild(n);
-    card.appendChild(p);
-    card.appendChild(pin);
-
-    elGrid.appendChild(card);
+    c.appendChild(nm);
+    c.appendChild(pr);
+    wrap.appendChild(c);
   });
+
+  elGrid.innerHTML = "";
+  elGrid.appendChild(wrap);
 }
 
-/* ===============================
-   장바구니 렌더
-================================= */
+/* =========================================================
+   렌더: 장바구니/합계
+========================================================= */
+function getItemById(id){
+  return items.find(x=>x.id===id);
+}
+
+function cartTotal(){
+  let sum=0, cnt=0;
+  cart.forEach(ci=>{
+    const it = getItemById(ci.id);
+    if(!it) return;
+    cnt += ci.qty;
+    sum += (Number(it.price)||0) * (Number(ci.qty)||0);
+  });
+  return {sum, cnt};
+}
+
 function renderCart(){
   elCartList.innerHTML = "";
+  cart.forEach(ci=>{
+    const it = getItemById(ci.id);
+    if(!it) return;
 
-  const entries = cartEntries();
-  if(!entries.length){
-    elCartList.innerHTML = `<div class="muted" style="padding:10px 8px;">—</div>`;
-    return;
-  }
-
-  const orderMap = new Map(items.map(x=>[x.id, Number(x.ord||0)]));
-  entries.sort((a,b)=> (orderMap.get(a.id)||9999)-(orderMap.get(b.id)||9999));
-
-  entries.forEach(x=>{
     const row = document.createElement("div");
-    row.className = "cartRow";
+    row.className = "cartItem";
 
-    const name = document.createElement("div");
-    name.className = "cartName";
-    name.textContent = `${x.name} x${x.qty}`;
+    const nm = document.createElement("div");
+    nm.className = "nm";
+    nm.textContent = `${it.name} x${ci.qty}`;
 
-    const price = document.createElement("div");
-    price.className = "cartPrice mono";
-    price.textContent = won((x.price||0)*(x.qty||0));
-
-    const qty = document.createElement("div");
-    qty.className = "qtyBox";
+    const pr = document.createElement("div");
+    pr.className = "pr";
+    pr.textContent = fmt((Number(it.price)||0) * (Number(ci.qty)||0));
 
     const minus = document.createElement("button");
-    minus.className = "qBtn";
-    minus.textContent = "−";
-    minus.onclick = (e)=>{ e.stopPropagation(); setQty(x.id, (x.qty||1)-1); };
-
-    const num = document.createElement("div");
-    num.className = "qNum mono";
-    num.textContent = String(x.qty||1);
+    minus.className = "miniBtn";
+    minus.textContent = "–";
+    minus.onclick = (e)=>{
+      e.stopPropagation();
+      ci.qty = Math.max(1, ci.qty-1);
+      save(LS_CART, cart);
+      renderCart();
+    };
 
     const plus = document.createElement("button");
-    plus.className = "qBtn";
+    plus.className = "miniBtn";
     plus.textContent = "+";
-    plus.onclick = (e)=>{ e.stopPropagation(); setQty(x.id, (x.qty||0)+1); };
-
-    qty.appendChild(minus);
-    qty.appendChild(num);
-    qty.appendChild(plus);
+    plus.onclick = (e)=>{
+      e.stopPropagation();
+      ci.qty += 1;
+      save(LS_CART, cart);
+      renderCart();
+    };
 
     const del = document.createElement("button");
-    del.className = "xBtn";
+    del.className = "miniBtn danger";
     del.textContent = "×";
-    del.onclick = (e)=>{ e.stopPropagation(); removeCart(x.id); };
+    del.onclick = (e)=>{
+      e.stopPropagation();
+      cart = cart.filter(x=>x.id!==ci.id);
+      save(LS_CART, cart);
+      renderCart();
+    };
 
-    row.appendChild(name);
-    row.appendChild(price);
-    row.appendChild(qty);
+    row.appendChild(nm);
+    row.appendChild(pr);
+    row.appendChild(minus);
+    row.appendChild(plus);
     row.appendChild(del);
-
     elCartList.appendChild(row);
   });
+
+  const {sum,cnt} = cartTotal();
+  elSumCaption.textContent = `총합계(${cnt}개)`;
+  elSumBig.textContent = fmt(sum);
+
+  elPaidVal.textContent = fmt(paid);
+  const change = Math.max(0, (paid||0) - sum);
+  elChangeVal.textContent = fmt(change);
+
+  elMisuPill.textContent = `미수(${misu.length||0})`;
 }
 
-/* 합계/받은돈/거스름돈/미수수 */
-function renderSummary(){
-  const cnt = cartCount();
-  const total = cartTotal();
-  const change = Math.max(0, (Number(paid)||0) - total);
-
-  elSumCnt.textContent = String(cnt);
-  elSumMoney.textContent = won(total);
-  elPaidMoney.textContent = won(paid||0);
-  elChangeMoney.textContent = won(change);
-
-  elMisuPill.textContent = `미수(${misu.length})`;
+/* =========================================================
+   동기화 표시
+========================================================= */
+function renderSyncInfo(){
+  const last = load(LS_LASTSYNC, null);
+  const d = todayStr();
+  const t = last ? (last.time || "-") : "-";
+  const dt = last ? (last.date || "-") : "-";
+  elSyncInfo.textContent = `오늘: ${d} · 🕒 마지막 동기화: ${dt} ${t}`;
 }
 
-/* 전체 렌더 */
+/* =========================================================
+   CSV 파서 (콤마/따옴표 안전)
+========================================================= */
+function parseCSV(text){
+  const rows = [];
+  let cur="", inQ=false;
+  let row=[];
+  function pushCell(){ row.push(cur); cur=""; }
+  function pushRow(){ rows.push(row); row=[]; }
+
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(ch === '"'){
+      if(inQ && text[i+1] === '"'){ cur += '"'; i++; }
+      else inQ = !inQ;
+      continue;
+    }
+    if(ch === ',' && !inQ){ pushCell(); continue; }
+    if((ch === '\n' || ch === '\r') && !inQ){
+      if(ch === '\r' && text[i+1] === '\n') i++;
+      pushCell(); pushRow(); continue;
+    }
+    cur += ch;
+  }
+  pushCell(); pushRow();
+  // 빈 줄 제거
+  return rows.filter(r=> r.some(c => (c||"").trim() !== ""));
+}
+
+function toNumber(v){
+  const s = (v??"").toString().replace(/[^\d.-]/g,"");
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function normalizeActive(v){
+  const s = (v??"").toString().trim().toLowerCase();
+  if(s==="" || s==="1" || s==="y" || s==="yes" || s==="true" || s==="사용" || s==="활성") return 1;
+  return 0;
+}
+function toInt(v, dft){
+  const n = parseInt((v??"").toString().trim(), 10);
+  return Number.isFinite(n) ? n : (dft||0);
+}
+
+/* =========================================================
+   구글시트 -> items 동기화
+   - ✅ 봉채소/봉지채소 자동 통일
+========================================================= */
+async function syncItemsFromSheet({force=false}={}){
+  if(!SHEET_CSV_URL){
+    return {ok:false, message:"SHEET_CSV_URL 비어있음(로컬 데이터 사용)"};
+  }
+  const res = await fetch(SHEET_CSV_URL, {cache: force ? "reload" : "no-store"});
+  if(!res.ok) throw new Error("시트 CSV 불러오기 실패");
+  const csv = await res.text();
+  const rows = parseCSV(csv);
+  if(rows.length < 2) throw new Error("시트 데이터가 비어있음");
+
+  const header = rows[0].map(h => String(h).trim());
+  const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
+
+  // 헤더 후보
+  const iId =
+    idx("id")>=0 ? idx("id") :
+    idx("ID")>=0 ? idx("ID") :
+    idx("상품ID")>=0 ? idx("상품ID") :
+    idx("코드");
+
+  const iCat =
+    idx("cat")>=0 ? idx("cat") :
+    idx("카테고리")>=0 ? idx("카테고리") :
+    idx("분류");
+
+  const iName =
+    idx("name")>=0 ? idx("name") :
+    idx("품목")>=0 ? idx("품목") :
+    idx("품목명")>=0 ? idx("품목명") :
+    idx("상품명");
+
+  const iPrice =
+    idx("price")>=0 ? idx("price") :
+    idx("가격")>=0 ? idx("가격") :
+    idx("단가");
+
+  const iActive =
+    idx("active")>=0 ? idx("active") :
+    idx("사용")>=0 ? idx("사용") :
+    idx("활성")>=0 ? idx("활성") :
+    idx("노출");
+
+  const iOrd =
+    idx("ord")>=0 ? idx("ord") :
+    idx("정렬")>=0 ? idx("정렬") :
+    idx("순서");
+
+  if(iId < 0 || iCat < 0 || iName < 0 || iPrice < 0){
+    throw new Error("시트 헤더 부족: id/cat/name/price 필수");
+  }
+
+  const next = [];
+  for(let r=1;r<rows.length;r++){
+    const row = rows[r];
+    const id = String(row[iId] ?? "").trim();
+    let cat = String(row[iCat] ?? "").trim();
+    cat = cat.replace(/\s+/g,"").replace(/\u00A0/g,""); // 공백 제거(일반/nbsp)
+    // ✅ 봉채소 -> 봉지채소 통일
+    if(cat === "봉채소") cat = "봉지채소";
+
+    const name = String(row[iName] ?? "").trim();
+    const price = toNumber(row[iPrice]);
+
+    if(!id || !name) continue;
+
+    const active = (iActive >= 0) ? normalizeActive(row[iActive]) : 1;
+    const ord = (iOrd >= 0) ? toInt(row[iOrd], 0) : 0;
+
+    next.push({id, cat, name, price, active, ord});
+  }
+
+  if(next.length < 3){
+    throw new Error("가져온 상품이 너무 적음 (시트/게시/헤더 확인 필요)");
+  }
+
+  items = next;
+  save(LS_ITEMS, items);
+  const stamp = {date: todayStr(), time: timeStr()};
+  save(LS_LASTSYNC, stamp);
+
+  return {ok:true, count: items.length};
+}
+
+// 콘솔에서 강제 실행 가능하도록 노출
+window.umganeSyncFromSheet = async (opt={force:true}) => {
+  try{
+    const r = await syncItemsFromSheet(opt);
+    renderAll();
+    return r;
+  }catch(e){
+    console.warn("[SHEET SYNC FAIL]", e?.message || e);
+    return {ok:false, error: e?.message || String(e)};
+  }
+};
+
+/* =========================================================
+   이벤트
+========================================================= */
+document.getElementById("syncBtn").onclick = async ()=>{
+  // 실무자는 "상품 새로고침 한번"만 누르면 됨
+  await window.umganeSyncFromSheet({force:true});
+};
+
+elQ.addEventListener("input", ()=>{
+  query = elQ.value || "";
+  renderAll();
+});
+
+document.querySelectorAll(".cashBtns button[data-add]").forEach(btn=>{
+  btn.onclick = ()=>{
+    const add = Number(btn.getAttribute("data-add")||0);
+    paid = (paid||0) + add;
+    save(LS_PAID, paid);
+    renderCart();
+  };
+});
+
+document.getElementById("resetPaidBtn").onclick = ()=>{
+  paid = 0;
+  save(LS_PAID, paid);
+  renderCart();
+};
+
+document.getElementById("resetAllBtn").onclick = ()=>{
+  // 리셋은 "받은돈만" 이 아니라, 여기 버튼은 전체 리셋(실무용)
+  // 원하면 이 버튼 동작도 바꿀 수 있음
+  cart = [];
+  paid = 0;
+  save(LS_CART, cart);
+  save(LS_PAID, paid);
+  renderCart();
+};
+
+document.getElementById("payBtn").onclick = ()=>{
+  // 결제완료: 장바구니 비우고 받은돈은 유지/초기화 중 선택 가능
+  // 여기서는 장바구니만 비우고 받은돈은 0으로 초기화
+  cart = [];
+  paid = 0;
+  save(LS_CART, cart);
+  save(LS_PAID, paid);
+  renderCart();
+};
+
+document.getElementById("misuSaveBtn").onclick = ()=>{
+  // 현재 장바구니를 미수로 저장(단순 기록)
+  if(cart.length === 0) return;
+  misu.push({ts: Date.now(), cart: JSON.parse(JSON.stringify(cart))});
+  save(LS_MISU, misu);
+  renderCart();
+};
+
+/* =========================================================
+   전체 렌더
+========================================================= */
 function renderAll(){
-  seedItemsIfEmpty();
-
-  items = load(LS_ITEMS, items);
-  pins  = load(LS_PINS, pins);
-  cart  = load(LS_CART, cart);
-  paid  = load(LS_PAID, paid);
-  misu  = load(LS_MISU, misu);
-
+  // items가 깨졌을 때도 화면이 안 사라지게 방어
+  if(!Array.isArray(items)) items = [];
   renderTabs();
   renderKeys();
   renderGrid();
   renderCart();
-  renderSummary();
+  renderSyncInfo();
 }
 
-/* ===============================
-   이벤트
-================================= */
-elQ.addEventListener("input", ()=>{
-  query = elQ.value;
-  renderAll();
-});
-
-document.querySelectorAll(".cashBtn[data-add]").forEach(b=>{
-  b.addEventListener("click", ()=> addPaid(Number(b.dataset.add||0)));
-});
-
-elPaidReset.addEventListener("click", ()=>{
-  paid = 0;
-  save(LS_PAID, paid);
-  renderAll();
-});
-
-elPayBtn.addEventListener("click", doPay);
-
-elSaveMisu.addEventListener("click", saveMisuNow);
-elMisuPill.addEventListener("click", openMisu);
-
-elCartPill.addEventListener("click", resetCartAll);
-
-elModalBack.addEventListener("click", (e)=>{
-  if(e.target === elModalBack) closeMisu();
-});
-elMClose.addEventListener("click", closeMisu);
-
-elSortBtn.addEventListener("click", ()=>{
-  alert("현재 정렬은 '고정 + ord' 고정입니다.");
-});
-
-/* ===============================
-   ✅ 실무자용 동기화(버튼+자동)
-   - 버튼: 언제든 OK
-   - 자동: 장바구니 0개일 때만
-   - 동기화 중 잠금 + 10초 쿨다운
-   - 오늘 날짜 + 마지막 동기화 시간 표시
-================================= */
-const LS_LASTSYNC_UI = "umgane_lastSync_ui_v1";
-let syncing = false;
-let lastSyncTryAt = 0;
-
-function fmtKST(ts){
-  const d = new Date(ts);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth()+1).padStart(2,"0");
-  const dd = String(d.getDate()).padStart(2,"0");
-  const hh = String(d.getHours()).padStart(2,"0");
-  const mi = String(d.getMinutes()).padStart(2,"0");
-  return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
-}
-function todayKST(){
-  const d = new Date();
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth()+1).padStart(2,"0");
-  const dd = String(d.getDate()).padStart(2,"0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-function setSyncInfo(){
-  const t = Number(localStorage.getItem(LS_LASTSYNC_UI) || 0);
-  if (!syncInfo) return;
-  syncInfo.textContent = t
-    ? `📅 오늘: ${todayKST()} · ⏱ 마지막 동기화: ${fmtKST(t)}`
-    : `📅 오늘: ${todayKST()} · ⏱ 마지막 동기화: -`;
-}
-
-async function runSync({force=true, silent=false} = {}){
-  if (syncing) return;
-
-  const now = Date.now();
-  if (now - lastSyncTryAt < 10_000) { // ✅ 10초 쿨다운(연타 방지)
-    if(!silent) alert("⚠️ 잠깐만요. 10초 후 다시 눌러주세요.");
-    return;
-  }
-  lastSyncTryAt = now;
-
-  syncing = true;
-  if (syncBtn){
-    syncBtn.disabled = true;
-    syncBtn.textContent = "⏳ 동기화중...";
-  }
-
+/* =========================================================
+   초기화: 시트 동기화 시도(조용히 실패)
+========================================================= */
+(async ()=>{
   try{
-    await umganeSyncFromSheet({ force });
-    localStorage.setItem(LS_LASTSYNC_UI, String(Date.now()));
-    setSyncInfo();
-    if(!silent) alert("✅ 상품 새로고침 완료");
+    await syncItemsFromSheet({force:false});
   }catch(e){
-    if(!silent) alert("❌ 동기화 실패 (인터넷/시트 확인)");
-  }finally{
-    syncing = false;
-    if (syncBtn){
-      syncBtn.disabled = false;
-      syncBtn.textContent = "📄 상품 새로고침";
-    }
+    // 조용히 무시(로컬 데이터로 계속)
   }
-}
-
-// ✅ 버튼 클릭 = 언제든 강제 새로고침
-syncBtn?.addEventListener("click", ()=> runSync({force:true, silent:false}));
-
-// ✅ 자동갱신(2분마다): 장바구니가 비었을 때만 (오늘 이미 동기화면 내부 로직이 스킵할 수 있음)
-setInterval(()=>{
-  try{
-    const cnt = cartCount();
-    if(cnt === 0){
-      runSync({force:false, silent:true});
-    }
-  }catch(e){}
-}, 120_000);
-
-/* 시작 */
-setSyncInfo();
-renderAll();
+  renderAll();
+})();
 </script>
 </body>
 </html>
