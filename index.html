@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>엄가네 POS</title>
 
-<!-- favicon 404 없애기(선택) -->
 <link rel="icon" href="data:,">
 
 <style>
@@ -77,7 +76,6 @@
     border-bottom:1px solid var(--line);
   }
 
-  /* ✅ 탭 왼쪽 / 새로고침 오른쪽 */
   .tabsRow{
     display:flex;
     align-items:center;
@@ -148,7 +146,6 @@
     font-weight:var(--w-500);
   }
 
-  /* ✅ 초성키: 가로 고정 */
   .chosungRow{
     display:flex;
     flex-direction:row !important;
@@ -239,10 +236,6 @@
     display:flex;align-items:center;justify-content:center;
     color:rgba(255,159,0,.95);
     font-size:14px;
-    -webkit-touch-callout:none;
-    -webkit-user-select:none;
-    user-select:none;
-    touch-action:manipulation;
   }
   .pin.off{ color:rgba(255,255,255,.18); filter:grayscale(1); opacity:.35; }
   .card.inactive{ opacity:.35; filter:grayscale(.55); }
@@ -256,9 +249,13 @@
     gap:10px;
   }
   .rightTitle{
+    display:flex;
+    gap:8px;
+    align-items:center;
     font-size:var(--fs-14);
     font-weight:var(--w-600);
     color:rgba(245,247,255,.92);
+    flex-wrap:wrap;
   }
   .pill{
     padding:7px 10px;
@@ -267,6 +264,7 @@
     background:rgba(255,255,255,.03);
     font-size:var(--fs-13);
     font-weight:var(--w-600);
+    white-space:nowrap;
   }
   .pill.accent{
     border-color:rgba(255,159,0,.45);
@@ -527,9 +525,60 @@
   .btn2.danger{ background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.30); }
   .btn2.good{ background:rgba(41,209,126,.12); border-color:rgba(41,209,126,.30); }
 
+  /* ✅ 리포트(오늘 데이터) */
+  .repGrid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .repBox{
+    border-radius:16px;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+  }
+  .repLabel{ font-size:12px; color:rgba(245,247,255,.65); font-weight:700; }
+  .repValue{ margin-top:4px; font-size:20px; font-weight:900; }
+  .repValue.small{ font-size:16px; font-weight:800; }
+
+  .repList{
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+    border-radius:18px;
+    overflow:hidden;
+    margin-bottom:10px;
+  }
+  .repListHead{
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .repListHead .t{ font-weight:900; }
+  .repRow{
+    padding:10px 12px;
+    display:grid;
+    grid-template-columns: 1fr auto auto;
+    gap:10px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    align-items:center;
+  }
+  .repRow:last-child{ border-bottom:0; }
+  .repName{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-weight:700;
+  }
+  .repQty{ color:rgba(245,247,255,.8); font-weight:800; }
+  .repAmt{ font-weight:900; }
   @media (max-width: 980px){
     .app{ grid-template-columns: 1fr; }
     :root{ --right-w: 100%; }
+    .repGrid{ grid-template-columns:1fr; }
   }
 </style>
 </head>
@@ -539,7 +588,6 @@
   <section class="panel left">
     <div class="top">
 
-      <!-- ✅ 탭(왼쪽) / 새로고침(오른쪽) -->
       <div class="tabsRow">
         <div class="tabs" id="tabs"></div>
 
@@ -559,7 +607,7 @@
       <div class="chosungRow" id="keys"></div>
 
       <div class="hint">
-        검색=전품목(초성 가능) · 핀(1.2초)=고정/해제 · 클릭=담기
+        검색=전품목(초성 가능) · 길게=고정/해제(PC 우클릭) · 클릭=담기
       </div>
     </div>
 
@@ -571,7 +619,10 @@
 
   <section class="panel right">
     <div class="rightTop">
-      <div class="rightTitle"><span class="pill accent" id="misuPill">미수(0)</span></div>
+      <div class="rightTitle">
+        <span class="pill accent" id="misuPill">미수(0)</span>
+        <span class="pill" id="salesPill">📊 오늘(0원)</span>
+      </div>
       <div class="rightTitle"><span class="pill" id="cartPill">리셋</span></div>
     </div>
 
@@ -613,13 +664,14 @@
   </section>
 </div>
 
+<!-- 미수 모달 -->
 <div class="modalBack" id="modalBack">
   <div class="modal">
     <div class="modalHead">
-      <h3>미수 목록</h3>
-      <button class="mClose" id="mClose">계산으로</button>
+      <h3 id="modalTitle">미수 목록</h3>
+      <button class="mClose" id="mClose">닫기</button>
     </div>
-    <div id="misuList"></div>
+    <div id="modalBody"></div>
   </div>
 </div>
 
@@ -633,21 +685,40 @@ const LS_CART  = "umgane_cart_v2";
 const LS_PAID  = "umgane_paid_v2";
 const LS_MISU  = "umgane_misu_v2";
 
-/* ===============================
-   ✅ iPad 핀 홀드 설정
-================================= */
-const PIN_HOLD_MS = 1200; // 1.2초
-const MOVE_TOL = 10;      // 10px 이상 움직이면 스크롤로 판단
+/* ✅ 오늘 매출/시간대/베스트/워스트 */
+const LS_SALES_TODAY = "umgane_sales_today_v1"; // {date, events:[]}
 
 /* ===============================
-   ✅ Apps Script 웹앱(JSON) → 상품마스터 동기화(단일 루트)
+   ✅ 구글시트(CSV) → 상품마스터 동기화
 ================================= */
-const ITEMS_API =
-  "https://script.google.com/macros/s/AKfycbyiOcWFHx0nsFt-5P-aJ07HgeDGuZIuZLxiw_jiHGYJVsvud99DnfT9nxQTvkRcrF2m/exec?action=items";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZMLZiCqXn-YKsOwR_RR1nZudB1VqAKI652Aje2p3Ytjqfzx5YhcLtEHyuiCSFKPqZ8e1xvbF3JCU4/pub?output=csv";
+const LS_LASTSYNC = "umgane_items_lastSync_v1";
 
-const LS_LASTSYNC = "umgane_items_lastSync_v2";
+/* ✅ 콤마/따옴표 안전 CSV 파서 */
+function parseCSV(text) {
+  const rows = [];
+  let cur = "", inQ = false;
+  let row = [];
+  function pushCell(){ row.push(cur); cur=""; }
+  function pushRow(){ rows.push(row); row=[]; }
 
-function nowISO(){ return new Date().toISOString(); }
+  for (let i=0;i<text.length;i++){
+    const ch = text[i];
+    if (ch === '"') {
+      if (inQ && text[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (ch === ',' && !inQ) {
+      pushCell();
+    } else if ((ch === '\n' || ch === '\r') && !inQ) {
+      if (ch === '\r' && text[i+1] === '\n') i++;
+      pushCell(); pushRow();
+    } else {
+      cur += ch;
+    }
+  }
+  if (cur.length > 0 || row.length > 0) { pushCell(); pushRow(); }
+  return rows.filter(r => r.some(c => (c || "").trim() !== ""));
+}
 
 function toNumber(v) {
   const s = String(v ?? "").replace(/[^\d.-]/g, "");
@@ -662,6 +733,8 @@ function normalizeActive(v){
   const s = String(v ?? "").trim().toLowerCase();
   return (s === "1" || s === "true" || s === "y" || s === "yes" || s === "on") ? 1 : 0;
 }
+function nowISO(){ return new Date().toISOString(); }
+
 function saveItemsToLS(items){
   localStorage.setItem(LS_ITEMS, JSON.stringify(items));
   localStorage.setItem(LS_LASTSYNC, nowISO());
@@ -679,37 +752,55 @@ function isSameDay(isoA, isoB){
   }catch{ return false; }
 }
 
-async function syncItemsFromApi({force=false} = {}) {
+async function syncItemsFromSheet({force=false} = {}) {
   const last = localStorage.getItem(LS_LASTSYNC);
   if (!force && last && isSameDay(last, nowISO())) {
     return { ok:true, skipped:true, count: (loadItemsFromLS()||[]).length };
   }
 
-  const res = await fetch(ITEMS_API, { cache:"no-store" });
-  if (!res.ok) throw new Error("API 불러오기 실패: " + res.status);
+  const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error("CSV 불러오기 실패: " + res.status);
 
-  const data = await res.json();
-  if (!data || !data.ok || !Array.isArray(data.items)) {
-    throw new Error("API 응답 형식 오류(ok/items)");
+  const csv = await res.text();
+  const rows = parseCSV(csv);
+
+  const header = rows[0].map(h => String(h).trim());
+  const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
+
+  const iId = idx("id");
+  const iCat = idx("cat");
+  const iName = idx("name");
+  const iPrice = idx("price");
+  const iActive = idx("active");
+  const iOrd = idx("ord");
+
+  if (iId < 0 || iCat < 0 || iName < 0 || iPrice < 0) {
+    throw new Error("시트 헤더가 부족함: id/cat/name/price 필수");
   }
 
-  const items = data.items.map(x=>{
-    let cat = String(x.cat ?? "").trim();
-    cat = cat.replace(/\s+/g,"").replace(/\u00A0/g,"");
-    if (cat === "봉채소") cat = "봉지채소"; // 카테고리 통일
+  const items = [];
+  for (let r=1; r<rows.length; r++){
+    const row = rows[r];
 
-    return {
-      id: String(x.id ?? "").trim(),
-      cat,
-      name: String(x.name ?? "").trim(),
-      price: toNumber(x.price),
-      active: normalizeActive(x.active ?? 1),
-      ord: toInt(x.ord, 0),
-    };
-  }).filter(x => x.id && x.name);
+    const id = String(row[iId] ?? "").trim();
+
+    let cat = String(row[iCat] ?? "").trim();
+    cat = cat.replace(/\s+/g,"").replace(/\u00A0/g,"");
+    if (cat === "봉채소") cat = "봉지채소";
+
+    const name = String(row[iName] ?? "").trim();
+    const price = toNumber(row[iPrice]);
+
+    if (!id || !name) continue;
+
+    const active = (iActive >= 0) ? normalizeActive(row[iActive]) : 1;
+    const ord = (iOrd >= 0) ? toInt(row[iOrd], 0) : 0;
+
+    items.push({ id, cat, name, price, active, ord });
+  }
 
   if (items.length < 3) {
-    throw new Error("가져온 상품이 너무 적음(저장 중단) - 웹앱/시트 확인 필요");
+    throw new Error("가져온 상품이 너무 적음(저장 중단) - 시트/게시 확인 필요");
   }
 
   saveItemsToLS(items);
@@ -717,13 +808,12 @@ async function syncItemsFromApi({force=false} = {}) {
   return { ok:true, skipped:false, count: items.length };
 }
 
-// 기존 runSync()가 호출하는 이름을 그대로 유지
-window.umganeSyncFromSheet = syncItemsFromApi;
+window.umganeSyncFromSheet = syncItemsFromSheet;
 
 // 페이지 열릴 때 1회 자동 동기화(오늘 했으면 스킵)
 (async () => {
-  try { await syncItemsFromApi({ force:false }); }
-  catch (e) { console.warn("[API SYNC FAIL]", e?.message || e); }
+  try { await syncItemsFromSheet({ force:false }); }
+  catch (e) { console.warn("[SHEET SYNC FAIL]", e?.message || e); }
 })();
 
 /* ===============================
@@ -745,7 +835,7 @@ function toChosung(str){
 function normalize(str){ return (str||"").toString().trim().toLowerCase(); }
 
 /* ===============================
-   로드/세이브 + ✅ 안정화(형태 섞임 방지)
+   로드/세이브 + 안정화
 ================================= */
 function loadRaw(key, fallback){
   try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
@@ -753,7 +843,6 @@ function loadRaw(key, fallback){
 }
 function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
 
-/* ✅ cart가 배열/객체 섞여도 무조건 객체로 정리 */
 function normalizeCart(v){
   if (!v) return {};
   if (Array.isArray(v)){
@@ -779,13 +868,110 @@ function normalizeCart(v){
   }
   return {};
 }
-
 function normalizePins(v){
   if (!v) return {};
   if (typeof v === "object" && !Array.isArray(v)) return v;
   return {};
 }
 
+/* ===============================
+   오늘매출(이벤트 기반) 저장/집계
+================================= */
+function todayKey(){
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+function loadSalesToday(){
+  const obj = loadRaw(LS_SALES_TODAY, null);
+  const tk = todayKey();
+  if(!obj || obj.date !== tk){
+    const fresh = { date: tk, events: [] };
+    save(LS_SALES_TODAY, fresh);
+    return fresh;
+  }
+  if(!Array.isArray(obj.events)) obj.events = [];
+  return obj;
+}
+function saveSalesToday(obj){
+  save(LS_SALES_TODAY, obj);
+}
+function recordSaleEvent({ts, total, entries}){
+  const s = loadSalesToday();
+  s.events.push({
+    ts,
+    total: Math.round(Number(total)||0),
+    items: entries.map(x=>({
+      id: String(x.id||""),
+      name: String(x.name||""),
+      qty: Math.round(Number(x.qty)||0),
+      price: Math.round(Number(x.price)||0)
+    }))
+  });
+  // 너무 커지면 방어(하루치만)
+  if(s.events.length > 2000) s.events = s.events.slice(-2000);
+  saveSalesToday(s);
+}
+
+function sumMisuAmount(list){
+  return (list||[]).reduce((a,m)=>a+Math.round(Number(m.amount||0)),0);
+}
+
+/* 12/2/4/6 누적: 12:00,14:00,16:00,18:00 기준 */
+function salesCheckpoints(events){
+  const cps = [
+    { label:"12시", h:12 },
+    { label:"2시",  h:14 },
+    { label:"4시",  h:16 },
+    { label:"6시",  h:18 }
+  ];
+  const out = {};
+  cps.forEach(c=> out[c.label]=0);
+
+  for(const e of events){
+    const d = new Date(e.ts);
+    const t = d.getHours() + d.getMinutes()/60;
+    // 누적 기준: 해당 시각 "이전"까지 합산
+    if(t < 12) out["12시"] += e.total;
+    if(t < 14) out["2시"]  += e.total;
+    if(t < 16) out["4시"]  += e.total;
+    if(t < 18) out["6시"]  += e.total;
+    if(t >= 18){
+      // 18시 이후는 누적에 포함되지 않게 했음(원하면 포함하게 바꿀 수 있음)
+    }
+  }
+  // 누적값이 이상해 보일 수 있어서 "진짜 누적"으로 변환:
+  // out["2시"]는 14시 이전 누적이 맞고, out["4시"], out["6시"]도 동일.
+  return out;
+}
+
+function aggregateItems(events){
+  const map = {};
+  for(const e of events){
+    for(const it of (e.items||[])){
+      const id = it.id || it.name;
+      if(!id) continue;
+      if(!map[id]) map[id] = { id, name: it.name || id, qty:0, amount:0 };
+      map[id].qty += Math.round(Number(it.qty)||0);
+      map[id].amount += Math.round(Number(it.qty)||0) * Math.round(Number(it.price)||0);
+      // (단, 장바구니에서 상품 가격을 바꾸는 기능이 없으니 price는 시점 가격 그대로)
+    }
+  }
+  return Object.values(map).filter(x=>x.qty>0);
+}
+
+function bestWorst15(agg){
+  const sorted = [...agg].sort((a,b)=> b.amount - a.amount);
+  const best = sorted.slice(0,15);
+  const worst = sorted.slice(-15).reverse(); // 가장 작은 15개
+  return { best, worst };
+}
+
+/* ===============================
+   샘플 seed
+================================= */
 function seedItemsIfEmpty(){
   const existing = loadRaw(LS_ITEMS, null);
   if(existing && Array.isArray(existing) && existing.length) return;
@@ -831,14 +1017,17 @@ const elChangeMoney = document.getElementById("changeMoney");
 
 const elCartPill = document.getElementById("cartPill");
 const elMisuPill = document.getElementById("misuPill");
+const elSalesPill = document.getElementById("salesPill");
 
 const elPayBtn = document.getElementById("payBtn");
 const elPaidReset = document.getElementById("paidReset");
 const elSaveMisu = document.getElementById("saveMisu");
 
+/* 모달(공용) */
 const elModalBack = document.getElementById("modalBack");
 const elMClose = document.getElementById("mClose");
-const elMisuList = document.getElementById("misuList");
+const elModalTitle = document.getElementById("modalTitle");
+const elModalBody = document.getElementById("modalBody");
 
 /* 동기화 버튼/표시 */
 const syncBtn = document.getElementById("syncBtn");
@@ -871,7 +1060,6 @@ function matchItem(it, q){
   return false;
 }
 
-/* ✅ 검색/초성은 항상 전카테고리 */
 function visibleItems(){
   const q = query.trim();
   let list = items.filter(it => Number(it.active) === 1);
@@ -1000,7 +1188,22 @@ function beep(){
 }
 
 /* ===============================
-   결제완료
+   모달(공용)
+================================= */
+function openModal(title, htmlOrNode){
+  elModalTitle.textContent = title;
+  elModalBody.innerHTML = "";
+  if(typeof htmlOrNode === "string"){
+    elModalBody.innerHTML = htmlOrNode;
+  }else{
+    elModalBody.appendChild(htmlOrNode);
+  }
+  elModalBack.style.display = "flex";
+}
+function closeModal(){ elModalBack.style.display = "none"; }
+
+/* ===============================
+   결제완료 (✅ 오늘매출 기록 추가)
 ================================= */
 function doPay(){
   const total = cartTotal();
@@ -1011,6 +1214,11 @@ function doPay(){
 
   beep();
 
+  // ✅ 오늘매출 이벤트 기록(결제 직전 cart snapshot)
+  const entries = cartEntries();
+  recordSaleEvent({ ts: Date.now(), total, entries });
+
+  // ✅ 미수 불러온 건 결제하면 미수에서 제거
   if(loadedMisuIndex !== null){
     misu = loadRaw(LS_MISU, misu);
     if(misu[loadedMisuIndex]){
@@ -1036,12 +1244,6 @@ function addPaid(n){
 /* ===============================
    미수
 ================================= */
-function openMisu(){
-  elModalBack.style.display = "flex";
-  renderMisuList();
-}
-function closeMisu(){ elModalBack.style.display = "none"; }
-
 function saveMisuNow(){
   const entries = cartEntries();
   const amount = cartTotal();
@@ -1066,6 +1268,27 @@ function saveMisuNow(){
   openMisu();
 }
 
+function openMisu(){
+  renderMisuList();
+  openModal("미수 목록", elMisuListWrap());
+}
+function elMisuListWrap(){
+  const wrap = document.createElement("div");
+  const total = sumMisuAmount(misu);
+  const head = document.createElement("div");
+  head.className = "repBox";
+  head.style.marginBottom = "10px";
+  head.innerHTML = `
+    <div class="repLabel">미수 누적</div>
+    <div class="repValue">${won(total)}</div>
+    <div class="repLabel" style="margin-top:6px;">건수</div>
+    <div class="repValue small">${misu.length}건</div>
+  `;
+  wrap.appendChild(head);
+  wrap.appendChild(elMisuList);
+  return wrap;
+}
+
 function restoreMisu(idx){
   const m = misu[idx];
   if(!m) return;
@@ -1087,7 +1310,7 @@ function restoreMisu(idx){
   save(LS_CART, cart);
   save(LS_PAID, paid);
 
-  closeMisu();
+  closeModal();
   renderAll();
 }
 
@@ -1120,6 +1343,8 @@ function deleteMisu(idx){
   renderAll();
 }
 
+/* 미수 리스트 DOM(재사용) */
+const elMisuList = document.createElement("div");
 function renderMisuList(){
   elMisuList.innerHTML = "";
   if(!misu.length){
@@ -1178,10 +1403,83 @@ function renderMisuList(){
 }
 
 /* ===============================
-   상품 카드 렌더
-   ✅ iPad: 핀만 1.2초 홀드 → 고정/해제
-   ✅ 스크롤/스침(드래그) 시에는 핀 동작 무시
+   오늘 데이터(전체/12/2/4/6 + 베스트/워스트)
 ================================= */
+function openSales(){
+  const sales = loadSalesToday();
+  const events = sales.events || [];
+  const total = events.reduce((a,e)=>a + Math.round(Number(e.total||0)), 0);
+
+  const cps = salesCheckpoints(events);
+  const agg = aggregateItems(events);
+  const {best, worst} = bestWorst15(agg);
+
+  const root = document.createElement("div");
+
+  const grid = document.createElement("div");
+  grid.className = "repGrid";
+
+  const b1 = document.createElement("div");
+  b1.className = "repBox";
+  b1.innerHTML = `<div class="repLabel">오늘 총매출</div><div class="repValue">${won(total)}</div>`;
+
+  const b2 = document.createElement("div");
+  b2.className = "repBox";
+  b2.innerHTML = `
+    <div class="repLabel">12시/2시/4시/6시 누적(이전)</div>
+    <div class="repValue small">12시: ${won(cps["12시"]||0)}</div>
+    <div class="repValue small">2시: ${won(cps["2시"]||0)}</div>
+    <div class="repValue small">4시: ${won(cps["4시"]||0)}</div>
+    <div class="repValue small">6시: ${won(cps["6시"]||0)}</div>
+  `;
+
+  grid.appendChild(b1);
+  grid.appendChild(b2);
+  root.appendChild(grid);
+
+  // 베스트
+  root.appendChild(makeRankList("베스트 15 (오늘, 매출 기준)", best));
+  // 워스트
+  root.appendChild(makeRankList("워스트 15 (오늘, 매출 기준)", worst));
+
+  openModal("오늘 데이터", root);
+}
+
+function makeRankList(title, list){
+  const wrap = document.createElement("div");
+  wrap.className = "repList";
+
+  const head = document.createElement("div");
+  head.className = "repListHead";
+  head.innerHTML = `<div class="t">${title}</div><div class="muted">${list.length}개</div>`;
+  wrap.appendChild(head);
+
+  if(!list.length){
+    const row = document.createElement("div");
+    row.className = "repRow";
+    row.innerHTML = `<div class="muted">아직 판매 데이터가 없습니다.</div><div></div><div></div>`;
+    wrap.appendChild(row);
+    return wrap;
+  }
+
+  list.forEach((x, i)=>{
+    const row = document.createElement("div");
+    row.className = "repRow";
+    row.innerHTML = `
+      <div class="repName">${i+1}. ${x.name}</div>
+      <div class="repQty mono">x${x.qty}</div>
+      <div class="repAmt mono">${won(x.amount)}</div>
+    `;
+    wrap.appendChild(row);
+  });
+
+  return wrap;
+}
+
+/* ===============================
+   상품 카드 렌더
+================================= */
+let pressTimer=null;
 function renderGrid(){
   const list = visibleItems();
   elGrid.innerHTML = "";
@@ -1201,85 +1499,18 @@ function renderGrid(){
     const pin = document.createElement("div");
     pin.className = "pin " + (pins[it.id] ? "" : "off");
     pin.textContent = "📌";
-    pin.title = "핀 1.2초 누르면 고정/해제";
+    pin.title = "고정";
+    pin.onclick = (e)=>{ e.stopPropagation(); togglePin(it.id); };
 
-    // ✅ 카드 클릭 = 담기
     card.onclick = ()=>addToCart(it);
-
-    // PC 우클릭(선택): 고정 토글 유지
     card.oncontextmenu = (e)=>{ e.preventDefault(); togglePin(it.id); return false; };
 
-    // ✅ 핀 홀드(1.2초)만 토글
-    let holdTimer = null;
-    let startX=0, startY=0, moved=false;
-
-    // 드래그/스크롤 감지(핀 누르기 전에 손가락이 움직였는지 체크)
-    const onMoveCheck = (clientX, clientY)=>{
-      const dx = Math.abs(clientX - startX);
-      const dy = Math.abs(clientY - startY);
-      if (dx > MOVE_TOL || dy > MOVE_TOL) moved = true;
-    };
-
-    // iOS 호환: touch 이벤트로 움직임 판정
-    pin.addEventListener("touchstart", (e)=>{
-      e.stopPropagation();
-      moved = false;
-      const t = e.touches[0];
-      startX = t.clientX; startY = t.clientY;
-
-      if (holdTimer) clearTimeout(holdTimer);
-      holdTimer = setTimeout(()=>{
-        if (!moved) togglePin(it.id);
-      }, PIN_HOLD_MS);
+    card.addEventListener("touchstart", ()=>{
+      pressTimer = setTimeout(()=>togglePin(it.id), 450);
     }, {passive:true});
-
-    pin.addEventListener("touchmove", (e)=>{
-      const t = e.touches[0];
-      onMoveCheck(t.clientX, t.clientY);
+    card.addEventListener("touchend", ()=>{
+      if(pressTimer) clearTimeout(pressTimer);
     }, {passive:true});
-
-    pin.addEventListener("touchend", (e)=>{
-      e.stopPropagation();
-      if (holdTimer) clearTimeout(holdTimer);
-      holdTimer = null;
-    }, {passive:true});
-
-    pin.addEventListener("touchcancel", (e)=>{
-      e.stopPropagation();
-      if (holdTimer) clearTimeout(holdTimer);
-      holdTimer = null;
-    }, {passive:true});
-
-    // Pointer 이벤트(지원되는 브라우저에서 더 안정적)
-    pin.addEventListener("pointerdown", (e)=>{
-      e.stopPropagation();
-      moved = false;
-      startX = e.clientX; startY = e.clientY;
-
-      if (holdTimer) clearTimeout(holdTimer);
-      holdTimer = setTimeout(()=>{
-        if (!moved) togglePin(it.id);
-      }, PIN_HOLD_MS);
-    });
-
-    pin.addEventListener("pointermove", (e)=>{
-      onMoveCheck(e.clientX, e.clientY);
-    });
-
-    pin.addEventListener("pointerup", (e)=>{
-      e.stopPropagation();
-      if (holdTimer) clearTimeout(holdTimer);
-      holdTimer = null;
-    });
-
-    pin.addEventListener("pointercancel", (e)=>{
-      e.stopPropagation();
-      if (holdTimer) clearTimeout(holdTimer);
-      holdTimer = null;
-    });
-
-    // 핀 짧은 탭은 아무 것도 안 하게(기본)
-    pin.addEventListener("click", (e)=> e.stopPropagation());
 
     card.appendChild(n);
     card.appendChild(p);
@@ -1290,7 +1521,7 @@ function renderGrid(){
 }
 
 /* ===============================
-   장바구니 렌더 (✅ forEach 에러 방지)
+   장바구니 렌더
 ================================= */
 function renderCart(){
   elCartList.innerHTML = "";
@@ -1361,7 +1592,14 @@ function renderSummary(){
   elPaidMoney.textContent = won(paid||0);
   elChangeMoney.textContent = won(change);
 
-  elMisuPill.textContent = `미수(${misu.length})`;
+  // 미수 pill: 건수 + 총액
+  const misuAmt = sumMisuAmount(misu);
+  elMisuPill.textContent = `미수(${misu.length})·${won(misuAmt)}`;
+
+  // 오늘 pill: 총매출
+  const s = loadSalesToday();
+  const todayTotal = (s.events||[]).reduce((a,e)=>a+Math.round(Number(e.total||0)),0);
+  elSalesPill.textContent = `📊 오늘(${won(todayTotal)})`;
 }
 
 function renderAll(){
@@ -1373,7 +1611,6 @@ function renderAll(){
   paid  = loadRaw(LS_PAID, paid);
   misu  = loadRaw(LS_MISU, misu);
 
-  // 🔥 혹시 예전 데이터 섞여있으면 여기서 한번 저장해 정리
   save(LS_CART, cart);
   save(LS_PINS, pins);
 
@@ -1407,12 +1644,14 @@ elPayBtn.addEventListener("click", doPay);
 elSaveMisu.addEventListener("click", saveMisuNow);
 elMisuPill.addEventListener("click", openMisu);
 
+elSalesPill.addEventListener("click", openSales);
+
 elCartPill.addEventListener("click", resetCartAll);
 
 elModalBack.addEventListener("click", (e)=>{
-  if(e.target === elModalBack) closeMisu();
+  if(e.target === elModalBack) closeModal();
 });
-elMClose.addEventListener("click", closeMisu);
+elMClose.addEventListener("click", closeModal);
 
 /* ===============================
    동기화 UI
@@ -1464,7 +1703,7 @@ async function runSync({force=true, silent=false} = {}){
     setSyncInfo();
     if(!silent) alert("✅ 상품 새로고침 완료");
   }catch(e){
-    if(!silent) alert("❌ 동기화 실패 (인터넷/시트/웹앱 확인)");
+    if(!silent) alert("❌ 동기화 실패 (인터넷/시트 확인)");
   }finally{
     syncing = false;
     syncBtn.disabled = false;
@@ -1474,7 +1713,6 @@ async function runSync({force=true, silent=false} = {}){
 
 syncBtn.addEventListener("click", ()=> runSync({force:true, silent:false}));
 
-// 장바구니가 비어있을 때만 2분마다 조용히 동기화 시도(오늘이면 스킵됨)
 setInterval(()=>{
   try{
     const cnt = cartCount();
@@ -1486,6 +1724,20 @@ setInterval(()=>{
 
 setSyncInfo();
 renderAll();
+
+/* ✅ 참고: 아래는 네가 넣어둔 Apps Script items API 테스트 코드(그대로 둠) */
+const ITEMS_API =
+  "https://script.google.com/macros/s/AKfycbyiOcWFHx0nsFt-5P-aJ07HgeDGuZIuZLxiw_jiHGYJVsvud99DnfT9nxQTvkRcrF2m/exec?action=items";
+
+async function loadItems(){
+  try{
+    const res = await fetch(ITEMS_API);
+    const data = await res.json();
+    if(!data.ok) return;
+    console.log("상품(API)", data.items);
+  }catch(e){}
+}
+loadItems();
 </script>
 </body>
 </html>
