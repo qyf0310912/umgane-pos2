@@ -239,6 +239,10 @@
     display:flex;align-items:center;justify-content:center;
     color:rgba(255,159,0,.95);
     font-size:14px;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    user-select:none;
+    touch-action:manipulation;
   }
   .pin.off{ color:rgba(255,255,255,.18); filter:grayscale(1); opacity:.35; }
   .card.inactive{ opacity:.35; filter:grayscale(.55); }
@@ -555,7 +559,7 @@
       <div class="chosungRow" id="keys"></div>
 
       <div class="hint">
-        검색=전품목(초성 가능) · 길게=고정/해제(PC 우클릭) · 클릭=담기
+        검색=전품목(초성 가능) · 핀(1.2초)=고정/해제 · 클릭=담기
       </div>
     </div>
 
@@ -630,36 +634,20 @@ const LS_PAID  = "umgane_paid_v2";
 const LS_MISU  = "umgane_misu_v2";
 
 /* ===============================
-   ✅ 구글시트(CSV) → 상품마스터 동기화
+   ✅ iPad 핀 홀드 설정
 ================================= */
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZMLZiCqXn-YKsOwR_RR1nZudB1VqAKI652Aje2p3Ytjqfzx5YhcLtEHyuiCSFKPqZ8e1xvbF3JCU4/pub?output=csv";
-const LS_LASTSYNC = "umgane_items_lastSync_v1";
+const PIN_HOLD_MS = 1200; // 1.2초
+const MOVE_TOL = 10;      // 10px 이상 움직이면 스크롤로 판단
 
-/* ✅ 콤마/따옴표 안전 CSV 파서 */
-function parseCSV(text) {
-  const rows = [];
-  let cur = "", inQ = false;
-  let row = [];
-  function pushCell(){ row.push(cur); cur=""; }
-  function pushRow(){ rows.push(row); row=[]; }
+/* ===============================
+   ✅ Apps Script 웹앱(JSON) → 상품마스터 동기화(단일 루트)
+================================= */
+const ITEMS_API =
+  "https://script.google.com/macros/s/AKfycbyiOcWFHx0nsFt-5P-aJ07HgeDGuZIuZLxiw_jiHGYJVsvud99DnfT9nxQTvkRcrF2m/exec?action=items";
 
-  for (let i=0;i<text.length;i++){
-    const ch = text[i];
-    if (ch === '"') {
-      if (inQ && text[i+1] === '"') { cur += '"'; i++; }
-      else inQ = !inQ;
-    } else if (ch === ',' && !inQ) {
-      pushCell();
-    } else if ((ch === '\n' || ch === '\r') && !inQ) {
-      if (ch === '\r' && text[i+1] === '\n') i++;
-      pushCell(); pushRow();
-    } else {
-      cur += ch;
-    }
-  }
-  if (cur.length > 0 || row.length > 0) { pushCell(); pushRow(); }
-  return rows.filter(r => r.some(c => (c || "").trim() !== ""));
-}
+const LS_LASTSYNC = "umgane_items_lastSync_v2";
+
+function nowISO(){ return new Date().toISOString(); }
 
 function toNumber(v) {
   const s = String(v ?? "").replace(/[^\d.-]/g, "");
@@ -674,8 +662,6 @@ function normalizeActive(v){
   const s = String(v ?? "").trim().toLowerCase();
   return (s === "1" || s === "true" || s === "y" || s === "yes" || s === "on") ? 1 : 0;
 }
-function nowISO(){ return new Date().toISOString(); }
-
 function saveItemsToLS(items){
   localStorage.setItem(LS_ITEMS, JSON.stringify(items));
   localStorage.setItem(LS_LASTSYNC, nowISO());
@@ -693,55 +679,37 @@ function isSameDay(isoA, isoB){
   }catch{ return false; }
 }
 
-async function syncItemsFromSheet({force=false} = {}) {
+async function syncItemsFromApi({force=false} = {}) {
   const last = localStorage.getItem(LS_LASTSYNC);
   if (!force && last && isSameDay(last, nowISO())) {
     return { ok:true, skipped:true, count: (loadItemsFromLS()||[]).length };
   }
 
-  const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-  if (!res.ok) throw new Error("CSV 불러오기 실패: " + res.status);
+  const res = await fetch(ITEMS_API, { cache:"no-store" });
+  if (!res.ok) throw new Error("API 불러오기 실패: " + res.status);
 
-  const csv = await res.text();
-  const rows = parseCSV(csv);
-
-  const header = rows[0].map(h => String(h).trim());
-  const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
-
-  const iId = idx("id");
-  const iCat = idx("cat");
-  const iName = idx("name");
-  const iPrice = idx("price");
-  const iActive = idx("active");
-  const iOrd = idx("ord");
-
-  if (iId < 0 || iCat < 0 || iName < 0 || iPrice < 0) {
-    throw new Error("시트 헤더가 부족함: id/cat/name/price 필수");
+  const data = await res.json();
+  if (!data || !data.ok || !Array.isArray(data.items)) {
+    throw new Error("API 응답 형식 오류(ok/items)");
   }
 
-  const items = [];
-  for (let r=1; r<rows.length; r++){
-    const row = rows[r];
-
-    const id = String(row[iId] ?? "").trim();
-
-    let cat = String(row[iCat] ?? "").trim();
+  const items = data.items.map(x=>{
+    let cat = String(x.cat ?? "").trim();
     cat = cat.replace(/\s+/g,"").replace(/\u00A0/g,"");
     if (cat === "봉채소") cat = "봉지채소"; // 카테고리 통일
 
-    const name = String(row[iName] ?? "").trim();
-    const price = toNumber(row[iPrice]);
-
-    if (!id || !name) continue;
-
-    const active = (iActive >= 0) ? normalizeActive(row[iActive]) : 1;
-    const ord = (iOrd >= 0) ? toInt(row[iOrd], 0) : 0;
-
-    items.push({ id, cat, name, price, active, ord });
-  }
+    return {
+      id: String(x.id ?? "").trim(),
+      cat,
+      name: String(x.name ?? "").trim(),
+      price: toNumber(x.price),
+      active: normalizeActive(x.active ?? 1),
+      ord: toInt(x.ord, 0),
+    };
+  }).filter(x => x.id && x.name);
 
   if (items.length < 3) {
-    throw new Error("가져온 상품이 너무 적음(저장 중단) - 시트/게시 확인 필요");
+    throw new Error("가져온 상품이 너무 적음(저장 중단) - 웹앱/시트 확인 필요");
   }
 
   saveItemsToLS(items);
@@ -749,12 +717,13 @@ async function syncItemsFromSheet({force=false} = {}) {
   return { ok:true, skipped:false, count: items.length };
 }
 
-window.umganeSyncFromSheet = syncItemsFromSheet;
+// 기존 runSync()가 호출하는 이름을 그대로 유지
+window.umganeSyncFromSheet = syncItemsFromApi;
 
 // 페이지 열릴 때 1회 자동 동기화(오늘 했으면 스킵)
 (async () => {
-  try { await syncItemsFromSheet({ force:false }); }
-  catch (e) { console.warn("[SHEET SYNC FAIL]", e?.message || e); }
+  try { await syncItemsFromApi({ force:false }); }
+  catch (e) { console.warn("[API SYNC FAIL]", e?.message || e); }
 })();
 
 /* ===============================
@@ -798,7 +767,6 @@ function normalizeCart(v){
     return out;
   }
   if (typeof v === "object"){
-    // 값이 배열로 들어있는 케이스까지 방어
     const out = {};
     for(const k of Object.keys(v)){
       const x = v[k];
@@ -1211,8 +1179,9 @@ function renderMisuList(){
 
 /* ===============================
    상품 카드 렌더
+   ✅ iPad: 핀만 1.2초 홀드 → 고정/해제
+   ✅ 스크롤/스침(드래그) 시에는 핀 동작 무시
 ================================= */
-let pressTimer=null;
 function renderGrid(){
   const list = visibleItems();
   elGrid.innerHTML = "";
@@ -1232,18 +1201,85 @@ function renderGrid(){
     const pin = document.createElement("div");
     pin.className = "pin " + (pins[it.id] ? "" : "off");
     pin.textContent = "📌";
-    pin.title = "고정";
-    pin.onclick = (e)=>{ e.stopPropagation(); togglePin(it.id); };
+    pin.title = "핀 1.2초 누르면 고정/해제";
 
+    // ✅ 카드 클릭 = 담기
     card.onclick = ()=>addToCart(it);
+
+    // PC 우클릭(선택): 고정 토글 유지
     card.oncontextmenu = (e)=>{ e.preventDefault(); togglePin(it.id); return false; };
 
-    card.addEventListener("touchstart", ()=>{
-      pressTimer = setTimeout(()=>togglePin(it.id), 450);
+    // ✅ 핀 홀드(1.2초)만 토글
+    let holdTimer = null;
+    let startX=0, startY=0, moved=false;
+
+    // 드래그/스크롤 감지(핀 누르기 전에 손가락이 움직였는지 체크)
+    const onMoveCheck = (clientX, clientY)=>{
+      const dx = Math.abs(clientX - startX);
+      const dy = Math.abs(clientY - startY);
+      if (dx > MOVE_TOL || dy > MOVE_TOL) moved = true;
+    };
+
+    // iOS 호환: touch 이벤트로 움직임 판정
+    pin.addEventListener("touchstart", (e)=>{
+      e.stopPropagation();
+      moved = false;
+      const t = e.touches[0];
+      startX = t.clientX; startY = t.clientY;
+
+      if (holdTimer) clearTimeout(holdTimer);
+      holdTimer = setTimeout(()=>{
+        if (!moved) togglePin(it.id);
+      }, PIN_HOLD_MS);
     }, {passive:true});
-    card.addEventListener("touchend", ()=>{
-      if(pressTimer) clearTimeout(pressTimer);
+
+    pin.addEventListener("touchmove", (e)=>{
+      const t = e.touches[0];
+      onMoveCheck(t.clientX, t.clientY);
     }, {passive:true});
+
+    pin.addEventListener("touchend", (e)=>{
+      e.stopPropagation();
+      if (holdTimer) clearTimeout(holdTimer);
+      holdTimer = null;
+    }, {passive:true});
+
+    pin.addEventListener("touchcancel", (e)=>{
+      e.stopPropagation();
+      if (holdTimer) clearTimeout(holdTimer);
+      holdTimer = null;
+    }, {passive:true});
+
+    // Pointer 이벤트(지원되는 브라우저에서 더 안정적)
+    pin.addEventListener("pointerdown", (e)=>{
+      e.stopPropagation();
+      moved = false;
+      startX = e.clientX; startY = e.clientY;
+
+      if (holdTimer) clearTimeout(holdTimer);
+      holdTimer = setTimeout(()=>{
+        if (!moved) togglePin(it.id);
+      }, PIN_HOLD_MS);
+    });
+
+    pin.addEventListener("pointermove", (e)=>{
+      onMoveCheck(e.clientX, e.clientY);
+    });
+
+    pin.addEventListener("pointerup", (e)=>{
+      e.stopPropagation();
+      if (holdTimer) clearTimeout(holdTimer);
+      holdTimer = null;
+    });
+
+    pin.addEventListener("pointercancel", (e)=>{
+      e.stopPropagation();
+      if (holdTimer) clearTimeout(holdTimer);
+      holdTimer = null;
+    });
+
+    // 핀 짧은 탭은 아무 것도 안 하게(기본)
+    pin.addEventListener("click", (e)=> e.stopPropagation());
 
     card.appendChild(n);
     card.appendChild(p);
@@ -1428,7 +1464,7 @@ async function runSync({force=true, silent=false} = {}){
     setSyncInfo();
     if(!silent) alert("✅ 상품 새로고침 완료");
   }catch(e){
-    if(!silent) alert("❌ 동기화 실패 (인터넷/시트 확인)");
+    if(!silent) alert("❌ 동기화 실패 (인터넷/시트/웹앱 확인)");
   }finally{
     syncing = false;
     syncBtn.disabled = false;
@@ -1438,6 +1474,7 @@ async function runSync({force=true, silent=false} = {}){
 
 syncBtn.addEventListener("click", ()=> runSync({force:true, silent:false}));
 
+// 장바구니가 비어있을 때만 2분마다 조용히 동기화 시도(오늘이면 스킵됨)
 setInterval(()=>{
   try{
     const cnt = cartCount();
@@ -1449,21 +1486,6 @@ setInterval(()=>{
 
 setSyncInfo();
 renderAll();
-  
-const ITEMS_API =
-  "https://script.google.com/macros/s/AKfycbyiOcWFHx0nsFt-5P-aJ07HgeDGuZIuZLxiw_jiHGYJVsvud99DnfT9nxQTvkRcrF2m/exec?action=items";
-
-async function loadItems(){
-  const res = await fetch(ITEMS_API);
-  const data = await res.json();
-  if(!data.ok) {
-    alert("상품 불러오기 실패");
-    return;
-  }
-  console.log("상품", data.items);
-}
-
-loadItems();
 </script>
 </body>
 </html>
