@@ -84,9 +84,7 @@
     flex-wrap:wrap;
     margin-bottom:10px;
   }
-  .tabs{
-    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-  }
+  .tabs{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
   .tab{
     padding:8px 12px;
     font-size:var(--fs-14);
@@ -252,10 +250,6 @@
     font-size:var(--fs-14);
     font-weight:var(--w-600);
     color:rgba(245,247,255,.92);
-    display:flex;
-    gap:8px;
-    align-items:center;
-    flex-wrap:wrap;
   }
   .pill{
     padding:7px 10px;
@@ -270,12 +264,7 @@
     box-shadow:0 0 0 2px rgba(255,159,0,.12) inset;
   }
 
-  .cartList{
-    flex:1;
-    overflow:auto;
-    padding:10px 10px 6px;
-  }
-
+  .cartList{flex:1; overflow:auto; padding:10px 10px 6px;}
   .cartRow{
     user-select:none;
     padding:10px 10px;
@@ -288,7 +277,6 @@
     gap:10px;
     margin-bottom:8px;
   }
-
   .cartName{
     font-size:var(--fs-14);
     font-weight:var(--w-500);
@@ -304,13 +292,7 @@
     font-weight:var(--w-600);
     color:rgba(245,247,255,.85);
   }
-
-  .qtyBox{
-    display:flex;
-    justify-content:flex-end;
-    align-items:center;
-    gap:8px;
-  }
+  .qtyBox{display:flex; justify-content:flex-end; align-items:center; gap:8px;}
   .qBtn{
     width:34px;height:32px;
     border-radius:10px;
@@ -337,52 +319,15 @@
     font-weight:700;
   }
 
-  .summary{
-    border-top:1px solid var(--line);
-    padding:10px 12px;
-  }
-  .sumTitle{
-    font-size:var(--fs-13);
-    color:rgba(245,247,255,.7);
-    font-weight:var(--w-600);
-  }
-  .sumMoney{
-    margin-top:4px;
-    font-size:var(--fs-32);
-    font-weight:700;
-    letter-spacing:-.6px;
-    line-height:1.05;
-  }
-  .twoCol{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-top:8px;
-  }
-  .moneyBox{
-    border-radius:16px;
-    padding:8px 12px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.02);
-  }
-  .moneyLabel{
-    font-size:var(--fs-12);
-    color:rgba(245,247,255,.65);
-    font-weight:var(--w-600);
-  }
-  .moneyValue{
-    margin-top:3px;
-    font-size:22px;
-    font-weight:800;
-    line-height:1.05;
-  }
+  .summary{border-top:1px solid var(--line); padding:10px 12px;}
+  .sumTitle{font-size:var(--fs-13); color:rgba(245,247,255,.7); font-weight:var(--w-600);}
+  .sumMoney{margin-top:4px; font-size:var(--fs-32); font-weight:700; letter-spacing:-.6px; line-height:1.05;}
+  .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;}
+  .moneyBox{border-radius:16px; padding:8px 12px; border:1px solid var(--line); background:rgba(255,255,255,.02);}
+  .moneyLabel{font-size:var(--fs-12); color:rgba(245,247,255,.65); font-weight:var(--w-600);}
+  .moneyValue{margin-top:3px; font-size:22px; font-weight:800; line-height:1.05;}
 
-  .cashGrid{
-    margin-top:10px;
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap:10px;
-  }
+  .cashGrid{margin-top:10px; display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;}
   .cashBtn{
     padding:10px 10px;
     border-radius:14px;
@@ -392,19 +337,9 @@
     font-weight:var(--w-600);
     font-size:var(--fs-14);
   }
-  .cashBtn.reset{
-    background:rgba(255,59,48,.12);
-    border-color:rgba(255,59,48,.28);
-  }
+  .cashBtn.reset{background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.28);}
 
-  .bottomRow{
-    margin-top:10px;
-    display:grid;
-    grid-template-columns: 1fr 2fr;
-    gap:10px;
-    align-items:stretch;
-  }
-
+  .bottomRow{margin-top:10px; display:grid; grid-template-columns: 1fr 2fr; gap:10px; align-items:stretch;}
   .misuBtn{
     border-radius:16px;
     border:1px solid var(--line);
@@ -413,19 +348,8 @@
     text-align:left;
     color:var(--text);
   }
-  .misuBtn .t{
-    font-weight:800;
-    font-size:var(--fs-16);
-    color:var(--text);
-    line-height:1.05;
-  }
-  .misuBtn .s{
-    margin-top:3px;
-    font-size:var(--fs-12);
-    color:rgba(245,247,255,.65);
-    font-weight:var(--w-600);
-    line-height:1.1;
-  }
+  .misuBtn .t{font-weight:800; font-size:var(--fs-16); color:var(--text); line-height:1.05;}
+  .misuBtn .s{margin-top:3px; font-size:var(--fs-12); color:rgba(245,247,255,.65); font-weight:var(--w-600); line-height:1.1;}
 
   .payBtn{
     border-radius:16px;
@@ -437,6 +361,7 @@
     padding:12px 10px;
   }
 
+  /* ===== 모달 ===== */
   .modalBack{
     position:fixed; inset:0;
     background:rgba(0,0,0,.62);
@@ -446,7 +371,7 @@
     padding:16px;
   }
   .modal{
-    width:min(980px, 96vw);
+    width:min(920px, 96vw);
     max-height:86vh;
     overflow:auto;
     background:var(--panel);
@@ -464,20 +389,133 @@
     border-bottom:1px solid var(--line);
     margin-bottom:12px;
   }
-  .modalHead h3{
-    margin:0;
-    font-size:var(--fs-18);
-    font-weight:700;
-  }
+  .modalHead h3{margin:0; font-size:var(--fs-18); font-weight:800; letter-spacing:-.2px;}
+  .mActions{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
   .mClose{
     padding:10px 12px;
     border:1px solid var(--line);
     background:rgba(255,255,255,.03);
     color:rgba(245,247,255,.95);
     border-radius:14px;
-    font-weight:700;
+    font-weight:800;
+  }
+  .btn2{
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    color:rgba(245,247,255,.95);
+    font-weight:800;
+    white-space:nowrap;
+  }
+  .btn2.good{ background:rgba(41,209,126,.12); border-color:rgba(41,209,126,.30); }
+  .btn2.danger{ background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.30); }
+  .btn2.accent{
+    border-color:rgba(255,159,0,.45);
+    box-shadow:0 0 0 2px rgba(255,159,0,.12) inset;
   }
 
+  /* ===== 오늘(관리자) 보드 ===== */
+  .todayTabs{display:flex; gap:8px; flex-wrap:wrap; margin:6px 6px 12px;}
+  .todayTab{
+    padding:8px 10px;
+    font-size:var(--fs-13);
+    font-weight:900;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    color:rgba(245,247,255,.92);
+    border-radius:14px;
+  }
+  .todayTab.active{
+    border-color:rgba(255,159,0,.45);
+    box-shadow:0 0 0 2px rgba(255,159,0,.12) inset;
+    color:#fff;
+  }
+  .kpi3{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:10px;
+    padding:0 6px 10px;
+  }
+  @media (max-width: 860px){
+    .kpi3{ grid-template-columns: 1fr; }
+  }
+  .kpi{
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+    border-radius:18px;
+    padding:12px 12px 10px;
+  }
+  .kpi .l{
+    font-size:var(--fs-12);
+    font-weight:800;
+    color:rgba(245,247,255,.65);
+  }
+  .kpi .v{
+    margin-top:6px;
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:-.6px;
+    line-height:1.05;
+  }
+  .kpi .s{
+    margin-top:6px;
+    font-size:var(--fs-12);
+    font-weight:800;
+    color:rgba(245,247,255,.55);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .bwWrap{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+    padding:0 6px 8px;
+  }
+  @media (max-width: 860px){
+    .bwWrap{ grid-template-columns: 1fr; }
+  }
+  .bwBox{
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+    border-radius:18px;
+    overflow:hidden;
+  }
+  .bwHead{
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+  }
+  .bwHead .t{font-weight:900; font-size:var(--fs-14);}
+  .bwHead .s{font-weight:800; font-size:var(--fs-12); color:rgba(245,247,255,.55);}
+  .bwList{padding:10px 10px 6px;}
+  .bwRow{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    gap:10px;
+    align-items:center;
+    padding:10px 10px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:rgba(255,255,255,.02);
+    margin-bottom:8px;
+  }
+  .bwName{
+    font-weight:900;
+    font-size:var(--fs-14);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .bwVal{font-weight:900; font-size:var(--fs-14); color:rgba(245,247,255,.9);}
+  .bwVal.bad{ color:rgba(255,190,186,.95); }
+  .bwVal.good{ color:rgba(200,255,225,.95); }
+
+  /* ===== 미수 리스트(기존) ===== */
   .misuItem{
     border:1px solid var(--line);
     background:rgba(255,255,255,.02);
@@ -492,7 +530,7 @@
   .misuInfo{ min-width:0; }
   .misuInfo .t{
     font-size:var(--fs-14);
-    font-weight:700;
+    font-weight:900;
     display:flex;
     gap:8px;
     align-items:baseline;
@@ -500,120 +538,18 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  .misuInfo .amt{ font-weight:800; color:rgba(245,247,255,.95); }
-  .misuInfo .time{ color:rgba(245,247,255,.55); font-weight:600; font-size:var(--fs-12); }
+  .misuInfo .amt{ font-weight:900; color:rgba(245,247,255,.95); }
+  .misuInfo .time{ color:rgba(245,247,255,.55); font-weight:800; font-size:var(--fs-12); }
   .misuInfo .d{
     margin-top:6px;
     font-size:var(--fs-13);
-    font-weight:600;
+    font-weight:800;
     color:rgba(245,247,255,.8);
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
   }
   .misuBtns{ display:flex; gap:8px; }
-  .btn2{
-    padding:10px 12px;
-    border-radius:14px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:rgba(245,247,255,.95);
-    font-weight:700;
-    white-space:nowrap;
-  }
-  .btn2.danger{ background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.30); }
-  .btn2.good{ background:rgba(41,209,126,.12); border-color:rgba(41,209,126,.30); }
-
-  /* ✅ 관리자(매출) 모달 UI */
-  .adminTopRow{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    align-items:center;
-    margin-bottom:12px;
-  }
-  .kpi{
-    flex:1;
-    min-width:220px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.02);
-    border-radius:18px;
-    padding:12px;
-  }
-  .kpi .k{
-    font-size:12px;
-    color:rgba(245,247,255,.65);
-    font-weight:700;
-  }
-  .kpi .v{
-    margin-top:4px;
-    font-size:22px;
-    font-weight:900;
-    letter-spacing:-.3px;
-  }
-  .segTabs{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin:10px 0 12px;
-  }
-  .segBtn{
-    padding:8px 10px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:rgba(245,247,255,.95);
-    border-radius:12px;
-    font-weight:800;
-    font-size:13px;
-  }
-  .segBtn.active{
-    border-color:rgba(255,159,0,.45);
-    box-shadow:0 0 0 2px rgba(255,159,0,.12) inset;
-  }
-  .twoTable{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:12px;
-  }
-  @media (max-width: 980px){
-    .twoTable{ grid-template-columns: 1fr; }
-  }
-  .tbl{
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.02);
-    border-radius:18px;
-    padding:10px;
-    overflow:hidden;
-  }
-  .tblTitle{
-    font-weight:900;
-    font-size:14px;
-    margin:0 0 8px;
-    color:rgba(245,247,255,.92);
-  }
-  table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:13px;
-  }
-  th, td{
-    padding:8px 6px;
-    border-top:1px solid rgba(255,255,255,.06);
-    vertical-align:middle;
-  }
-  th{
-    color:rgba(245,247,255,.65);
-    font-weight:800;
-    text-align:left;
-    border-top:0;
-  }
-  td.r{ text-align:right; }
-  td.name{
-    max-width:0;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
 
   @media (max-width: 980px){
     .app{ grid-template-columns: 1fr; }
@@ -626,6 +562,7 @@
 <div class="app">
   <section class="panel left">
     <div class="top">
+
       <div class="tabsRow">
         <div class="tabs" id="tabs"></div>
 
@@ -657,13 +594,9 @@
 
   <section class="panel right">
     <div class="rightTop">
-      <div class="rightTitle">
-        <span class="pill" id="salesPill">📊 오늘</span>
-        <span class="pill accent" id="misuPill">미수(0)</span>
-      </div>
-      <div class="rightTitle">
-        <span class="pill" id="cartPill">리셋</span>
-      </div>
+      <!-- ✅ 미수 → 오늘 (들어갈 때마다 패스워드) -->
+      <div class="rightTitle"><span class="pill accent" id="todayPill">오늘</span></div>
+      <div class="rightTitle"><span class="pill" id="cartPill">리셋</span></div>
     </div>
 
     <div class="cartList" id="cartList"></div>
@@ -704,55 +637,63 @@
   </section>
 </div>
 
-<!-- ✅ 미수 모달 -->
+<!-- ✅ 오늘/미수 통합 모달(오늘이 기본, 안에서 미수목록도 이동 가능) -->
 <div class="modalBack" id="modalBack">
   <div class="modal">
     <div class="modalHead">
-      <h3>미수 목록</h3>
-      <button class="mClose" id="mClose">계산으로</button>
-    </div>
-    <div id="misuList"></div>
-  </div>
-</div>
-
-<!-- ✅ 관리자(매출) 모달 -->
-<div class="modalBack" id="salesBack">
-  <div class="modal">
-    <div class="modalHead">
-      <h3>관리자 · 오늘 지표</h3>
-      <button class="mClose" id="salesClose">닫기</button>
-    </div>
-
-    <div class="adminTopRow">
-      <div class="kpi">
-        <div class="k">객단가(결제 1건 평균)</div>
-        <div class="v mono" id="kpiAov">-</div>
-      </div>
-      <div class="kpi">
-        <div class="k">피크시간(비중 최고)</div>
-        <div class="v mono" id="kpiPeak">-</div>
-      </div>
-      <div class="kpi">
-        <div class="k">Top15 매출 비중</div>
-        <div class="v mono" id="kpiTopShare">-</div>
+      <h3 id="modalTitle">오늘</h3>
+      <div class="mActions">
+        <button class="btn2" id="goToday">오늘</button>
+        <button class="btn2" id="goMisu">미수목록</button>
+        <button class="mClose" id="mClose">닫기</button>
       </div>
     </div>
 
-    <div class="segTabs" id="segTabs"></div>
+    <!-- ===== 오늘 보드 ===== -->
+    <div id="todayView">
+      <div class="todayTabs" id="todayTabs"></div>
 
-    <div class="twoTable">
-      <div class="tbl">
-        <div class="tblTitle" id="bestTitle">베스트 15</div>
-        <div id="bestTable"></div>
+      <!-- ✅ 상단 3개 크게 -->
+      <div class="kpi3">
+        <div class="kpi">
+          <div class="l">결제건수</div>
+          <div class="v mono" id="kpiCnt">0</div>
+          <div class="s" id="kpiCntSub">오늘 누적</div>
+        </div>
+        <div class="kpi">
+          <div class="l">객단가</div>
+          <div class="v mono" id="kpiAov">0원</div>
+          <div class="s" id="kpiAovSub">오늘 누적</div>
+        </div>
+        <div class="kpi">
+          <div class="l">피크 시간대 + 비중</div>
+          <div class="v mono" id="kpiPeak">-</div>
+          <div class="s" id="kpiPeakSub">-</div>
+        </div>
       </div>
-      <div class="tbl">
-        <div class="tblTitle" id="worstTitle">워스트 15</div>
-        <div id="worstTable"></div>
+
+      <!-- ✅ 베스트15 / 워스트15 : 매출X, 나간수량 기준 -->
+      <div class="bwWrap">
+        <div class="bwBox">
+          <div class="bwHead">
+            <div class="t">베스트 15</div>
+            <div class="s">나간수량 기준</div>
+          </div>
+          <div class="bwList" id="bestList"></div>
+        </div>
+        <div class="bwBox">
+          <div class="bwHead">
+            <div class="t">워스트 15</div>
+            <div class="s">나간수량 기준</div>
+          </div>
+          <div class="bwList" id="worstList"></div>
+        </div>
       </div>
     </div>
 
-    <div class="muted" style="margin-top:12px;font-size:12px;">
-      ※ 워스트는 “오늘 판매량(개수) 낮은 순(0개 포함)” 기준입니다. (실무용)
+    <!-- ===== 미수 목록(기존) ===== -->
+    <div id="misuView" class="hide">
+      <div id="misuList"></div>
     </div>
   </div>
 </div>
@@ -767,8 +708,15 @@ const LS_CART  = "umgane_cart_v2";
 const LS_PAID  = "umgane_paid_v2";
 const LS_MISU  = "umgane_misu_v2";
 
-/* ✅ 매출 로그(결제건수/시간대/베스트/워스트용) */
+/* ✅ 오늘(관리자) 데이터: 결제 로그 */
 const LS_SALES = "umgane_sales_v1";
+
+/* ===============================
+   ✅ 관리자 패스워드
+   - 들어갈 때마다 prompt 뜸
+   - 여기만 바꾸면 됨
+================================= */
+const ADMIN_PASS = "1234"; // ✅ 원하시는 번호로 바꾸세요 (예: "0000")
 
 /* ===============================
    ✅ 구글시트(CSV) → 상품마스터 동기화
@@ -951,7 +899,6 @@ function normalizeCart(v){
   }
   return {};
 }
-
 function normalizePins(v){
   if (!v) return {};
   if (typeof v === "object" && !Array.isArray(v)) return v;
@@ -981,11 +928,23 @@ let pins  = normalizePins(loadRaw(LS_PINS, {}));
 let cart  = normalizeCart(loadRaw(LS_CART, {}));
 let paid  = loadRaw(LS_PAID, 0);
 let misu  = loadRaw(LS_MISU, []);
+let sales = loadRaw(LS_SALES, []);
 let activeCat = "전체";
 let query = "";
 
 /* 미수 불러오기 중복 방지 */
 let loadedMisuIndex = null;
+
+/* 오늘(관리자) 탭 */
+const TODAY_TABS = [
+  {key:"~12",  label:"~12",  from:0,  to:12},
+  {key:"12~2", label:"12~2", from:12, to:14},
+  {key:"2~4",  label:"2~4",  from:14, to:16},
+  {key:"4~6",  label:"4~6",  from:16, to:18},
+  {key:"6~",   label:"6~",   from:18, to:24},
+  {key:"전체", label:"전체",  from:0,  to:24},
+];
+let todayTabKey = "전체";
 
 /* ===============================
    엘리먼트
@@ -1002,8 +961,7 @@ const elPaidMoney = document.getElementById("paidMoney");
 const elChangeMoney = document.getElementById("changeMoney");
 
 const elCartPill = document.getElementById("cartPill");
-const elMisuPill = document.getElementById("misuPill");
-const elSalesPill = document.getElementById("salesPill");
+const elTodayPill = document.getElementById("todayPill");
 
 const elPayBtn = document.getElementById("payBtn");
 const elPaidReset = document.getElementById("paidReset");
@@ -1011,29 +969,45 @@ const elSaveMisu = document.getElementById("saveMisu");
 
 const elModalBack = document.getElementById("modalBack");
 const elMClose = document.getElementById("mClose");
+const elModalTitle = document.getElementById("modalTitle");
+const elGoToday = document.getElementById("goToday");
+const elGoMisu = document.getElementById("goMisu");
+
+const elTodayView = document.getElementById("todayView");
+const elMisuView = document.getElementById("misuView");
 const elMisuList = document.getElementById("misuList");
+
+const elTodayTabs = document.getElementById("todayTabs");
+const elKpiCnt = document.getElementById("kpiCnt");
+const elKpiAov = document.getElementById("kpiAov");
+const elKpiPeak = document.getElementById("kpiPeak");
+const elKpiCntSub = document.getElementById("kpiCntSub");
+const elKpiAovSub = document.getElementById("kpiAovSub");
+const elKpiPeakSub = document.getElementById("kpiPeakSub");
+const elBestList = document.getElementById("bestList");
+const elWorstList = document.getElementById("worstList");
 
 /* 동기화 버튼/표시 */
 const syncBtn = document.getElementById("syncBtn");
 const syncInfo = document.getElementById("syncInfo");
 
-/* 관리자(매출) 모달 */
-const salesBack = document.getElementById("salesBack");
-const salesClose = document.getElementById("salesClose");
-const kpiAov = document.getElementById("kpiAov");
-const kpiPeak = document.getElementById("kpiPeak");
-const kpiTopShare = document.getElementById("kpiTopShare");
-const segTabs = document.getElementById("segTabs");
-const bestTable = document.getElementById("bestTable");
-const worstTable = document.getElementById("worstTable");
-const bestTitle = document.getElementById("bestTitle");
-const worstTitle = document.getElementById("worstTitle");
-
 /* ===============================
    유틸
 ================================= */
 function won(n){ const x = Math.round(Number(n)||0); return x.toLocaleString("ko-KR") + "원"; }
-function pct(n){ return (Math.round((Number(n)||0)*10)/10).toFixed(1) + "%"; }
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+function todayKey(d=new Date()){
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+function isTodayISO(iso){
+  try{ return todayKey(new Date(iso)) === todayKey(new Date()); }catch{ return false; }
+}
+function hourOf(iso){
+  try{ return new Date(iso).getHours(); }catch{ return 0; }
+}
 
 function getSorted(list){
   const pinned = [];
@@ -1186,44 +1160,36 @@ function beep(){
 }
 
 /* ===============================
-   ✅ 매출 로그 저장
+   ✅ 결제 로그 기록(오늘 보드용)
 ================================= */
-function loadSales(){ return loadRaw(LS_SALES, []); }
-function saveSales(v){ save(LS_SALES, v); }
-
-function isoLocalDateKey(d){
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth()+1).padStart(2,"0");
-  const dd = String(d.getDate()).padStart(2,"0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-function todayKey(){ return isoLocalDateKey(new Date()); }
-
-function recordSaleFromCurrentCart(){
+function recordSaleFromCart(){
   const entries = cartEntries();
   const total = cartTotal();
-  const cnt = entries.reduce((a,x)=>a+(x.qty||0),0);
-  if(total<=0 || !entries.length) return;
+  if(total<=0 || entries.length===0) return;
 
-  const at = new Date();
-  const sale = {
-    at: at.toISOString(),
-    day: isoLocalDateKey(at),
+  const at = new Date().toISOString();
+  const payload = {
+    at,
     total,
-    cnt,
-    items: entries.map(x=>({
-      id: String(x.id),
-      name: String(x.name||""),
-      qty: Number(x.qty||0),
-      price: Number(x.price||0)
-    }))
+    items: entries.map(x=>({ id:x.id, name:x.name, qty:Number(x.qty||0), price:Number(x.price||0) })),
   };
+  sales = loadRaw(LS_SALES, sales);
+  sales.push(payload);
+  save(LS_SALES, sales);
+}
 
-  const all = loadSales();
-  all.push(sale);
-  // 너무 쌓이면 느려지니까 6개월치 정도만(대충) 유지
-  if(all.length > 6000) all.splice(0, all.length-6000);
-  saveSales(all);
+function recordSaleFromMisu(m){
+  // 미수 결제완료 처리도 "결제 1건"으로 잡아줌(가격이 정확히 없으면 amount만 기록)
+  const at = new Date().toISOString();
+  const payload = {
+    at,
+    total: Number(m.amount||0),
+    items: (m.items||[]).map(x=>({ id:"MISU_"+x.name, name:x.name, qty:Number(x.qty||0), price:0 })),
+    fromMisu: true,
+  };
+  sales = loadRaw(LS_SALES, sales);
+  sales.push(payload);
+  save(LS_SALES, sales);
 }
 
 /* ===============================
@@ -1236,12 +1202,11 @@ function doPay(){
   const ok = confirm("결제완료 하겠습니까?");
   if(!ok) return;
 
+  // ✅ 결제 로그 먼저 기록
+  recordSaleFromCart();
   beep();
 
-  // ✅ 결제 로그 저장(관리자 지표용)
-  recordSaleFromCurrentCart();
-
-  // ✅ 미수에서 불러온 장바구니면 해당 미수 제거
+  // 미수 불러온 상태면 해당 미수 삭제
   if(loadedMisuIndex !== null){
     misu = loadRaw(LS_MISU, misu);
     if(misu[loadedMisuIndex]){
@@ -1267,12 +1232,6 @@ function addPaid(n){
 /* ===============================
    미수
 ================================= */
-function openMisu(){
-  elModalBack.style.display = "flex";
-  renderMisuList();
-}
-function closeMisu(){ elModalBack.style.display = "none"; }
-
 function saveMisuNow(){
   const entries = cartEntries();
   const amount = cartTotal();
@@ -1294,7 +1253,7 @@ function saveMisuNow(){
   save(LS_PAID, paid);
 
   renderAll();
-  openMisu();
+  // 저장 후엔 미수목록 바로 보여주지 않음(요청 없음) → 필요하면 여기서 openMisu()로 바꾸면 됨
 }
 
 function restoreMisu(idx){
@@ -1318,7 +1277,7 @@ function restoreMisu(idx){
   save(LS_CART, cart);
   save(LS_PAID, paid);
 
-  closeMisu();
+  closeModal();
   renderAll();
 }
 
@@ -1327,6 +1286,10 @@ function settleMisu(idx){
   if(!m) return;
   const ok = confirm(`${m.id} (${won(m.amount||0)}) 결제완료 처리할까요?`);
   if(!ok) return;
+
+  // ✅ 미수 결제도 로그 기록
+  recordSaleFromMisu(m);
+
   beep();
   misu.splice(idx,1);
   save(LS_MISU, misu);
@@ -1437,9 +1400,9 @@ function renderGrid(){
     card.onclick = ()=>addToCart(it);
     card.oncontextmenu = (e)=>{ e.preventDefault(); togglePin(it.id); return false; };
 
-    // ✅ 아이패드 길게(1.2초) 누르면 고정/해제
+    // (아이패드 고정핀 "스치면"은 다음 단계에서 테스트 후 적용)
     card.addEventListener("touchstart", ()=>{
-      pressTimer = setTimeout(()=>togglePin(it.id), 1200);
+      pressTimer = setTimeout(()=>togglePin(it.id), 450);
     }, {passive:true});
     card.addEventListener("touchend", ()=>{
       if(pressTimer) clearTimeout(pressTimer);
@@ -1524,12 +1487,186 @@ function renderSummary(){
   elSumMoney.textContent = won(total);
   elPaidMoney.textContent = won(paid||0);
   elChangeMoney.textContent = won(change);
-
-  elMisuPill.textContent = `미수(${misu.length})`;
-  // ✅ pill은 금액 표시 안함 (요청사항)
-  elSalesPill.textContent = `📊 오늘`;
 }
 
+/* ===============================
+   ✅ 오늘(관리자) 보드 계산
+================================= */
+function renderTodayTabs(){
+  elTodayTabs.innerHTML = "";
+  TODAY_TABS.forEach(t=>{
+    const b = document.createElement("button");
+    b.className = "todayTab" + (t.key===todayTabKey ? " active":"");
+    b.textContent = t.label;
+    b.onclick = ()=>{
+      todayTabKey = t.key;
+      renderTodayBoard();
+    };
+    elTodayTabs.appendChild(b);
+  });
+}
+
+function filterSalesTodayByTab(tabKey){
+  sales = loadRaw(LS_SALES, sales) || [];
+  const t = TODAY_TABS.find(x=>x.key===tabKey) || TODAY_TABS[TODAY_TABS.length-1];
+  const fromH = t.from, toH = t.to;
+
+  const list = sales.filter(s=>{
+    if(!s || !s.at) return false;
+    if(!isTodayISO(s.at)) return false;
+    const h = hourOf(s.at);
+    // 6~ 는 18~24, 전체는 0~24
+    return (h >= fromH && h < toH);
+  });
+  return list;
+}
+
+function calcPeakSegment(todaySalesAll){
+  // 전체(오늘) 기준으로 피크 시간대 계산: 결제건수 비중
+  const buckets = new Map(TODAY_TABS.filter(t=>t.key!=="전체").map(t=>[t.key,0]));
+  todaySalesAll.forEach(s=>{
+    const h = hourOf(s.at);
+    for(const t of TODAY_TABS){
+      if(t.key==="전체") continue;
+      if(h >= t.from && h < t.to){
+        buckets.set(t.key, (buckets.get(t.key)||0) + 1);
+        break;
+      }
+    }
+  });
+  let bestKey="-", bestCnt=0, total=todaySalesAll.length||0;
+  for(const [k,v] of buckets.entries()){
+    if(v > bestCnt){ bestCnt=v; bestKey=k; }
+  }
+  const share = total ? Math.round((bestCnt/total)*100) : 0;
+  return { bestKey, bestCnt, share, total };
+}
+
+function buildQtyMap(salesList){
+  const map = new Map(); // name -> qty
+  for(const s of salesList){
+    for(const it of (s.items||[])){
+      const name = String(it.name||"").trim();
+      if(!name) continue;
+      const q = Number(it.qty||0);
+      map.set(name, (map.get(name)||0) + q);
+    }
+  }
+  return map;
+}
+
+function renderBWList(container, rows, type){
+  container.innerHTML = "";
+  if(!rows.length){
+    container.innerHTML = `<div class="muted" style="padding:10px 8px;">데이터 없음</div>`;
+    return;
+  }
+  rows.forEach((r, idx)=>{
+    const div = document.createElement("div");
+    div.className = "bwRow";
+    const nm = document.createElement("div");
+    nm.className = "bwName";
+    nm.textContent = `${idx+1}. ${r.name}`;
+
+    const val = document.createElement("div");
+    val.className = "bwVal " + (type==="best" ? "good":"bad");
+    val.textContent = `${r.qty}개`;
+
+    div.appendChild(nm);
+    div.appendChild(val);
+    container.appendChild(div);
+  });
+}
+
+function renderTodayBoard(){
+  // 오늘 전체 + 탭 구간
+  const allToday = filterSalesTodayByTab("전체");
+  const segToday = filterSalesTodayByTab(todayTabKey);
+
+  // KPI (요청: 금액(📊 오늘(120,800원)) 같은 노출 X -> 금액은 객단가만 보여줌)
+  const cnt = segToday.length;
+  const total = segToday.reduce((a,s)=>a+Number(s.total||0),0);
+  const aov = cnt ? Math.round(total/cnt) : 0;
+
+  elKpiCnt.textContent = String(cnt);
+  elKpiAov.textContent = won(aov);
+
+  // KPI 하단 설명
+  elKpiCntSub.textContent = (todayTabKey==="전체") ? "오늘 누적" : `${todayTabKey} 구간`;
+  elKpiAovSub.textContent = (todayTabKey==="전체") ? "오늘 누적" : `${todayTabKey} 구간`;
+
+  // 피크는 "오늘 전체" 기준 (실무 판단에 더 유용)
+  const peak = calcPeakSegment(allToday);
+  elKpiPeak.textContent = peak.bestKey==="-" ? "-" : `${peak.bestKey}`;
+  elKpiPeakSub.textContent = peak.total ? `결제 ${peak.bestCnt}건 · ${peak.share}%` : "-";
+
+  // 베스트/워스트 15: 나간수량 기준
+  // 워스트는 "오늘 상품마스터(활성)" 전체를 기준으로 0개도 포함(현장에 유용)
+  const qtyMap = buildQtyMap(segToday);
+
+  const activeNames = items
+    .filter(it=>Number(it.active)===1)
+    .map(it=>it.name);
+
+  // 모든 활성상품에 대해 qty 채움(없으면 0)
+  const allRows = activeNames.map(name=>({ name, qty: qtyMap.get(name)||0 }));
+
+  const best = [...allRows].sort((a,b)=>b.qty-a.qty || a.name.localeCompare(b.name,"ko")).slice(0,15);
+  const worst = [...allRows].sort((a,b)=>a.qty-b.qty || a.name.localeCompare(b.name,"ko")).slice(0,15);
+
+  renderBWList(elBestList, best, "best");
+  renderBWList(elWorstList, worst, "worst");
+}
+
+/* ===============================
+   ✅ 모달: 오늘/미수 전환 + 패스워드
+================================= */
+function openModal(){
+  elModalBack.style.display = "flex";
+}
+function closeModal(){
+  elModalBack.style.display = "none";
+}
+
+function showToday(){
+  elModalTitle.textContent = "오늘";
+  elTodayView.classList.remove("hide");
+  elMisuView.classList.add("hide");
+  elGoToday.classList.add("accent");
+  elGoMisu.classList.remove("accent");
+
+  renderTodayTabs();
+  renderTodayBoard();
+}
+
+function showMisu(){
+  elModalTitle.textContent = "미수 목록";
+  elTodayView.classList.add("hide");
+  elMisuView.classList.remove("hide");
+  elGoToday.classList.remove("accent");
+  elGoMisu.classList.add("accent");
+  renderMisuList();
+}
+
+function checkAdminPassEveryTime(){
+  const p = prompt("관리자 비밀번호");
+  if(p === null) return false;
+  if(String(p) !== String(ADMIN_PASS)){
+    alert("비밀번호가 틀렸습니다.");
+    return false;
+  }
+  return true;
+}
+
+function openTodayWithPassword(){
+  if(!checkAdminPassEveryTime()) return;
+  openModal();
+  showToday();
+}
+
+/* ===============================
+   렌더 전체
+================================= */
 function renderAll(){
   seedItemsIfEmpty();
 
@@ -1538,6 +1675,7 @@ function renderAll(){
   cart  = normalizeCart(loadRaw(LS_CART, cart));
   paid  = loadRaw(LS_PAID, paid);
   misu  = loadRaw(LS_MISU, misu);
+  sales = loadRaw(LS_SALES, sales);
 
   save(LS_CART, cart);
   save(LS_PINS, pins);
@@ -1568,16 +1706,21 @@ elPaidReset.addEventListener("click", ()=>{
 });
 
 elPayBtn.addEventListener("click", doPay);
-
 elSaveMisu.addEventListener("click", saveMisuNow);
-elMisuPill.addEventListener("click", openMisu);
 
 elCartPill.addEventListener("click", resetCartAll);
 
+/* ✅ 오늘 버튼(항상 패스워드) */
+elTodayPill.addEventListener("click", openTodayWithPassword);
+
+/* 모달 닫기/전환 */
+elMClose.addEventListener("click", closeModal);
+elGoToday.addEventListener("click", showToday);
+elGoMisu.addEventListener("click", showMisu);
+
 elModalBack.addEventListener("click", (e)=>{
-  if(e.target === elModalBack) closeMisu();
+  if(e.target === elModalBack) closeModal();
 });
-elMClose.addEventListener("click", closeMisu);
 
 /* ===============================
    동기화 UI
@@ -1651,241 +1794,7 @@ setInterval(()=>{
 setSyncInfo();
 renderAll();
 
-/* ===============================
-   ✅ 관리자 모드(PIN)
-================================= */
-const LS_ADMIN_PIN = "umgane_admin_pin_v1";
-const LS_ADMIN_OK  = "umgane_admin_ok_v1";
-
-function isAdmin(){ return localStorage.getItem(LS_ADMIN_OK) === "1"; }
-
-function requireAdmin(){
-  if(isAdmin()) return true;
-  const saved = localStorage.getItem(LS_ADMIN_PIN) || "1234"; // 기본 1234
-  const input = prompt("관리자 PIN 입력");
-  if(input === null) return false;
-  if(String(input).trim() === saved){
-    localStorage.setItem(LS_ADMIN_OK, "1");
-    return true;
-  }
-  alert("❌ PIN 틀림");
-  return false;
-}
-window.setAdminPin = function(){
-  if(!requireAdmin()) return;
-  const next = prompt("새 PIN (예: 2580)");
-  if(!next) return;
-  localStorage.setItem(LS_ADMIN_PIN, String(next).trim());
-  alert("✅ PIN 변경됨");
-}
-window.adminOff = function(){
-  localStorage.removeItem(LS_ADMIN_OK);
-  alert("관리자 OFF");
-}
-
-/* ===============================
-   ✅ 관리자(매출) 화면: 12/14/16/18 누적 + Best/Worst 15
-================================= */
-function openSales(){
-  salesBack.style.display = "flex";
-  renderSalesUI();
-}
-function closeSales(){ salesBack.style.display = "none"; }
-salesClose.addEventListener("click", closeSales);
-salesBack.addEventListener("click", (e)=>{ if(e.target === salesBack) closeSales(); });
-
-/* 시간대 구간(누적 기준) */
-const SEGMENTS = [
-  { key:"ALL", label:"전체(현재)" },
-  { key:"12",  label:"12시" },
-  { key:"14",  label:"2시" },
-  { key:"16",  label:"4시" },
-  { key:"18",  label:"6시" },
-];
-
-let activeSeg = "ALL";
-
-function buildCutoffToday(hour){
-  const d = new Date();
-  d.setHours(hour,0,0,0);
-  return d.getTime();
-}
-function segCutoffMs(segKey){
-  if(segKey === "12") return buildCutoffToday(12);
-  if(segKey === "14") return buildCutoffToday(14);
-  if(segKey === "16") return buildCutoffToday(16);
-  if(segKey === "18") return buildCutoffToday(18);
-  return Infinity;
-}
-
-function salesTodayFiltered(segKey){
-  const all = loadSales();
-  const tKey = todayKey();
-  const cutoff = segCutoffMs(segKey);
-
-  return all
-    .filter(s => s && s.day === tKey)
-    .filter(s => {
-      const t = new Date(s.at).getTime();
-      return t <= cutoff;
-    });
-}
-
-/* 시간대별 “비중” 계산용 (0-12 / 12-14 / 14-16 / 16-18 / 18+ ) */
-function segmentBucketIndex(ts){
-  const t = new Date(ts);
-  const h = t.getHours();
-  if(h < 12) return 0;
-  if(h < 14) return 1;
-  if(h < 16) return 2;
-  if(h < 18) return 3;
-  return 4;
-}
-const BUCKET_NAMES = ["~12시","12~2시","2~4시","4~6시","6시~"];
-
-function aggregateSales(salesList){
-  const itemMap = new Map(); // id -> {id,name,rev,qty}
-  let totalRev = 0;
-  let totalCnt = 0;
-  let txCount = 0;
-
-  for(const s of salesList){
-    txCount += 1;
-    totalRev += Number(s.total||0);
-    totalCnt += Number(s.cnt||0);
-
-    for(const it of (s.items||[])){
-      const id = String(it.id||"");
-      const name = String(it.name||"");
-      const qty = Number(it.qty||0);
-      const price = Number(it.price||0);
-      const rev = qty * price;
-
-      const prev = itemMap.get(id) || {id, name, rev:0, qty:0};
-      prev.rev += rev;
-      prev.qty += qty;
-      if(!prev.name && name) prev.name = name;
-      itemMap.set(id, prev);
-    }
-  }
-
-  return { itemMap, totalRev, totalCnt, txCount };
-}
-
-function renderTable(rows){
-  const htmlRows = rows.map((r, i)=>`
-    <tr>
-      <td class="mono" style="width:34px;color:rgba(245,247,255,.55);">${i+1}</td>
-      <td class="name">${r.name}</td>
-      <td class="r mono" style="width:70px;">${r.qty}</td>
-      <td class="r mono" style="width:110px;">${won(r.rev)}</td>
-    </tr>
-  `).join("");
-
-  return `
-    <table>
-      <thead>
-        <tr>
-          <th style="width:34px;">#</th>
-          <th>품목</th>
-          <th class="r" style="width:70px;">수량</th>
-          <th class="r" style="width:110px;">매출</th>
-        </tr>
-      </thead>
-      <tbody>${htmlRows}</tbody>
-    </table>
-  `;
-}
-
-function renderSalesUI(){
-  // 1) KPI는 항상 "전체(현재)" 기준
-  const allToday = salesTodayFiltered("ALL");
-  const aggAll = aggregateSales(allToday);
-
-  const aov = (aggAll.txCount>0) ? (aggAll.totalRev / aggAll.txCount) : 0;
-  kpiAov.textContent = aggAll.txCount>0 ? won(aov) : "-";
-
-  // 피크시간(비중)
-  const bucketSum = [0,0,0,0,0];
-  for(const s of allToday){
-    const idx = segmentBucketIndex(s.at);
-    bucketSum[idx] += Number(s.total||0);
-  }
-  const total = bucketSum.reduce((a,b)=>a+b,0);
-  if(total>0){
-    let maxI = 0;
-    for(let i=1;i<bucketSum.length;i++) if(bucketSum[i] > bucketSum[maxI]) maxI = i;
-    kpiPeak.textContent = `${BUCKET_NAMES[maxI]} (${pct(bucketSum[maxI]/total*100)})`;
-  }else{
-    kpiPeak.textContent = "-";
-  }
-
-  // Top15 매출 비중
-  const rowsAll = [...aggAll.itemMap.values()]
-    .map(x=>({name:x.name||x.id, qty:x.qty||0, rev:x.rev||0}))
-    .sort((a,b)=>b.rev-a.rev);
-
-  const top15rev = rowsAll.slice(0,15).reduce((a,x)=>a+x.rev,0);
-  kpiTopShare.textContent = (aggAll.totalRev>0) ? pct((top15rev/aggAll.totalRev)*100) : "-";
-
-  // 2) 세그먼트 탭
-  segTabs.innerHTML = "";
-  SEGMENTS.forEach(s=>{
-    const b = document.createElement("button");
-    b.className = "segBtn" + (s.key===activeSeg ? " active":"");
-    b.textContent = s.label;
-    b.onclick = ()=>{ activeSeg = s.key; renderSegmentTables(); renderSalesUI(); /* 탭 강조 갱신 */ };
-    segTabs.appendChild(b);
-  });
-
-  renderSegmentTables();
-}
-
-function renderSegmentTables(){
-  const segSales = salesTodayFiltered(activeSeg);
-  const agg = aggregateSales(segSales);
-
-  const segLabel = (SEGMENTS.find(x=>x.key===activeSeg)?.label) || "전체";
-  bestTitle.textContent = `베스트 15 · ${segLabel}`;
-  worstTitle.textContent = `워스트 15 · ${segLabel}`;
-
-  // 베스트15(매출 내림차순)
-  const soldRows = [...agg.itemMap.values()]
-    .map(x=>({name:x.name||x.id, qty:x.qty||0, rev:x.rev||0}))
-    .sort((a,b)=>b.rev-a.rev);
-
-  const best15 = soldRows.slice(0,15);
-  bestTable.innerHTML = best15.length
-    ? renderTable(best15)
-    : `<div class="muted" style="padding:8px;">데이터 없음</div>`;
-
-  // 워스트15(판매량 낮은 순) - 0개 포함해서 “삭제/정리 대상” 판단 가능
-  const allItemRows = items
-    .filter(it => Number(it.active)===1)
-    .map(it=>{
-      const v = agg.itemMap.get(it.id);
-      const qty = v ? (v.qty||0) : 0;
-      const rev = v ? (v.rev||0) : 0;
-      return {name: it.name, qty, rev};
-    })
-    .sort((a,b)=> (a.qty-b.qty) || (a.rev-b.rev) || a.name.localeCompare(b.name,"ko"));
-
-  const worst15 = allItemRows.slice(0,15);
-  worstTable.innerHTML = worst15.length
-    ? renderTable(worst15)
-    : `<div class="muted" style="padding:8px;">데이터 없음</div>`;
-}
-
-/* 📊 오늘 클릭 → 관리자 PIN 통과해야 열림 */
-elSalesPill.addEventListener("click", ()=>{
-  if(requireAdmin()) openSales();
-});
-
-renderAll();
-
-/* ===============================
-   (참고) Apps Script items API - 현재는 콘솔 확인용
-================================= */
+/* (그대로 둠) Apps Script items API 테스트 */
 const ITEMS_API =
   "https://script.google.com/macros/s/AKfycbyiOcWFHx0nsFt-5P-aJ07HgeDGuZIuZLxiw_jiHGYJVsvud99DnfT9nxQTvkRcrF2m/exec?action=items";
 
