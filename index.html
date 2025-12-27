@@ -38,7 +38,7 @@
   html,body{
     height:100%;margin:0;background:var(--bg);color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
-    overscroll-behavior: contain; /* ✅ iPad 튐 방지 */
+    overscroll-behavior: contain;
   }
   button{cursor:pointer;border:0;border-radius:12px}
   .mono{font-variant-numeric:tabular-nums;}
@@ -67,7 +67,6 @@
     border-bottom:1px solid var(--line);
   }
 
-  /* ✅ 탭 왼쪽 / 새로고침 오른쪽 */
   .tabsRow{
     display:flex;
     align-items:center;
@@ -127,7 +126,7 @@
     border-radius:16px;
     border:1px solid var(--line);
     background:rgba(255,255,255,.02);
-    touch-action: manipulation; /* ✅ iPad 선택 튐 완화 */
+    touch-action: manipulation;
   }
   .search input{
     width:100%;
@@ -141,7 +140,6 @@
     user-select:text;
   }
 
-  /* ✅ 초성키: 가로 고정 */
   .chosungRow{
     display:flex;
     flex-direction:row !important;
@@ -415,7 +413,7 @@
   .btn2.danger{ background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.30); }
   .btn2.good{ background:rgba(41,209,126,.12); border-color:rgba(41,209,126,.30); }
 
-  /* ✅ 관리자 탭 */
+  /* 관리자 */
   .adminTabs{ display:flex; flex-wrap:wrap; gap:8px; padding:6px 6px 10px; }
   .adminTabs .tab{ padding:8px 12px; }
   .adminBox{
@@ -479,11 +477,63 @@
   .tinyBtn.bad{ background:rgba(255,59,48,.12); border-color:rgba(255,59,48,.30); }
   .tinyBtn.good{ background:rgba(41,209,126,.12); border-color:rgba(41,209,126,.30); }
 
+  /* 상품수정 폼 */
+  .formRow{
+    display:grid;
+    grid-template-columns: 140px 1fr;
+    gap:8px;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .ipt, .sel{
+    width:100%;
+    padding:10px 10px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    color:rgba(245,247,255,.95);
+    outline:none;
+    font-weight:700;
+  }
+  .miniHelp{ font-size:12px; color:rgba(245,247,255,.65); font-weight:700; }
+  .rowBtns{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .btnPrimary{
+    padding:10px 12px;border-radius:14px;
+    background:var(--accent);color:#111;font-weight:900;
+  }
+  .btnGhost{
+    padding:10px 12px;border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    color:rgba(245,247,255,.95);
+    font-weight:900;
+  }
+
+  .editItem{
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+    border-radius:18px;
+    padding:12px;
+    margin-bottom:10px;
+  }
+  .editHead{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    margin-bottom:10px;
+  }
+  .badge{
+    padding:6px 10px;border-radius:999px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    font-size:12px;font-weight:900;
+  }
+  .badge.off{ opacity:.45; filter:grayscale(1); }
+
   @media (max-width: 980px){
     .app{ grid-template-columns: 1fr; }
     :root{ --right-w: 100%; }
     .adminTop3{ grid-template-columns: 1fr; }
     .rankCols{ grid-template-columns:1fr; }
+    .formRow{ grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -521,7 +571,6 @@
 
   <section class="panel right">
     <div class="rightTop">
-      <!-- ✅ 미수/관리자 둘 다 복구 -->
       <div class="rightTitle">
         <span class="pill accent" id="misuPill">미수(0)</span>
       </div>
@@ -569,7 +618,7 @@
   </section>
 </div>
 
-<!-- ✅ 미수 모달 -->
+<!-- 미수 모달 -->
 <div class="modalBack" id="modalBack">
   <div class="modal">
     <div class="modalHead">
@@ -580,7 +629,7 @@
   </div>
 </div>
 
-<!-- ✅ 관리자 모달 -->
+<!-- 관리자 모달 -->
 <div class="modalBack" id="adminBack">
   <div class="modal">
     <div class="modalHead">
@@ -588,60 +637,100 @@
       <button class="mClose" id="aClose">계산으로</button>
     </div>
 
-    <!-- ✅ 시간탭 (요청 순서대로 + 전체 맨앞) -->
-    <div class="adminTabs" id="timeTabs"></div>
+    <!-- ✅ 메인 탭 3개 -->
+    <div class="adminTabs" id="adminMainTabs"></div>
 
-    <!-- ✅ 카테고리탭 (요청 순서대로) -->
-    <div class="adminTabs" id="catTabs"></div>
+    <!-- ===== 데이터분석 영역 ===== -->
+    <div id="adminPageAnalysis">
+      <div class="adminTabs" id="timeTabs"></div>
+      <div class="adminTabs" id="catTabs"></div>
 
-    <!-- ✅ 상단 3개 KPI -->
-    <div class="adminTop3">
-      <div class="kpi">
-        <div class="k">결제건수(선택시간/카테고리)</div>
-        <div class="v mono" id="kpiCnt">0</div>
-        <div class="s" id="kpiCntS">—</div>
-      </div>
-      <div class="kpi">
-        <div class="k">객단가</div>
-        <div class="v mono" id="kpiAov">0원</div>
-        <div class="s" id="kpiAovS">—</div>
-      </div>
-      <div class="kpi">
-        <div class="k">피크 시간대 + 비중</div>
-        <div class="v" id="kpiPeak">—</div>
-        <div class="s" id="kpiPeakS">—</div>
-      </div>
-    </div>
-
-    <!-- ✅ 총매출(전체/시간별 보기) -->
-    <div class="adminBox">
-      <div class="muted" style="font-weight:900; margin-bottom:8px;">총매출</div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <div class="pill accent">선택구간: <span class="mono" id="revSel">0원</span></div>
-        <div class="pill">전체(오늘): <span class="mono" id="revAll">0원</span></div>
-      </div>
-      <div class="muted" style="margin-top:8px; font-size:12px;">* ‘선택구간’은 위 시간탭에 따라 바뀜</div>
-    </div>
-
-    <!-- ✅ 베스트/워스트 15 (수량 기준) -->
-    <div class="adminBox">
-      <div class="muted" style="font-weight:900; margin-bottom:8px;">베스트15 / 워스트15 (수량 기준)</div>
-      <div class="rankCols">
-        <div>
-          <div class="muted" style="margin-bottom:6px;">베스트15</div>
-          <div id="bestList"></div>
+      <div class="adminTop3">
+        <div class="kpi">
+          <div class="k">결제건수(선택시간/카테고리)</div>
+          <div class="v mono" id="kpiCnt">0</div>
+          <div class="s" id="kpiCntS">—</div>
         </div>
-        <div>
-          <div class="muted" style="margin-bottom:6px;">워스트15</div>
-          <div id="worstList"></div>
+        <div class="kpi">
+          <div class="k">객단가</div>
+          <div class="v mono" id="kpiAov">0원</div>
+          <div class="s" id="kpiAovS">—</div>
+        </div>
+        <div class="kpi">
+          <div class="k">피크 시간대 + 비중</div>
+          <div class="v" id="kpiPeak">—</div>
+          <div class="s" id="kpiPeakS">—</div>
         </div>
       </div>
+
+      <div class="adminBox">
+        <div class="muted" style="font-weight:900; margin-bottom:8px;">총매출</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div class="pill accent">선택구간: <span class="mono" id="revSel">0원</span></div>
+          <div class="pill">전체(오늘): <span class="mono" id="revAll">0원</span></div>
+        </div>
+        <div class="muted" style="margin-top:8px; font-size:12px;">* ‘선택구간’은 위 시간탭에 따라 바뀜</div>
+      </div>
+
+      <div class="adminBox">
+        <div class="muted" style="font-weight:900; margin-bottom:8px;">베스트15 / 워스트15 (수량 기준)</div>
+        <div class="rankCols">
+          <div>
+            <div class="muted" style="margin-bottom:6px;">베스트15</div>
+            <div id="bestList"></div>
+          </div>
+          <div>
+            <div class="muted" style="margin-bottom:6px;">워스트15</div>
+            <div id="worstList"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- ✅ 품절관리 -->
-    <div class="adminBox">
-      <div class="muted" style="font-weight:900; margin-bottom:8px;">품절관리 (팔린갯수 포함 + 품절시간)</div>
-      <div id="soldOutList"></div>
+    <!-- ===== 품절상품 영역 ===== -->
+    <div id="adminPageSoldout" class="hide">
+      <div class="adminBox">
+        <div class="muted" style="font-weight:900; margin-bottom:8px;">품절상품 (POS에서 숨김)</div>
+        <div class="miniHelp">품절 누르면 POS 상품카드에서 사라지고, 품절해제하면 다시 노출됩니다.</div>
+      </div>
+      <div class="adminBox">
+        <div class="muted" style="font-weight:900; margin-bottom:8px;">품절관리</div>
+        <div id="soldOutList"></div>
+      </div>
+    </div>
+
+    <!-- ===== 상품수정 영역 ===== -->
+    <div id="adminPageEdit" class="hide">
+      <div class="adminBox">
+        <div class="muted" style="font-weight:900; margin-bottom:8px;">상품 빠른 수정</div>
+        <div class="miniHelp">⚠️ 여기서 바꾼 건 “이 기기(브라우저)”에 저장돼요. (구글시트에 자동 반영은 아직 X)</div>
+        <div class="search" style="margin-top:10px;">
+          <span class="muted">🔎</span>
+          <input id="editSearch" placeholder="상품 검색 (이름/초성/ID)" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="adminBox">
+        <div class="muted" style="font-weight:900; margin-bottom:8px;">새 상품 추가</div>
+
+        <div class="formRow"><div class="miniHelp">ID</div><input class="ipt" id="newId" placeholder="예: S21" /></div>
+        <div class="formRow"><div class="miniHelp">카테고리</div>
+          <select class="sel" id="newCat"></select>
+        </div>
+        <div class="formRow"><div class="miniHelp">품목명</div><input class="ipt" id="newName" placeholder="예: 단감 15개" /></div>
+        <div class="formRow"><div class="miniHelp">가격</div><input class="ipt mono" id="newPrice" placeholder="예: 5000" inputmode="numeric" /></div>
+        <div class="formRow"><div class="miniHelp">정렬(ord)</div><input class="ipt mono" id="newOrd" placeholder="예: 10 (작을수록 위)" inputmode="numeric" /></div>
+
+        <div class="rowBtns">
+          <button class="btnPrimary" id="btnAddItem">추가</button>
+          <button class="btnGhost" id="btnResetNew">초기화</button>
+        </div>
+      </div>
+
+      <div class="adminBox">
+        <div class="muted" style="font-weight:900; margin-bottom:8px;">상품 목록 수정</div>
+        <div id="editList"></div>
+      </div>
     </div>
 
   </div>
@@ -657,16 +746,13 @@ const LS_CART  = "umgane_cart_v2";
 const LS_PAID  = "umgane_paid_v2";
 const LS_MISU  = "umgane_misu_v2";
 
-const LS_SALES = "umgane_sales_v1";           // ✅ 판매 로그
-const LS_SOLDOUT = "umgane_soldout_v1";       // ✅ 품절 맵 {id: isoTime}
+const LS_SALES = "umgane_sales_v1";
+const LS_SOLDOUT = "umgane_soldout_v1";       // {id: isoTime}
 
-/* ===============================
-   ✅ 구글시트(CSV) → 상품마스터 동기화
-================================= */
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZMLZiCqXn-YKsOwR_RR1nZudB1VqAKI652Aje2p3Ytjqfzx5YhcLtEHyuiCSFKPqZ8e1xvbF3JCU4/pub?output=csv";
 const LS_LASTSYNC = "umgane_items_lastSync_v1";
 
-/* ✅ 콤마/따옴표 안전 CSV 파서 */
+/* ✅ CSV 파서 */
 function parseCSV(text) {
   const rows = [];
   let cur = "", inQ = false;
@@ -747,7 +833,7 @@ async function syncItemsFromSheet({force=false} = {}) {
   const iOrd = idx("ord");
 
   if (iId < 0 || iCat < 0 || iName < 0 || iPrice < 0) {
-    throw new Error("시트 헤더가 부족함: id/cat/name/price 필수");
+    throw new Error("시트 헤더 부족: id/cat/name/price 필수");
   }
 
   const items = [];
@@ -771,9 +857,7 @@ async function syncItemsFromSheet({force=false} = {}) {
     items.push({ id, cat, name, price, active, ord });
   }
 
-  if (items.length < 3) {
-    throw new Error("가져온 상품이 너무 적음(저장 중단) - 시트/게시 확인 필요");
-  }
+  if (items.length < 3) throw new Error("가져온 상품이 너무 적음(저장 중단)");
 
   saveItemsToLS(items);
   try { renderAll(); } catch {}
@@ -806,7 +890,7 @@ function toChosung(str){
 function normalize(str){ return (str||"").toString().trim().toLowerCase(); }
 
 /* ===============================
-   로드/세이브 + ✅ 안정화
+   로드/세이브
 ================================= */
 function loadRaw(key, fallback){
   try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
@@ -873,7 +957,6 @@ let soldOutMap = loadRaw(LS_SOLDOUT, {}); // {id: isoTime}
 let activeCat = "전체";
 let query = "";
 
-/* 미수 불러오기 중복 방지 */
 let loadedMisuIndex = null;
 
 /* ===============================
@@ -905,6 +988,12 @@ const elMisuList = document.getElementById("misuList");
 /* 관리자 */
 const adminBack = document.getElementById("adminBack");
 const aClose = document.getElementById("aClose");
+
+const adminMainTabs = document.getElementById("adminMainTabs");
+const adminPageAnalysis = document.getElementById("adminPageAnalysis");
+const adminPageSoldout = document.getElementById("adminPageSoldout");
+const adminPageEdit = document.getElementById("adminPageEdit");
+
 const timeTabs = document.getElementById("timeTabs");
 const catTabs  = document.getElementById("catTabs");
 const kpiCnt   = document.getElementById("kpiCnt");
@@ -918,7 +1007,19 @@ const revSel = document.getElementById("revSel");
 const revAll = document.getElementById("revAll");
 const bestList = document.getElementById("bestList");
 const worstList = document.getElementById("worstList");
+
 const soldOutList = document.getElementById("soldOutList");
+
+/* 상품수정 */
+const editSearch = document.getElementById("editSearch");
+const editList = document.getElementById("editList");
+const newId = document.getElementById("newId");
+const newCat = document.getElementById("newCat");
+const newName = document.getElementById("newName");
+const newPrice = document.getElementById("newPrice");
+const newOrd = document.getElementById("newOrd");
+const btnAddItem = document.getElementById("btnAddItem");
+const btnResetNew = document.getElementById("btnResetNew");
 
 /* 동기화 버튼/표시 */
 const syncBtn = document.getElementById("syncBtn");
@@ -959,6 +1060,10 @@ function matchItem(it, q){
   const nameCho = toChosung(it.name);
   const qCho = qn.replace(/\s+/g,"");
   if(nameCho.includes(qCho)) return true;
+
+  const idn = normalize(it.id);
+  if(idn.includes(qn)) return true;
+
   return false;
 }
 
@@ -967,7 +1072,7 @@ function visibleItems(){
   const q = query.trim();
   let list = items.filter(it => Number(it.active) === 1);
 
-  // ✅ 품절이면 POS에서 숨김
+  // ✅ 품절은 POS에서 숨김
   list = list.filter(it => !soldOutMap[it.id]);
 
   if(q){
@@ -991,7 +1096,6 @@ function renderTabs(){
     b.textContent = cat;
     b.onclick = ()=>{
       activeCat = cat;
-      // ✅ 탭 클릭하면 활성띠가 이동 (요청)
       renderAll();
     };
     elTabs.appendChild(b);
@@ -1041,10 +1145,9 @@ function persistCart(){
   cart = normalizeCart(cart);
   save(LS_CART, cart);
 }
-
 function addToCart(it){
   if(Number(it.active)!==1) return;
-  if (soldOutMap[it.id]) return; // ✅ 품절이면 담기 방지
+  if (soldOutMap[it.id]) return; // 품절이면 담기 방지(이론상 POS에 안뜨지만 안전)
   const id = it.id;
   if(!cart[id]){
     cart[id] = {id, name:it.name, price:Number(it.price||0), qty:1};
@@ -1054,7 +1157,6 @@ function addToCart(it){
   persistCart();
   renderAll();
 }
-
 function setQty(id, qty){
   if(!cart[id]) return;
   cart[id].qty = qty;
@@ -1096,7 +1198,7 @@ function beep(){
 }
 
 /* ===============================
-   ✅ 판매 로그(총매출/랭킹/시간대)
+   판매 로그
 ================================= */
 function loadSales(){ return loadRaw(LS_SALES, []); }
 function saveSales(list){ save(LS_SALES, list); }
@@ -1111,14 +1213,18 @@ function logSaleFromCart(){
   sales.push({
     at: now.toISOString(),
     total,
-    items: entries.map(x=>({id:x.id, name:x.name, cat:(items.find(i=>i.id===x.id)?.cat || "기타"), qty:Number(x.qty||0), price:Number(x.price||0)}))
+    items: entries.map(x=>({
+      id:x.id,
+      name:x.name,
+      cat:(items.find(i=>i.id===x.id)?.cat || "기타"),
+      qty:Number(x.qty||0),
+      price:Number(x.price||0)
+    }))
   });
   saveSales(sales);
 }
 
-/* ===============================
-   결제완료
-================================= */
+/* 결제 */
 function doPay(){
   const total = cartTotal();
   if(total<=0) return;
@@ -1126,9 +1232,7 @@ function doPay(){
   const ok = confirm("결제완료 하겠습니까?");
   if(!ok) return;
 
-  // ✅ 결제 시 판매로그 저장(총매출/랭킹용)
   logSaleFromCart();
-
   beep();
 
   if(loadedMisuIndex !== null){
@@ -1326,7 +1430,6 @@ function renderGrid(){
     card.onclick = ()=>addToCart(it);
     card.oncontextmenu = (e)=>{ e.preventDefault(); togglePin(it.id); return false; };
 
-    // ✅ iPad: 1.2초 길게 누르면 고정
     card.addEventListener("touchstart", ()=>{
       pressTimer = setTimeout(()=>togglePin(it.id), 1200);
     }, {passive:true});
@@ -1418,7 +1521,37 @@ function renderSummary(){
 }
 
 /* ===============================
-   ✅ 관리자: 시간/카테고리 탭 + 계산
+   ✅ 관리자 3탭
+================================= */
+const ADMIN_MAIN = [
+  { key:"analysis", label:"데이터분석" },
+  { key:"soldout", label:"품절상품" },
+  { key:"edit", label:"상품수정" },
+];
+let adminMainKey = "analysis";
+
+function renderAdminMainTabs(){
+  adminMainTabs.innerHTML = "";
+  ADMIN_MAIN.forEach(t=>{
+    const b = document.createElement("button");
+    b.className = "tab" + (t.key===adminMainKey ? " active":"");
+    b.textContent = t.label;
+    b.onclick = ()=>{
+      adminMainKey = t.key;
+      syncAdminPages();
+      renderAdmin(); // 탭 전환 시 화면 갱신
+    };
+    adminMainTabs.appendChild(b);
+  });
+}
+function syncAdminPages(){
+  adminPageAnalysis.classList.toggle("hide", adminMainKey!=="analysis");
+  adminPageSoldout.classList.toggle("hide", adminMainKey!=="soldout");
+  adminPageEdit.classList.toggle("hide", adminMainKey!=="edit");
+}
+
+/* ===============================
+   ✅ 관리자: 시간/카테고리 탭 + 집계
 ================================= */
 const TIME_TABS = [
   { key:"ALL", label:"전체" },
@@ -1426,7 +1559,7 @@ const TIME_TABS = [
   { key:"T12_14", label:"12~2" },
   { key:"T14_16", label:"2~4" },
   { key:"T16_18", label:"4~6" },
-  { key:"T18_X", label:"6~" }, // ✅ 6시부터 마감까지(무한)
+  { key:"T18_X", label:"6~" },
 ];
 
 let adminTimeKey = "ALL";
@@ -1477,7 +1610,6 @@ function filterSalesByAdmin(sales){
     const d = new Date(s.at);
     if(!isInTimeBucket(d, adminTimeKey)) return false;
     if(adminCatKey==="전체") return true;
-    // 카테고리 필터: 해당 결제에 그 카테고리 품목이 1개라도 있으면 포함
     return (s.items||[]).some(it => (it.cat||"기타") === adminCatKey);
   });
 }
@@ -1486,7 +1618,6 @@ function aggregateQty(sales){
   const map = new Map(); // name -> {name, qty, cat}
   for(const s of sales){
     for(const it of (s.items||[])){
-      // ✅ 선택 카테고리면 해당 카테고리만 집계
       if(adminCatKey!=="전체" && (it.cat||"기타") !== adminCatKey) continue;
       const key = it.name; // 이름 기준
       const cur = map.get(key) || { name: it.name, cat: it.cat||"기타", qty:0 };
@@ -1498,7 +1629,6 @@ function aggregateQty(sales){
 }
 
 function calcRevenue(sales){
-  // 선택 카테고리면 그 카테고리 품목 가격만 합산(대략)
   if(adminCatKey==="전체"){
     return sales.reduce((a,s)=>a+Number(s.total||0),0);
   }
@@ -1532,12 +1662,15 @@ function renderRank(el, arr){
   });
 }
 
+/* ===============================
+   ✅ 품절 관리 (품절이면 POS에서 숨김 유지)
+================================= */
 function renderSoldOut(){
   soldOutList.innerHTML = "";
   soldOutMap = loadRaw(LS_SOLDOUT, soldOutMap) || {};
   const todaySales = getTodaySales();
 
-  // 오늘 판매수량 맵(전체 기준)
+  // 오늘 판매수량 맵
   const qtyMap = new Map(); // id->qty
   for(const s of todaySales){
     for(const it of (s.items||[])){
@@ -1546,7 +1679,7 @@ function renderSoldOut(){
     }
   }
 
-  // 품절된 것 먼저, 그 다음 정상 상품
+  // 품절 먼저
   const list = items
     .filter(it => Number(it.active)===1)
     .sort((a,b)=>{
@@ -1582,76 +1715,285 @@ function renderSoldOut(){
       if(soldOutMap[it.id]) delete soldOutMap[it.id];
       else soldOutMap[it.id] = new Date().toISOString();
       save(LS_SOLDOUT, soldOutMap);
-      renderAll();     // POS 반영
-      renderSoldOut(); // 관리자 반영
+      renderAll();     // POS 반영(숨김/노출)
+      renderSoldOut(); // 탭 반영
     };
 
     right.appendChild(btn);
-
     row.appendChild(left);
     row.appendChild(right);
     soldOutList.appendChild(row);
   });
 }
 
+/* ===============================
+   ✅ 상품수정(로컬) + 추가
+================================= */
+function renderNewCatOptions(){
+  newCat.innerHTML = "";
+  CATS.filter(x=>x!=="전체").forEach(c=>{
+    const o = document.createElement("option");
+    o.value = c;
+    o.textContent = c;
+    newCat.appendChild(o);
+  });
+}
+renderNewCatOptions();
+
+function sanitizeId(id){
+  return String(id||"").trim().replace(/\s+/g,"").toUpperCase();
+}
+function saveItemsLocal(next){
+  items = next;
+  save(LS_ITEMS, items);
+  // 상품이 바뀌면, 장바구니 가격도 최신으로 맞춰줌(동일 id 기준)
+  const c = normalizeCart(loadRaw(LS_CART, {}));
+  for(const k of Object.keys(c)){
+    const it = items.find(x=>x.id===k);
+    if(it){
+      c[k].name = it.name;
+      c[k].price = Number(it.price||0);
+    }
+  }
+  save(LS_CART, c);
+  renderAll();
+}
+
+function resetNewForm(){
+  newId.value = "";
+  newName.value = "";
+  newPrice.value = "";
+  newOrd.value = "";
+  newCat.value = CATS.includes("과일") ? "과일" : (CATS.filter(x=>x!=="전체")[0] || "기타");
+}
+
+function addNewItem(){
+  const id = sanitizeId(newId.value);
+  const cat = String(newCat.value||"기타").trim();
+  const name = String(newName.value||"").trim();
+  const price = toNumber(newPrice.value);
+  const ord = toInt(newOrd.value, 0);
+
+  if(!id || !name) return alert("ID/품목명은 필수");
+  if(items.some(x=>sanitizeId(x.id)===id)) return alert("이미 존재하는 ID입니다. 다른 ID로.");
+
+  const next = [...items, {id, cat, name, price, active:1, ord}];
+  saveItemsLocal(next);
+  resetNewForm();
+  alert("✅ 추가 완료");
+}
+
+function renderEditList(){
+  editList.innerHTML = "";
+  const q = normalize(editSearch?.value || "");
+  const list = items
+    .slice()
+    .sort((a,b)=> (Number(a.ord||0)-Number(b.ord||0)) || a.name.localeCompare(b.name,"ko"))
+    .filter(it=>{
+      if(!q) return true;
+      return matchItem(it, q);
+    });
+
+  if(!list.length){
+    editList.innerHTML = `<div class="muted" style="padding:8px 6px;">검색 결과 없음</div>`;
+    return;
+  }
+
+  list.forEach(it=>{
+    const wrap = document.createElement("div");
+    wrap.className = "editItem";
+
+    const head = document.createElement("div");
+    head.className = "editHead";
+
+    const left = document.createElement("div");
+    left.style.minWidth = "0";
+    left.innerHTML = `<div style="font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.name}</div>
+                      <div class="miniHelp">ID: <span class="mono">${it.id}</span></div>`;
+
+    const badge = document.createElement("div");
+    badge.className = "badge " + (Number(it.active)===1 ? "" : "off");
+    badge.textContent = (Number(it.active)===1 ? "활성" : "비활성");
+
+    head.appendChild(left);
+    head.appendChild(badge);
+
+    const row1 = document.createElement("div");
+    row1.className = "formRow";
+    row1.innerHTML = `<div class="miniHelp">품목명</div><input class="ipt" value="${it.name.replace(/"/g,'&quot;')}" />`;
+
+    const row2 = document.createElement("div");
+    row2.className = "formRow";
+    row2.innerHTML = `<div class="miniHelp">가격</div><input class="ipt mono" inputmode="numeric" value="${Number(it.price||0)}" />`;
+
+    const row3 = document.createElement("div");
+    row3.className = "formRow";
+    const sel = document.createElement("select");
+    sel.className = "sel";
+    CATS.filter(x=>x!=="전체").forEach(c=>{
+      const o=document.createElement("option");
+      o.value=c; o.textContent=c;
+      if(c===it.cat) o.selected=true;
+      sel.appendChild(o);
+    });
+    const row3L = document.createElement("div");
+    row3L.className="miniHelp";
+    row3L.textContent="카테고리";
+    const row3R = document.createElement("div");
+    row3R.appendChild(sel);
+    row3.appendChild(row3L);
+    row3.appendChild(row3R);
+
+    const row4 = document.createElement("div");
+    row4.className = "formRow";
+    row4.innerHTML = `<div class="miniHelp">정렬(ord)</div><input class="ipt mono" inputmode="numeric" value="${Number(it.ord||0)}" />`;
+
+    const row5 = document.createElement("div");
+    row5.className = "rowBtns";
+
+    const btnSave = document.createElement("button");
+    btnSave.className = "btnPrimary";
+    btnSave.textContent = "저장";
+
+    const btnToggle = document.createElement("button");
+    btnToggle.className = "btnGhost";
+    btnToggle.textContent = (Number(it.active)===1 ? "비활성" : "활성");
+
+    const btnDel = document.createElement("button");
+    btnDel.className = "btnGhost";
+    btnDel.textContent = "삭제";
+
+    const nameI = row1.querySelector("input");
+    const priceI = row2.querySelector("input");
+    const ordI = row4.querySelector("input");
+
+    btnSave.onclick = ()=>{
+      const name = String(nameI.value||"").trim();
+      const price = toNumber(priceI.value);
+      const cat = String(sel.value||"기타").trim();
+      const ord = toInt(ordI.value, 0);
+      if(!name) return alert("품목명은 비울 수 없음");
+
+      const next = items.map(x=>{
+        if(x.id !== it.id) return x;
+        return {...x, name, price, cat, ord};
+      });
+      saveItemsLocal(next);
+      alert("✅ 저장 완료");
+      // 현재 목록 다시 그림(가격/이름 반영)
+      renderEditList();
+    };
+
+    btnToggle.onclick = ()=>{
+      const next = items.map(x=>{
+        if(x.id !== it.id) return x;
+        return {...x, active: (Number(x.active)===1 ? 0 : 1)};
+      });
+      saveItemsLocal(next);
+      renderEditList();
+    };
+
+    btnDel.onclick = ()=>{
+      const ok = confirm(`삭제할까요?\n${it.name} (${it.id})`);
+      if(!ok) return;
+
+      // 품절 상태도 같이 제거
+      soldOutMap = loadRaw(LS_SOLDOUT, soldOutMap) || {};
+      if(soldOutMap[it.id]){ delete soldOutMap[it.id]; save(LS_SOLDOUT, soldOutMap); }
+
+      // 고정핀도 제거
+      pins = normalizePins(loadRaw(LS_PINS, pins));
+      if(pins[it.id]){ delete pins[it.id]; save(LS_PINS, pins); }
+
+      const next = items.filter(x=>x.id !== it.id);
+      saveItemsLocal(next);
+      renderEditList();
+    };
+
+    row5.appendChild(btnSave);
+    row5.appendChild(btnToggle);
+    row5.appendChild(btnDel);
+
+    wrap.appendChild(head);
+    wrap.appendChild(row1);
+    wrap.appendChild(row2);
+    wrap.appendChild(row3);
+    wrap.appendChild(row4);
+    wrap.appendChild(row5);
+
+    editList.appendChild(wrap);
+  });
+}
+
+/* ===============================
+   관리자 렌더
+================================= */
 function renderAdmin(){
-  renderAdminTabs();
+  renderAdminMainTabs();
+  syncAdminPages();
 
-  const todaySales = getTodaySales();
-  const salesAll = todaySales;
-  const salesSel = filterSalesByAdmin(todaySales);
+  // 탭별 렌더
+  if(adminMainKey==="analysis"){
+    renderAdminTabs();
 
-  // KPI: 결제건수, 객단가, 피크시간대
-  const cnt = salesSel.length;
-  const rev = calcRevenue(salesSel);
-  const aov = cnt>0 ? Math.round(rev/cnt) : 0;
+    const todaySales = getTodaySales();
+    const salesAll = todaySales;
+    const salesSel = filterSalesByAdmin(todaySales);
 
-  kpiCnt.textContent = String(cnt);
-  kpiCntS.textContent = `오늘(${todayKey()})`;
+    const cnt = salesSel.length;
+    const rev = calcRevenue(salesSel);
+    const aov = cnt>0 ? Math.round(rev/cnt) : 0;
 
-  kpiAov.textContent = won(aov);
-  kpiAovS.textContent = adminCatKey==="전체" ? "전체품목 기준" : `${adminCatKey}만 기준`;
+    kpiCnt.textContent = String(cnt);
+    kpiCntS.textContent = `오늘(${todayKey()})`;
 
-  // 피크 시간대(전체 기준으로 계산: 시간탭 ALL일 때 더 의미)
-  const buckets = new Map(); // label->count
-  for(const s of todaySales){
-    const d = new Date(s.at);
-    let label="6~";
-    const h=d.getHours();
-    if(h<12) label="~12";
-    else if(h<14) label="12~2";
-    else if(h<16) label="2~4";
-    else if(h<18) label="4~6";
-    else label="6~";
-    buckets.set(label,(buckets.get(label)||0)+1);
+    kpiAov.textContent = won(aov);
+    kpiAovS.textContent = adminCatKey==="전체" ? "전체품목 기준" : `${adminCatKey}만 기준`;
+
+    const buckets = new Map();
+    for(const s of todaySales){
+      const d = new Date(s.at);
+      let label="6~";
+      const h=d.getHours();
+      if(h<12) label="~12";
+      else if(h<14) label="12~2";
+      else if(h<16) label="2~4";
+      else if(h<18) label="4~6";
+      else label="6~";
+      buckets.set(label,(buckets.get(label)||0)+1);
+    }
+    let peakLabel="—", peakCnt=0;
+    for(const [k,v] of buckets.entries()){
+      if(v>peakCnt){ peakCnt=v; peakLabel=k; }
+    }
+    const totalCnt = todaySales.length || 0;
+    const pct = totalCnt ? Math.round((peakCnt/totalCnt)*100) : 0;
+    kpiPeak.textContent = totalCnt ? `${peakLabel}` : "—";
+    kpiPeakS.textContent = totalCnt ? `${pct}% (${peakCnt}/${totalCnt})` : "—";
+
+    revSel.textContent = won(rev);
+    revAll.textContent = won(calcRevenue(salesAll));
+
+    const agg = aggregateQty(salesSel);
+    const best = agg.slice(0,15);
+    const worst = agg.slice().reverse().slice(0,15);
+
+    renderRank(bestList, best);
+    renderRank(worstList, worst);
   }
-  let peakLabel="—", peakCnt=0;
-  for(const [k,v] of buckets.entries()){
-    if(v>peakCnt){ peakCnt=v; peakLabel=k; }
+
+  if(adminMainKey==="soldout"){
+    renderSoldOut();
   }
-  const totalCnt = todaySales.length || 0;
-  const pct = totalCnt ? Math.round((peakCnt/totalCnt)*100) : 0;
-  kpiPeak.textContent = totalCnt ? `${peakLabel}` : "—";
-  kpiPeakS.textContent = totalCnt ? `${pct}% (${peakCnt}/${totalCnt})` : "—";
 
-  // 총매출(선택/전체)
-  revSel.textContent = won(rev);
-  revAll.textContent = won(calcRevenue(salesAll));
-
-  // 랭킹(수량 기준)
-  const agg = aggregateQty(salesSel);
-  const best = agg.slice(0,15);
-  const worst = agg.slice().reverse().slice(0,15); // 판매된 것 중 최저
-
-  renderRank(bestList, best);
-  renderRank(worstList, worst);
-
-  // 품절관리
-  renderSoldOut();
+  if(adminMainKey==="edit"){
+    renderNewCatOptions();
+    renderEditList();
+  }
 }
 
 /* 관리자 열기(패스워드) */
-const ADMIN_PASS = "1234"; // ✅ 여기 원하는 비번으로 바꾸면 됨
+const ADMIN_PASS = "1234";
 function openAdmin(){
   const pw = prompt("관리자 비밀번호");
   if(pw !== ADMIN_PASS) return;
@@ -1719,6 +2061,12 @@ aClose.addEventListener("click", closeAdmin);
 adminBack.addEventListener("click", (e)=>{
   if(e.target === adminBack) closeAdmin();
 });
+
+/* 상품수정 */
+editSearch?.addEventListener("input", ()=> renderEditList());
+btnAddItem?.addEventListener("click", addNewItem);
+btnResetNew?.addEventListener("click", resetNewForm);
+resetNewForm();
 
 /* ===============================
    동기화 UI
